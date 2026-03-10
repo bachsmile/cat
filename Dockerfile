@@ -6,6 +6,11 @@ WORKDIR /app
 # Copy package management files
 COPY package.json yarn.lock* package-lock.json* ./
 
+# Copy TS configs and other essential build files specifically
+COPY tsconfig*.json ./
+COPY vite.config.ts ./
+COPY index.html ./
+
 # Install dependencies
 RUN if [ -f yarn.lock ]; then yarn install; \
     else npm install; fi
