@@ -147,6 +147,119 @@
         @submit="handlePasswordSubmit"
         @cancel="cancelUnlock"
       />
+
+      <!-- Tiết kiệm Section -->
+      <div v-if="savingsSummary" class="mt-20">
+        <div class="flex justify-end mb-12">
+          <div
+            class="w-[40%] h-[1px] bg-gradient-to-r from-transparent via-emerald-500 to-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+          ></div>
+        </div>
+
+        <div
+          class="bg-gradient-to-br from-emerald-500/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] relative overflow-hidden group shadow-2xl"
+        >
+          <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-[60px]"
+          ></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-8">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400"
+                >
+                  <PiggyBankIcon class="w-6 h-6" />
+                </div>
+                <div>
+                  <h3
+                    class="text-xl font-black text-white tracking-tighter uppercase"
+                  >
+                    Thống kê tiền gửi
+                  </h3>
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"
+                  >
+                    Toàn bộ danh mục đầu tư tích lũy
+                  </p>
+                </div>
+              </div>
+              <button
+                @click="showSavingsStatsModal = true"
+                class="px-5 py-2.5 bg-white/5 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-emerald-500 shadow-lg hover:shadow-emerald-500/20"
+              >
+                Xem chi tiết
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div class="relative">
+                <p
+                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                >
+                  Tổng tiền đang gửi
+                </p>
+                <p class="text-3xl font-black text-white tracking-tight">
+                  {{
+                    isBalanceVisible
+                      ? formatNumber(savingsSummary.totalVndValue)
+                      : "••••••••"
+                  }}
+                  <span class="text-sm text-gray-500">₫</span>
+                </p>
+              </div>
+
+              <div class="relative">
+                <p
+                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                >
+                  Lợi nhuận ước tính / ngày
+                </p>
+                <p class="text-3xl font-black text-emerald-400 tracking-tight">
+                  +{{
+                    isBalanceVisible
+                      ? formatNumber(savingsSummary.totalProfitEstimateVnd)
+                      : "••••••••"
+                  }}
+                  <span class="text-sm text-gray-500">₫</span>
+                </p>
+              </div>
+
+              <div class="relative">
+                <p
+                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                >
+                  Lãi suất trung bình
+                </p>
+                <p class="text-3xl font-black text-white tracking-tight">
+                  {{
+                    savingsSummary.count > 0
+                      ? (
+                          savingsSummary.details.reduce(
+                            (sum: number, s: any) => sum + Number(s.annualRate),
+                            0,
+                          ) / savingsSummary.count
+                        ).toFixed(2)
+                      : "0.00"
+                  }}
+                  <span class="text-sm text-gray-500">%/năm</span>
+                </p>
+              </div>
+
+              <div class="relative">
+                <p
+                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                >
+                  Số sổ đang hoạt động
+                </p>
+                <p class="text-3xl font-black text-white tracking-tight">
+                  {{ savingsSummary.count }}
+                  <span class="text-sm text-gray-500">sổ</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Asset Details section when unlocked -->
@@ -232,7 +345,13 @@
                 <p class="text-lg font-bold text-white">
                   {{
                     isBalanceVisible
-                      ? formatNumber(selectedAssetData?.totalInvested || 0)
+                      ? formatNumber(
+                          includeSavingsInStats
+                            ? selectedAssetData?.totalInvestedPortfolio ||
+                                selectedAssetData?.totalInvested ||
+                                0
+                            : selectedAssetData?.totalInvested || 0,
+                        )
                       : "********"
                   }}
                   <span class="text-xs text-gray-500">{{
@@ -881,44 +1000,6 @@
         </div>
       </div>
 
-      <!-- Deposit Modal -->
-      <AssetDepositModal
-        v-if="showDepositModal"
-        :selectedAsset="selectedAsset"
-        v-model:formData="depositForm"
-        :totalAmount="depositTotal"
-        @close="showDepositModal = false"
-        @submit="submitDeposit"
-      />
-
-      <!-- Withdraw Modal -->
-      <AssetWithdrawModal
-        v-if="showWithdrawModal"
-        :selectedAsset="selectedAsset"
-        v-model:formData="withdrawForm"
-        :totalAmount="withdrawTotal"
-        :availableBalance="selectedAssetData?.balance || 0"
-        @close="showWithdrawModal = false"
-        @submit="submitWithdraw"
-      />
-      <!-- Receive Modal -->
-      <AssetReceiveModal
-        v-if="showReceiveModal"
-        :selectedAsset="selectedAsset"
-        v-model:formData="receiveForm"
-        @close="showReceiveModal = false"
-        @submit="submitReceive"
-      />
-
-      <!-- Savings Modal -->
-      <AssetSavingsModal
-        v-if="showSavingsModal"
-        :selectedAsset="selectedAsset"
-        :availableBalance="selectedAssetData?.balance || 0"
-        @close="showSavingsModal = false"
-        @submit="submitSavings"
-      />
-
       <!-- Savings Tab Content -->
       <div
         v-if="activeSubTab === 'savings'"
@@ -926,7 +1007,7 @@
       >
         <!-- Savings Summary Panel -->
         <div
-          v-if="savingsSummary"
+          v-if="currentSavingsSummary"
           class="bg-gradient-to-br from-emerald-500/10 via-white/5 to-transparent backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] mb-8 relative overflow-hidden"
         >
           <div
@@ -938,15 +1019,28 @@
                 <p
                   class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
                 >
-                  Tổng tiền đang gửi
+                  {{
+                    selectedAsset
+                      ? `Tổng ${selectedAsset} đang gửi`
+                      : "Tổng tiền đang gửi"
+                  }}
                 </p>
                 <p class="text-2xl font-black text-white">
                   {{
                     isBalanceVisible
-                      ? formatNumber(savingsSummary.totalVndValue)
+                      ? selectedAsset
+                        ? formatNumber(
+                            currentSavingsSummary.details.reduce(
+                              (sum: number, s: any) => sum + Number(s.quantity),
+                              0,
+                            ),
+                          )
+                        : formatNumber(currentSavingsSummary.totalVndValue)
                       : "••••••"
                   }}
-                  <span class="text-sm text-gray-500">₫</span>
+                  <span class="text-sm text-gray-500">{{
+                    selectedAsset || "₫"
+                  }}</span>
                 </p>
               </div>
               <div>
@@ -958,10 +1052,25 @@
                 <p class="text-2xl font-black text-emerald-400">
                   +{{
                     isBalanceVisible
-                      ? formatNumber(savingsSummary.totalProfitEstimateVnd)
+                      ? selectedAsset
+                        ? formatNumber(
+                            currentSavingsSummary.details.reduce(
+                              (sum: number, s: any) =>
+                                sum +
+                                (Number(s.quantity) * Number(s.annualRate)) /
+                                  100 /
+                                  365,
+                              0,
+                            ),
+                          )
+                        : formatNumber(
+                            currentSavingsSummary.totalProfitEstimateVnd,
+                          )
                       : "••••••"
                   }}
-                  <span class="text-sm text-gray-500">₫</span>
+                  <span class="text-sm text-gray-500">{{
+                    selectedAsset || "₫"
+                  }}</span>
                 </p>
               </div>
               <div>
@@ -972,12 +1081,12 @@
                 </p>
                 <p class="text-2xl font-black text-white">
                   {{
-                    savingsSummary.count > 0
+                    currentSavingsSummary.count > 0
                       ? (
-                          savingsSummary.details.reduce(
+                          currentSavingsSummary.details.reduce(
                             (sum: number, s: any) => sum + Number(s.annualRate),
                             0,
-                          ) / savingsSummary.count
+                          ) / currentSavingsSummary.count
                         ).toFixed(2)
                       : "0.00"
                   }}
@@ -991,7 +1100,7 @@
                   Sổ gửi đang hoạt động
                 </p>
                 <p class="text-2xl font-black text-white">
-                  {{ savingsSummary.count }}
+                  {{ currentSavingsSummary.count }}
                   <span class="text-sm text-gray-500">sổ</span>
                 </p>
               </div>
@@ -1005,7 +1114,7 @@
           class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
         >
           <div
-            v-for="saving in savingsList"
+            v-for="saving in filteredSavingsList"
             :key="saving.id"
             class="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-[1.5rem] relative overflow-hidden hover:border-emerald-500/30 transition-all group"
           >
@@ -1059,15 +1168,24 @@
                 </div>
                 <div>
                   <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">
-                    {{ saving.savingsType === 'flexible' && saving.lastDailyInterest > 0 ? 'Lãi hôm qua' : 'Lãi ước tính/ngày' }}
+                    {{
+                      saving.savingsType === "flexible" &&
+                      saving.lastDailyInterest > 0
+                        ? "Lãi hôm qua"
+                        : "Lãi ước tính/ngày"
+                    }}
                   </p>
                   <p class="text-lg font-black text-emerald-400">
                     +{{
                       isBalanceVisible
                         ? formatNumber(
-                            saving.savingsType === 'flexible' && saving.lastDailyInterest > 0
+                            saving.savingsType === "flexible" &&
+                              saving.lastDailyInterest > 0
                               ? Number(saving.lastDailyInterest)
-                              : (Number(saving.quantity) * Number(saving.annualRate)) / 100 / 365
+                              : (Number(saving.quantity) *
+                                  Number(saving.annualRate)) /
+                                  100 /
+                                  365,
                           )
                         : "••••"
                     }}
@@ -1142,6 +1260,49 @@
         </div>
       </div>
     </div>
+
+    <!-- Modals -->
+    <AssetDepositModal
+      v-if="showDepositModal"
+      :selectedAsset="selectedAsset"
+      v-model:formData="depositForm"
+      :totalAmount="depositTotal"
+      @close="showDepositModal = false"
+      @submit="submitDeposit"
+    />
+
+    <AssetWithdrawModal
+      v-if="showWithdrawModal"
+      :selectedAsset="selectedAsset"
+      v-model:formData="withdrawForm"
+      :totalAmount="withdrawTotal"
+      :availableBalance="selectedAssetData?.balance || 0"
+      @close="showWithdrawModal = false"
+      @submit="submitWithdraw"
+    />
+
+    <AssetReceiveModal
+      v-if="showReceiveModal"
+      :selectedAsset="selectedAsset"
+      v-model:formData="receiveForm"
+      @close="showReceiveModal = false"
+      @submit="submitReceive"
+    />
+
+    <AssetSavingsModal
+      v-if="showSavingsModal"
+      :selectedAsset="selectedAsset"
+      :availableBalance="selectedAssetData?.balance || 0"
+      @close="showSavingsModal = false"
+      @submit="submitSavings"
+    />
+
+    <SavingsStatsModal
+      v-if="showSavingsStatsModal"
+      :savingsList="savingsList"
+      @close="showSavingsStatsModal = false"
+      @withdraw="handleWithdrawSavings"
+    />
   </div>
 </template>
 
@@ -1154,6 +1315,7 @@ import {
   Trash2 as TrashIcon,
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
+  PiggyBank as PiggyBankIcon,
 } from "lucide-vue-next";
 import AssetCard from "../components/AssetCard.vue";
 import AssetPasswordPrompt from "../components/AssetPasswordPrompt.vue";
@@ -1161,6 +1323,7 @@ import AssetDepositModal from "../components/AssetDepositModal.vue";
 import AssetWithdrawModal from "../components/AssetWithdrawModal.vue";
 import AssetReceiveModal from "../components/AssetReceiveModal.vue";
 import AssetSavingsModal from "../components/AssetSavingsModal.vue";
+import SavingsStatsModal from "../components/SavingsStatsModal.vue";
 import { getUsdtVndP2pPrice } from "../api/market";
 import {
   unlockWallet,
@@ -1300,6 +1463,7 @@ const showDepositModal = ref(false);
 const showWithdrawModal = ref(false);
 const showReceiveModal = ref(false);
 const showSavingsModal = ref(false);
+const showSavingsStatsModal = ref(false);
 
 // Savings state
 const savingsList = ref<any[]>([]);
@@ -1311,7 +1475,7 @@ const fetchSavingsData = async () => {
       getSavings(),
       getSavingsSummary(),
     ]);
-    savingsList.value = list.filter((s: any) => s.status === 'active');
+    savingsList.value = list.filter((s: any) => s.status === "active");
     savingsSummary.value = summary;
   } catch (e) {
     console.error("Failed to fetch savings data:", e);
@@ -1405,11 +1569,43 @@ const realizedStats = computed(() => {
 
 // Transaction History
 const filteredTransactions = computed(() => {
+  if (!selectedAsset.value) return transactions.value;
   return transactions.value
     .filter(
       (t) => t.asset === selectedAsset.value && t.type === activeSubTab.value,
     )
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+});
+
+const filteredSavingsList = computed(() => {
+  if (!selectedAsset.value) return savingsList.value;
+  return savingsList.value.filter((s) => s.assetSymbol === selectedAsset.value);
+});
+
+const currentSavingsSummary = computed(() => {
+  if (!selectedAsset.value || !savingsSummary.value)
+    return savingsSummary.value;
+
+  const filteredDetails = savingsSummary.value.details.filter(
+    (s: any) => s.assetSymbol === selectedAsset.value,
+  );
+
+  const totalVndValue = filteredDetails.reduce(
+    (sum: number, s: any) => sum + s.vndValue,
+    0,
+  );
+  const totalProfitEstimateVnd = filteredDetails.reduce(
+    (sum: number, s: any) => sum + s.dailyProfitVnd,
+    0,
+  );
+
+  return {
+    ...savingsSummary.value,
+    totalVndValue,
+    totalProfitEstimateVnd,
+    count: filteredDetails.length,
+    details: filteredDetails,
+  };
 });
 
 // Security Logic
@@ -1468,6 +1664,7 @@ onMounted(() => {
         asset.totalInvestedPortfolio =
           status.stats.totalInvestedPortfolio || status.stats.totalInvested;
         asset.savingsBalance = status.stats.savingsBalance;
+        asset.totalBalance = status.stats.totalBalance; // Add this line
       }
 
       // CHỈ TỰ ĐỘNG MỞ KHOÁ NẾU CÓ CẢ TRẠNG THÁI DB VÀ TOKEN CỤC BỘ
@@ -1490,24 +1687,23 @@ onUnmounted(() => {
 });
 
 // Profit Calculation Logic
-const includeReceivedInStats = ref(false);
+const includeReceivedInStats = ref(true);
 const includeSavingsInStats = ref(true);
 
 const effectiveBalance = computed(() => {
   if (!selectedAssetData.value) return 0;
-  const balance = selectedAssetData.value.balance;
-  const receivedBalance = selectedAssetData.value.receivedBalance || 0;
+  const balance = selectedAssetData.value.balance || 0;
   const savingsBalance = selectedAssetData.value.savingsBalance || 0;
+  const receivedBalance = selectedAssetData.value.receivedBalance || 0;
 
-  let total = includeReceivedInStats.value
-    ? balance
-    : balance - receivedBalance;
+  const totalOwnership = balance + savingsBalance;
 
-  if (includeSavingsInStats.value) {
-    total += savingsBalance;
+  if (includeReceivedInStats.value) {
+    return totalOwnership;
+  } else {
+    // Return only the "Purchased/Principal" portion
+    return Math.max(0, totalOwnership - receivedBalance);
   }
-
-  return total;
 });
 
 const currentProfit = computed(() => {
@@ -1650,6 +1846,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    totalBalance: 0,
     bgClass: "bg-green-500/10",
     textClass: "text-green-500",
     gradClass: "from-green-500/20 to-green-500",
@@ -1663,6 +1860,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    totalBalance: 0,
     bgClass: "bg-orange-500/10",
     textClass: "text-orange-500",
     gradClass: "from-orange-500/20 to-orange-500",
@@ -1676,6 +1874,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    totalBalance: 0,
     bgClass: "bg-blue-500/10",
     textClass: "text-blue-500",
     gradClass: "from-blue-500/20 to-blue-500",
@@ -1689,6 +1888,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    totalBalance: 0,
     bgClass: "bg-red-500/10",
     textClass: "text-red-500",
     gradClass: "from-red-500/20 to-red-500",
