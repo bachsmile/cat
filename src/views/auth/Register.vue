@@ -29,7 +29,7 @@
         >
           Create Account
         </h1>
-        <p class="text-gray-400 mt-1">Join the NovaOS ecosystem today</p>
+        <p class="text-gray-400 mt-1">Join the Finzo ecosystem today</p>
       </div>
 
       <form @submit.prevent="handleRegister" class="space-y-5">
@@ -164,7 +164,7 @@ import {
   Contact as IdCardIcon,
   ShieldCheck as ShieldCheckIcon,
 } from "lucide-vue-next";
-import { authApi } from "../api/auth";
+import { authApi } from "../../api/auth";
 
 const router = useRouter();
 const loading = ref(false);

@@ -2,15 +2,15 @@
   <div class="animate-in fade-in duration-300">
     <!-- Top Persistent bar -->
     <div
-      class="flex items-center justify-between mb-12 py-4 border-b border-white/5"
+      class="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-12 py-4 border-b border-white/5 gap-6"
     >
       <div>
         <h1
-          class="text-3xl md:text-5xl font-black tracking-tighter text-white mb-2"
+          class="text-2xl sm:text-3xl md:text-5xl font-black tracking-tighter text-white mb-1 md:mb-2"
         >
           Quản lý Tài sản
         </h1>
-        <p class="text-gray-500 font-medium text-lg">
+        <p class="text-gray-500 font-medium text-[10px] sm:text-sm md:text-lg">
           {{
             selectedAsset
               ? `Đang xem ví ${selectedAsset}`
@@ -19,26 +19,26 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 md:gap-4">
         <button
           @click="toggleBalanceVisibility"
-          class="flex items-center gap-3 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all group/btn"
+          class="flex-1 md:flex-none flex items-center justify-center gap-3 px-4 md:px-6 py-3 md:py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all group/btn"
         >
           <component
             :is="isBalanceVisible ? EyeIcon : EyeOffIcon"
             class="w-5 h-5 text-gray-400 group-hover/btn:text-white"
           />
           <span
-            class="text-xs font-bold text-gray-400 group-hover/btn:text-white uppercase tracking-widest hidden md:inline"
+            class="text-xs font-bold text-gray-400 group-hover/btn:text-white uppercase tracking-widest"
           >
-            {{ isBalanceVisible ? "Ẩn số dư" : "Hiện số dư" }}
+            {{ isBalanceVisible ? (windowWidth < 768 ? "Ẩn" : "Ẩn số dư") : (windowWidth < 768 ? "Hiện" : "Hiện số dư") }}
           </span>
         </button>
 
         <button
           v-if="selectedAsset"
           @click="selectedAsset = null"
-          class="p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all text-gray-400 hover:text-white"
+          class="p-3 md:p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all text-gray-400 hover:text-white"
         >
           <ArrowLeftIcon class="w-5 h-5" />
         </button>
@@ -50,7 +50,7 @@
       <!-- Large Full-Width Portfolio Panel -->
       <div
         v-if="portfolioSummary"
-        class="bg-gradient-to-br from-purple-500/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/10 p-10 rounded-[2.5rem] mb-12 relative overflow-hidden group shadow-2xl"
+        class="bg-gradient-to-br from-purple-500/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/10 p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] mb-12 relative overflow-hidden group shadow-2xl"
       >
         <!-- Decoration icons/glows -->
         <div
@@ -61,18 +61,18 @@
         ></div>
 
         <div
-          class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-8"
+          class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-6 md:gap-8"
         >
-          <div class="flex-1">
+          <div class="flex-1 w-full">
             <p
-              class="text-xs text-purple-400 font-black uppercase tracking-[0.3em] mb-4 flex items-center gap-2"
+              class="text-[8px] sm:text-[10px] md:text-xs text-purple-400 font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-4 flex items-center gap-2"
             >
               <ActivityIcon class="w-4 h-4" />
               TỔNG TRỊ GIÁ TÀI SẢN (VND)
             </p>
-            <div class="flex items-baseline gap-4">
+            <div class="flex items-baseline gap-3 md:gap-4 overflow-hidden">
               <h2
-                class="text-5xl md:text-7xl font-black tracking-tighter text-white"
+                class="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white truncate"
               >
                 {{
                   isBalanceVisible && portfolioSummary
@@ -80,29 +80,50 @@
                     : "••••••••"
                 }}
               </h2>
-              <span class="text-2xl md:text-3xl text-gray-500 font-bold"
+              <span class="text-xl md:text-3xl text-gray-500 font-bold"
                 >₫</span
               >
             </div>
-            <div class="flex items-center gap-4 mt-8">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mt-8">
               <div
-                class="flex items-center gap-2 px-3 py-1 bg-green-400/10 border border-green-400/20 rounded-full"
+                class="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full w-fit"
+                :class="
+                  (portfolioSummary?.dailyChangePercent || 0) >= 0
+                    ? 'bg-green-400/10 border-green-400/20'
+                    : 'bg-red-400/10 border-red-400/20'
+                "
               >
                 <div
-                  class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
+                  class="w-1.5 h-1.5 rounded-full animate-pulse"
+                  :class="
+                    (portfolioSummary?.dailyChangePercent || 0) >= 0
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  "
                 ></div>
                 <span
-                  class="text-[10px] text-green-400 font-black uppercase tracking-widest"
-                  >+2.5% Today</span
+                  class="text-[10px] font-black uppercase tracking-widest whitespace-nowrap"
+                  :class="
+                    (portfolioSummary?.dailyChangePercent || 0) >= 0
+                      ? 'text-green-400'
+                      : 'text-red-400'
+                  "
                 >
+                  {{ (portfolioSummary?.dailyChangePercent || 0) >= 0 ? "+" : ""
+                  }}{{
+                    (portfolioSummary?.dailyChangePercent || 0).toFixed(2)
+                  }}% Today (±{{
+                    formatNumber(portfolioSummary?.dailyChangeVnd || 0)
+                  }}₫)
+                </span>
               </div>
-              <p class="text-xs text-gray-500 font-medium italic">
+              <p class="text-[10px] md:text-xs text-gray-500 font-medium italic">
                 Công cụ tính toán tự động qua Binance P2P & Market API
               </p>
             </div>
           </div>
 
-          <div class="flex flex-col items-end gap-2 ml-auto text-right">
+          <div class="flex flex-col items-start md:items-end gap-1 md:gap-2 md:ml-auto w-full md:w-auto md:text-right">
             <p
               class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-1"
             >
@@ -117,7 +138,7 @@
               }}
             </p>
             <div
-              class="w-12 h-1 bg-purple-500/30 rounded-full ml-auto mt-2"
+              class="w-12 h-1 bg-purple-500/30 rounded-full md:ml-auto mt-2"
             ></div>
           </div>
         </div>
@@ -149,35 +170,35 @@
       />
 
       <!-- Tiết kiệm Section -->
-      <div v-if="savingsSummary" class="mt-20">
-        <div class="flex justify-end mb-12">
+      <div v-if="savingsSummary" class="mt-12 md:mt-20">
+        <div class="flex justify-end mb-8 md:mb-12">
           <div
-            class="w-[40%] h-[1px] bg-gradient-to-r from-transparent via-emerald-500 to-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+            class="w-full md:w-[40%] h-[1px] bg-gradient-to-r from-transparent via-emerald-500 to-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
           ></div>
         </div>
 
         <div
-          class="bg-gradient-to-br from-emerald-500/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] relative overflow-hidden group shadow-2xl"
+          class="bg-gradient-to-br from-emerald-500/10 via-white/5 to-transparent backdrop-blur-3xl border border-white/10 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] relative overflow-hidden group shadow-2xl"
         >
           <div
             class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-[60px]"
           ></div>
           <div class="relative z-10">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
               <div class="flex items-center gap-3">
                 <div
-                  class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400"
+                  class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400"
                 >
-                  <PiggyBankIcon class="w-6 h-6" />
+                  <PiggyBankIcon class="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div>
                   <h3
-                    class="text-xl font-black text-white tracking-tighter uppercase"
+                    class="text-lg md:text-xl font-black text-white tracking-tighter uppercase"
                   >
                     Thống kê tiền gửi
                   </h3>
                   <p
-                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"
+                    class="text-[9px] md:text-[10px] text-gray-500 font-bold uppercase tracking-widest"
                   >
                     Toàn bộ danh mục đầu tư tích lũy
                   </p>
@@ -185,75 +206,76 @@
               </div>
               <button
                 @click="showSavingsStatsModal = true"
-                class="px-5 py-2.5 bg-white/5 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-emerald-500 shadow-lg hover:shadow-emerald-500/20"
+                class="w-full sm:w-auto px-5 py-2.5 bg-white/5 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-emerald-500 shadow-lg hover:shadow-emerald-500/20"
               >
                 Xem chi tiết
               </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               <div class="relative">
                 <p
-                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                  class="text-[9px] md:text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
                 >
                   Tổng tiền đang gửi
                 </p>
-                <p class="text-3xl font-black text-white tracking-tight">
+                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
                   {{
                     isBalanceVisible
                       ? formatNumber(savingsSummary.totalVndValue)
                       : "••••••••"
                   }}
-                  <span class="text-sm text-gray-500">₫</span>
+                  <span class="text-xs md:text-sm text-gray-500">₫</span>
                 </p>
               </div>
 
               <div class="relative">
                 <p
-                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                  class="text-[9px] md:text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
                 >
                   Lợi nhuận ước tính / ngày
                 </p>
-                <p class="text-3xl font-black text-emerald-400 tracking-tight">
+                <p class="text-xl md:text-3xl font-black text-emerald-400 tracking-tight truncate">
                   +{{
                     isBalanceVisible
                       ? formatNumber(savingsSummary.totalProfitEstimateVnd)
                       : "••••••••"
                   }}
-                  <span class="text-sm text-gray-500">₫</span>
+                  <span class="text-xs md:text-sm text-gray-500">₫</span>
                 </p>
               </div>
 
               <div class="relative">
                 <p
-                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                  class="text-[9px] md:text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
                 >
                   Lãi suất trung bình
                 </p>
-                <p class="text-3xl font-black text-white tracking-tight">
+                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
                   {{
                     savingsSummary.count > 0
                       ? (
                           savingsSummary.details.reduce(
                             (sum: number, s: any) => sum + Number(s.annualRate),
                             0,
+                            0,
                           ) / savingsSummary.count
                         ).toFixed(2)
                       : "0.00"
                   }}
-                  <span class="text-sm text-gray-500">%/năm</span>
+                  <span class="text-xs md:text-sm text-gray-500">%/n</span>
                 </p>
               </div>
 
               <div class="relative">
                 <p
-                  class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
+                  class="text-[9px] md:text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-2"
                 >
-                  Số sổ đang hoạt động
+                  Số sổ hoạt động
                 </p>
-                <p class="text-3xl font-black text-white tracking-tight">
+                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
                   {{ savingsSummary.count }}
-                  <span class="text-sm text-gray-500">sổ</span>
+                  <span class="text-xs md:text-sm text-gray-500">sổ</span>
                 </p>
               </div>
             </div>
@@ -282,10 +304,10 @@
       <!-- Highlight card for the selected asset -->
       <div
         @click="cardMode = cardMode === 'portfolio' ? 'realized' : 'portfolio'"
-        class="bg-gradient-to-br from-[#0a0a0f] to-[#0d0d14] p-10 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group mb-8 cursor-pointer select-none transition-all duration-500 hover:border-white/10"
+        class="bg-gradient-to-br from-[#0a0a0f] to-[#0d0d14] p-6 md:p-10 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group mb-8 cursor-pointer select-none transition-all duration-500 hover:border-white/10"
       >
         <div
-          class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-8"
+          class="flex flex-col lg:flex-row justify-between items-start lg:items-center relative z-10 gap-8"
         >
           <!-- Portfolio View -->
           <div
@@ -293,19 +315,19 @@
             class="animate-in fade-in slide-in-from-left-4 duration-500"
           >
             <p
-              class="text-gray-400 font-bold uppercase tracking-widest text-xs mb-3"
+              class="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-2 md:mb-3"
             >
               Số Dư Khả Dụng
             </p>
-            <p class="text-5xl md:text-6xl font-black tracking-tight mb-6">
+            <p class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6">
               {{
                 isBalanceVisible ? formatNumber(effectiveBalance) : "********"
               }}
-              <span class="text-2xl text-gray-500 font-bold">{{
+              <span class="text-xl md:text-2xl text-gray-500 font-bold ml-1">{{
                 selectedAsset
               }}</span>
             </p>
-            <div class="flex flex-wrap items-center gap-6 md:gap-10">
+            <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-4 md:gap-10">
               <div>
                 <p
                   class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
@@ -384,20 +406,20 @@
             class="animate-in fade-in slide-in-from-right-4 duration-500 w-full"
           >
             <p
-              class="text-blue-500/80 font-bold uppercase tracking-widest text-xs mb-3"
+              class="text-blue-500/80 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-2 md:mb-3"
             >
               Tổng Token Đã Nhận
             </p>
             <p
-              class="text-5xl md:text-6xl font-black tracking-tight mb-6 text-blue-400"
+              class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6 text-blue-400"
             >
               {{ formatNumber(receivedStats.totalQuantity) }}
-              <span class="text-2xl text-gray-500 font-bold">{{
+              <span class="text-xl md:text-2xl text-gray-500 font-bold ml-1">{{
                 selectedAsset
               }}</span>
             </p>
 
-            <div class="flex flex-wrap items-center gap-6 md:gap-10">
+            <div class="grid grid-cols-1 md:flex md:flex-wrap items-center gap-4 md:gap-10">
               <div>
                 <p
                   class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
@@ -435,12 +457,12 @@
             class="animate-in fade-in slide-in-from-right-4 duration-500"
           >
             <p
-              class="text-orange-500/80 font-bold uppercase tracking-widest text-xs mb-3"
+              class="text-orange-500/80 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-2 md:mb-3"
             >
               Tổng Lợi Nhuận Đã Chốt
             </p>
             <p
-              class="text-5xl md:text-6xl font-black tracking-tight mb-6"
+              class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6"
               :class="
                 realizedStats.totalProfit >= 0
                   ? 'text-green-400'
@@ -449,12 +471,12 @@
             >
               {{ realizedStats.totalProfit >= 0 ? "+" : ""
               }}{{ formatNumber(realizedStats.totalProfit) }}
-              <span class="text-2xl text-gray-500 font-bold">{{
+              <span class="text-xl md:text-2xl text-gray-500 font-bold ml-1">{{
                 selectedAsset === "USDT" ? "₫" : "$"
               }}</span>
             </p>
 
-            <div class="flex flex-wrap items-center gap-6 md:gap-10">
+            <div class="grid grid-cols-2 lg:flex lg:flex-wrap items-center gap-4 md:gap-10">
               <div>
                 <p
                   class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
@@ -569,43 +591,53 @@
 
         <!-- Action buttons -->
         <div
-          class="flex flex-wrap gap-4 relative z-10 mt-12 pt-8 border-t border-white/5"
+          class="grid grid-cols-5 gap-2 md:flex md:flex-wrap md:gap-4 relative z-10 mt-8 md:mt-12 pt-8 border-t border-white/5"
         >
           <button
             @click="showDepositModal = true"
-            class="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-500/20 text-white rounded-xl font-bold transition-all focus:ring-2 focus:ring-purple-500/50 flex-1 md:flex-none text-center"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-500/20 text-white rounded-xl font-bold transition-all focus:ring-2 focus:ring-purple-500/50"
+            :title="`Nạp ${selectedAsset}`"
           >
-            📥 Nạp {{ selectedAsset }}
+            <span class="text-xl md:text-base">📥</span>
+            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Nạp</span>
           </button>
           <button
             @click="showWithdrawModal = true"
-            class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20 flex-1 md:flex-none text-center"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20"
+            :title="`Rút ${selectedAsset}`"
           >
-            📤 Rút {{ selectedAsset }}
+            <span class="text-xl md:text-base">📤</span>
+            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Rút</span>
           </button>
           <button
             @click="showReceiveModal = true"
-            class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20 flex-1 md:flex-none text-center"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20"
+            :title="`Nhận ${selectedAsset}`"
           >
-            🎁 Nhận {{ selectedAsset }}
+            <span class="text-xl md:text-base">🎁</span>
+            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Nhận</span>
           </button>
           <button
             @click="showSavingsModal = true"
-            class="px-8 py-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl font-bold transition-all focus:ring-2 focus:ring-emerald-500/20 flex-1 md:flex-none text-center"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl font-bold transition-all focus:ring-2 focus:ring-emerald-500/20"
+            title="Gửi Lãi"
           >
-            🏦 Gửi Lãi
+            <span class="text-xl md:text-base">🏦</span>
+            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Gửi Lãi</span>
           </button>
           <button
             @click="fetchTransactions"
-            class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20 ml-auto flex-1 md:flex-none text-center"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold transition-all focus:ring-2 focus:ring-white/20 md:ml-auto"
+            title="Làm mới"
           >
-            📋 Làm mới lịch sử
+            <span class="text-xl md:text-base">📋</span>
+            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Làm mới</span>
           </button>
         </div>
 
         <!-- Navigation Dots/Switch moved here -->
         <div
-          class="flex items-center gap-4 z-20 bg-white/5 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/5 mx-auto mt-10 w-fit"
+          class="flex flex-col sm:flex-row items-center gap-4 z-20 bg-white/5 backdrop-blur-md px-5 py-3 md:px-6 md:py-3 rounded-2xl border border-white/5 mx-auto mt-10 w-fit"
         >
           <div class="flex gap-2">
             <button
@@ -637,11 +669,11 @@
             ></button>
           </div>
 
-          <div class="w-[1px] h-4 bg-white/10 mx-1"></div>
+          <div class="hidden sm:block w-[1px] h-4 bg-white/10 mx-1"></div>
 
           <div class="flex items-center gap-2 group/switch">
             <span
-              class="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover/switch:text-gray-300 transition-colors"
+              class="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover/switch:text-gray-300 transition-colors"
               >Tính Token Nhận</span
             >
             <button
@@ -658,11 +690,11 @@
             </button>
           </div>
 
-          <div class="w-[1px] h-4 bg-white/10 mx-1"></div>
+          <div class="hidden sm:block w-[1px] h-4 bg-white/10 mx-1"></div>
 
           <div class="flex items-center gap-2 group/switch">
             <span
-              class="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover/switch:text-gray-300 transition-colors"
+              class="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover/switch:text-gray-300 transition-colors"
               >Tính Token Gửi</span
             >
             <button
@@ -688,11 +720,11 @@
       </div>
 
       <!-- Management Tabs -->
-      <div class="mt-12">
-        <div class="flex items-center gap-8 border-b border-white/5 mb-8">
+      <div class="mt-8 md:mt-12">
+        <div class="flex items-center gap-6 md:gap-8 border-b border-white/5 mb-8 overflow-x-auto no-scrollbar whitespace-nowrap px-1">
           <button
             @click="activeSubTab = 'deposit'"
-            class="pb-4 text-sm font-bold transition-all relative"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
             :class="
               activeSubTab === 'deposit'
                 ? 'text-purple-500'
@@ -707,7 +739,7 @@
           </button>
           <button
             @click="activeSubTab = 'withdraw'"
-            class="pb-4 text-sm font-bold transition-all relative"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
             :class="
               activeSubTab === 'withdraw'
                 ? 'text-orange-500'
@@ -722,7 +754,7 @@
           </button>
           <button
             @click="activeSubTab = 'receive'"
-            class="pb-4 text-sm font-bold transition-all relative"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
             :class="
               activeSubTab === 'receive'
                 ? 'text-blue-400'
@@ -737,7 +769,7 @@
           </button>
           <button
             @click="activeSubTab = 'savings'"
-            class="pb-4 text-sm font-bold transition-all relative"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
             :class="
               activeSubTab === 'savings'
                 ? 'text-emerald-400'
@@ -759,9 +791,9 @@
         >
           <div
             v-if="filteredTransactions.length > 0"
-            class="overflow-hidden bg-white/5 border border-white/5 rounded-[2rem] shadow-xl"
+            class="overflow-x-auto bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] shadow-xl no-scrollbar"
           >
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr class="bg-white/5 border-b border-white/5">
                   <th
@@ -1308,6 +1340,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+
+const windowWidth = ref(window.innerWidth);
+const updateWidth = () => {
+  windowWidth.value = window.innerWidth;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", updateWidth);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateWidth);
+});
 import {
   Activity as ActivityIcon,
   ArrowLeft as ArrowLeftIcon,
@@ -1317,14 +1362,14 @@ import {
   EyeOff as EyeOffIcon,
   PiggyBank as PiggyBankIcon,
 } from "lucide-vue-next";
-import AssetCard from "../components/AssetCard.vue";
-import AssetPasswordPrompt from "../components/AssetPasswordPrompt.vue";
-import AssetDepositModal from "../components/AssetDepositModal.vue";
-import AssetWithdrawModal from "../components/AssetWithdrawModal.vue";
-import AssetReceiveModal from "../components/AssetReceiveModal.vue";
-import AssetSavingsModal from "../components/AssetSavingsModal.vue";
-import SavingsStatsModal from "../components/SavingsStatsModal.vue";
-import { getUsdtVndP2pPrice } from "../api/market";
+import AssetCard from "../../components/AssetCard.vue";
+import AssetPasswordPrompt from "../../components/AssetPasswordPrompt.vue";
+import AssetDepositModal from "../../components/AssetDepositModal.vue";
+import AssetWithdrawModal from "../../components/AssetWithdrawModal.vue";
+import AssetReceiveModal from "../../components/AssetReceiveModal.vue";
+import AssetSavingsModal from "../../components/AssetSavingsModal.vue";
+import SavingsStatsModal from "../../components/SavingsStatsModal.vue";
+import { getUsdtVndP2pPrice } from "../../api/market";
 import {
   unlockWallet,
   getWalletStatus,
@@ -1337,7 +1382,7 @@ import {
   getSavingsSummary,
   withdrawSavings,
   getPortfolioSummary,
-} from "../api/wallet";
+} from "../../api/wallet";
 
 const selectedAsset = ref<string | null>(null);
 
@@ -1350,9 +1395,12 @@ const toggleBalanceVisibility = () => {
   localStorage.setItem("is_balance_visible", isBalanceVisible.value.toString());
 };
 
-const portfolioSummary = ref<{ totalVndValue: number; assets: any[] } | null>(
-  null,
-);
+const portfolioSummary = ref<{
+  totalVndValue: number;
+  dailyChangeVnd: number;
+  dailyChangePercent: number;
+  assets: any[];
+} | null>(null);
 
 const fetchPortfolioSummary = async () => {
   try {
@@ -1365,8 +1413,8 @@ const fetchPortfolioSummary = async () => {
         const asset = assets.value.find((a) => a.symbol === stat.symbol);
         if (asset) {
           asset.balance = stat.balance;
-          // Note: totalInvested logic might need a more detailed per-asset call
-          // but for now, we'll keep it simple or fetch per-asset stats
+          asset.savingsBalance = stat.savingsBalance || 0;
+          asset.totalBalance = stat.totalBalance || (asset.balance + asset.savingsBalance);
         }
       });
     }

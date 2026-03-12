@@ -3,15 +3,15 @@
     class="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 animate-in fade-in"
   >
     <div
-      class="bg-[#0a0a0f] border border-white/10 rounded-3xl p-8 max-w-md w-full relative shadow-2xl"
+      class="bg-[#0a0a0f] border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 max-w-md w-full relative shadow-2xl"
     >
       <button
         @click="$emit('close')"
-        class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+        class="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-white transition-colors"
       >
         <XIcon class="w-6 h-6" />
       </button>
-      <h3 class="text-2xl font-bold mb-6 text-orange-500">Rút Tài Sản</h3>
+      <h3 class="text-xl md:text-2xl font-bold mb-6 text-orange-500">Rút Tài Sản</h3>
 
       <form @submit.prevent="$emit('submit')" class="space-y-5">
         <div>
@@ -90,16 +90,16 @@
         </div>
 
         <div
-          class="p-5 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl mt-8"
+          class="p-4 md:p-5 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl mt-6 md:mt-8"
         >
           <p
-            class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1"
+            class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1"
           >
             Tổng Giá Trị Quy Đổi
           </p>
-          <p class="text-3xl font-black text-white">
+          <p class="text-2xl md:text-3xl font-black text-white">
             ≈ {{ formatNumber(totalAmount) }}
-            <span class="text-sm text-gray-500 font-bold">{{
+            <span class="text-xs md:text-sm text-gray-500 font-bold">{{
               selectedAsset === "USDT" ? "₫" : "$"
             }}</span>
           </p>

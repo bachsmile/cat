@@ -45,7 +45,7 @@
     <div class="mt-6">
       <p class="text-3xl font-bold tracking-tight">
         <span v-if="isUnlocked">
-          {{ isVisible ? formatNumber(asset.balance) : "********" }}
+          {{ isVisible ? formatNumber((asset.balance || 0) + (asset.savingsBalance || 0)) : "********" }}
         </span>
         <span v-else class="text-gray-600 tracking-[0.3em]">••••••</span>
         <span class="text-sm text-gray-500 font-normal ml-1">
@@ -57,7 +57,7 @@
         class="mt-2 text-xs text-gray-400 font-medium tracking-wide"
       >
         ≈
-        {{ isVisible ? formatNumber(asset.balance * livePrice) : "********" }} ₫
+        {{ isVisible ? formatNumber(((asset.balance || 0) + (asset.savingsBalance || 0)) * livePrice) : "********" }} ₫
       </div>
     </div>
 

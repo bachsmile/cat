@@ -3,14 +3,14 @@
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-sm animate-in fade-in duration-300"
   >
     <div
-      class="bg-[#0a0a0f] w-full max-w-lg rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300"
+      class="bg-[#0a0a0f] w-full max-w-lg rounded-3xl md:rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300"
     >
       <!-- Header -->
       <div
-        class="p-8 pb-4 flex justify-between items-center border-b border-white/5"
+        class="p-6 md:p-8 pb-4 flex justify-between items-center border-b border-white/5"
       >
         <div>
-          <h3 class="text-2xl font-black tracking-tight text-blue-400">
+          <h3 class="text-xl md:text-2xl font-black tracking-tight text-blue-400">
             🎁 Nhận {{ selectedAsset }}
           </h3>
           <p
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Form -->
-      <div class="p-8 space-y-8">
+      <div class="p-6 md:p-8 space-y-6 md:space-y-8">
         <div class="space-y-4">
           <label
             class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2"
@@ -72,11 +72,11 @@
       </div>
 
       <!-- Footer -->
-      <div class="p-8 pt-0">
+      <div class="p-6 md:p-8 pt-0">
         <button
           @click="handleSubmit"
           :disabled="!displayQuantity || Number(displayQuantity.replace(',', '.')) <= 0"
-          class="w-full py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 text-white rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3"
+          class="w-full py-4 md:py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 text-white rounded-2xl font-black text-base md:text-lg transition-all flex items-center justify-center gap-3"
         >
           <span>Xác Nhận Nhận Token</span>
           <CheckIcon class="w-5 h-5" />

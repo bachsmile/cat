@@ -148,11 +148,11 @@ import {
   Terminal as TerminalIcon,
   Zap as ZapIcon,
 } from "lucide-vue-next";
-import { authApi } from "../api/auth";
+import { authApi } from "../../api/auth";
 
 const router = useRouter();
-const email = ref("admin@example.com");
-const password = ref("");
+const email = ref("vikingshome86@gmail.com");
+const password = ref("123123");
 const error = ref("");
 const loading = ref(false);
 
@@ -168,7 +168,12 @@ const handleLogin = async () => {
 
   if (result.status === 200 || result.status === 201) {
     saveAuth(result.data);
-    router.push("/dashboard");
+    const userRole = result.data.user.role;
+    if (["admin", "moderator", "manager", "lawyer"].includes(userRole)) {
+      router.push("/dashboard");
+    } else {
+      router.push("/home");
+    }
   } else {
     error.value = result.message || "Login failed";
   }
@@ -183,7 +188,12 @@ const handleTrial = async () => {
 
   if (result.status === 200 || result.status === 201) {
     saveAuth(result.data);
-    router.push("/dashboard");
+    const userRole = result.data.user.role;
+    if (["admin", "moderator", "lawyer"].includes(userRole)) {
+      router.push("/dashboard");
+    } else {
+      router.push("/home");
+    }
   } else {
     error.value = result.message || "Trial failed";
   }
