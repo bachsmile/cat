@@ -404,30 +404,24 @@
         </form>
       </div>
     </div>
-    <!-- Mock Content for other SubTabs -->
-    <div
-      v-else
-      class="bg-[#0a0a0f] rounded-3xl border border-white/5 p-20 text-center"
-    >
-      <div
-        class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
-      >
-        <UsersIcon class="w-10 h-10 text-blue-400" />
-      </div>
-      <h3 class="text-xl font-bold mb-2">
-        Module {{ tabs.find((t) => t.id === activeSubTab)?.label }}
-      </h3>
-      <p class="text-gray-500">
-        Chúng tôi đang phát triển các chức năng chi tiết cho phần này.
-      </p>
-    </div>
+    <CmConfirm
+      :show="showConfirmModal"
+      :title="confirmConfig.title"
+      :message="confirmConfig.message"
+      :icon="confirmConfig.icon"
+      :show-cancel="confirmConfig.showCancel"
+      :confirm-text="confirmConfig.confirmText"
+      :cancel-text="confirmConfig.cancelText"
+      :variant="confirmConfig.variant"
+      @confirm="handleConfirmAction"
+      @cancel="showConfirmModal = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import {
-  Users as UsersIcon,
   UserPlus as PlusIcon,
   Search as SearchIcon,
   Filter as FilterIcon,
@@ -437,8 +431,10 @@ import {
   CheckCircle as CheckCircleIcon,
   Pause as PauseIcon,
   X as XIcon,
+  AlertCircle as AlertCircleIcon,
 } from "lucide-vue-next";
 import { userApi, type User } from "../../api/user";
+import CmConfirm from "../../components/CmConfirm.vue";
 
 const activeSubTab = ref("accounts");
 const tabs = [
@@ -465,6 +461,38 @@ const form = ref({
   role: "user",
   status: "active" as "active" | "suspended",
 });
+
+// Confirmation Modal State
+const showConfirmModal = ref(false);
+const confirmConfig = ref({
+  title: "",
+  message: "",
+  icon: AlertCircleIcon,
+  showCancel: true,
+  confirmText: "Xác nhận",
+  cancelText: "Hủy bỏ",
+  variant: "primary" as "primary" | "danger" | "warning" | "teal",
+  onConfirm: () => {},
+});
+
+const triggerConfirm = (config: any) => {
+  confirmConfig.value = {
+    title: "",
+    message: "",
+    icon: AlertCircleIcon,
+    showCancel: true,
+    confirmText: "Xác nhận",
+    cancelText: "Hủy bỏ",
+    variant: "primary",
+    ...config,
+  };
+  showConfirmModal.value = true;
+};
+
+const handleConfirmAction = () => {
+  if (confirmConfig.value.onConfirm) confirmConfig.value.onConfirm();
+  showConfirmModal.value = false;
+};
 
 const fetchUsers = async () => {
   loading.value = true;
@@ -542,20 +570,40 @@ const handleSubmit = async () => {
     await fetchUsers();
     closeModal();
   } else if (result.message) {
-    alert(result.message);
+    triggerConfirm({
+      title: "Thông báo",
+      message: result.message,
+      icon: AlertCircleIcon,
+      showCancel: false,
+      variant: "warning",
+    });
   }
   submitting.value = false;
 };
 
 const handleDelete = async (id: string) => {
-  if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
-    const result = await userApi.deleteUser(id);
-    if (result && !result.message) {
-      await fetchUsers();
-    } else {
-      alert(result.message || "Xóa thất bại");
-    }
-  }
+  triggerConfirm({
+    title: "Xác nhận xóa",
+    message: "Bạn có chắc chắn muốn xóa người dùng này?",
+    icon: TrashIcon,
+    variant: "danger",
+    showCancel: true,
+    confirmText: "Xóa ngay",
+    onConfirm: async () => {
+      const result = await userApi.deleteUser(id);
+      if (result && !result.message) {
+        await fetchUsers();
+      } else {
+        triggerConfirm({
+          title: "Lỗi",
+          message: result.message || "Xóa thất bại",
+          icon: AlertCircleIcon,
+          showCancel: false,
+          variant: "danger",
+        });
+      }
+    },
+  });
 };
 
 const getRoleStyles = (role: string) => {

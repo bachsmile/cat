@@ -730,7 +730,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import dogLawImage from '../../assets/images/dog-law.png';
 import CmConfirm from '../../components/CmConfirm.vue';
@@ -1029,6 +1029,27 @@ const connectToLawyer = (lawyer: any) => {
   };
 
   setupSocket();
+};
+
+const cleanupSocket = () => {
+  if (socket.value) {
+    console.log("Cleaning up socket listeners and disconnecting...");
+    socket.value.off("connect");
+    socket.value.off("connect_error");
+    socket.value.off("new_message");
+    socket.value.off("lawyer_joined");
+    socket.value.off("room_closed");
+    socket.value.disconnect();
+    socket.value = null;
+  }
+};
+
+let checkReadyId: any = null;
+
+onUnmounted(() => {
+  cleanupSocket();
+  if (checkReadyId) clearInterval(checkReadyId);
+});
 
   // UX Transition logic: Wait for roomId OR timeout
   let retryCount = 0;
@@ -1039,6 +1060,7 @@ const connectToLawyer = (lawyer: any) => {
       console.log("Room ready, transitioning to CHATTING");
       chatFlowStep.value = 'CHATTING';
       clearInterval(checkReady);
+      checkReadyId = null;
     } else if (retryCount > maxRetries) {
       console.warn("Connection timeout - no room received from server");
       triggerModal({
@@ -1051,10 +1073,11 @@ const connectToLawyer = (lawyer: any) => {
         onConfirm: () => resetChatState()
       });
       clearInterval(checkReady);
+      checkReadyId = null;
     }
     retryCount++;
   }, 500);
-};
+  checkReadyId = checkReady;
 
 const sortedSelectedHours = computed(() => {
   return [...bookingData.value.hours].sort((a, b) => a - b);
@@ -1349,7 +1372,12 @@ const submitQuestion = () => {
   });
   
   newQuestion.value = { title: '', content: '' };
-  alert("Yêu cầu của bạn đã được gửi thành công!");
+  triggerModal({
+    title: "Thành công",
+    message: "Yêu cầu của bạn đã được gửi thành công!",
+    icon: ZapIcon,
+    variant: 'teal'
+  });
 };
 </script>
 
