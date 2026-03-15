@@ -1335,19 +1335,6 @@
       @close="showSavingsStatsModal = false"
       @withdraw="handleWithdrawSavings"
     />
-
-    <CmConfirm
-      :show="showConfirmModal"
-      :title="confirmConfig.title"
-      :message="confirmConfig.message"
-      :icon="confirmConfig.icon"
-      :show-cancel="confirmConfig.showCancel"
-      :confirm-text="confirmConfig.confirmText"
-      :cancel-text="confirmConfig.cancelText"
-      :variant="confirmConfig.variant"
-      @confirm="handleConfirmAction"
-      @cancel="showConfirmModal = false"
-    />
   </div>
 </template>
 
@@ -1374,9 +1361,7 @@ import {
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
   PiggyBank as PiggyBankIcon,
-  AlertCircle as AlertCircleIcon,
 } from "lucide-vue-next";
-import CmConfirm from "../../components/CmConfirm.vue";
 import AssetCard from "../../components/AssetCard.vue";
 import AssetPasswordPrompt from "../../components/AssetPasswordPrompt.vue";
 import AssetDepositModal from "../../components/AssetDepositModal.vue";
@@ -1436,38 +1421,6 @@ const fetchPortfolioSummary = async () => {
   } catch (e) {
     console.error("Failed to fetch portfolio summary:", e);
   }
-};
-
-// Confirmation Modal State
-const showConfirmModal = ref(false);
-const confirmConfig = ref({
-  title: "",
-  message: "",
-  icon: AlertCircleIcon,
-  showCancel: true,
-  confirmText: "Xác nhận",
-  cancelText: "Hủy bỏ",
-  variant: "primary" as "primary" | "danger" | "warning" | "teal",
-  onConfirm: () => {},
-});
-
-const triggerConfirm = (config: any) => {
-  confirmConfig.value = {
-    title: "",
-    message: "",
-    icon: AlertCircleIcon,
-    showCancel: true,
-    confirmText: "Xác nhận",
-    cancelText: "Hủy bỏ",
-    variant: "primary",
-    ...config,
-  };
-  showConfirmModal.value = true;
-};
-
-const handleConfirmAction = () => {
-  if (confirmConfig.value.onConfirm) confirmConfig.value.onConfirm();
-  showConfirmModal.value = false;
 };
 
 // Sync selectedAsset to localStorage for the API interceptor
@@ -1585,42 +1538,23 @@ const submitSavings = async (data: any) => {
     await fetchStats();
     await fetchPortfolioSummary();
   } catch (e: any) {
-    triggerConfirm({
-      title: "Lỗi",
-      message: e?.response?.data?.message || "Lỗi khi gửi lãi",
-      variant: "danger",
-      showCancel: false,
-    });
+    alert(e?.response?.data?.message || "Lỗi khi gửi lãi");
   }
 };
 
 const handleWithdrawSavings = async (id: string) => {
-  triggerConfirm({
-    title: "Xác nhận rút",
-    message: "Bạn có chắc chắn muốn rút số tiền này về ví không?",
-    variant: "warning",
-    onConfirm: async () => {
-      try {
-        const res = await withdrawSavings(id);
-        triggerConfirm({
-          title: "Thành công",
-          message: `Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`,
-          variant: "teal",
-          showCancel: false,
-        });
-        await fetchSavingsData();
-        await fetchStats();
-        await fetchPortfolioSummary();
-      } catch (e: any) {
-        triggerConfirm({
-          title: "Lỗi",
-          message: e?.response?.data?.message || "Lỗi khi rút tiền gửi",
-          variant: "danger",
-          showCancel: false,
-        });
-      }
-    },
-  });
+  if (!confirm("Bạn có chắc chắn muốn rút số tiền này về ví không?")) return;
+  try {
+    const res = await withdrawSavings(id);
+    alert(
+      `Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`,
+    );
+    await fetchSavingsData();
+    await fetchStats();
+    await fetchPortfolioSummary();
+  } catch (e: any) {
+    alert(e?.response?.data?.message || "Lỗi khi rút tiền gửi");
+  }
 };
 
 const depositForm = ref({
@@ -1748,12 +1682,7 @@ const handleTokenExpired = (event: any) => {
     selectedAsset.value = null;
     const index = unlockedAssets.value.indexOf(asset);
     if (index > -1) unlockedAssets.value.splice(index, 1);
-    triggerConfirm({
-      title: "Phiên làm việc hết hạn",
-      message: `Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`,
-      variant: "warning",
-      showCancel: false,
-    });
+    alert(`Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`);
   }
 };
 
@@ -2055,12 +1984,7 @@ const submitDeposit = async () => {
         await fetchTransactions();
         await fetchPortfolioSummary();
       } catch (e) {
-        triggerConfirm({
-          title: "Lỗi",
-          message: "Lỗi khi lưu giao dịch nạp",
-          variant: "danger",
-          showCancel: false,
-        });
+        alert("Lỗi khi lưu giao dịch nạp");
       }
     }
   }
@@ -2093,12 +2017,7 @@ const submitReceive = async () => {
         await fetchTransactions();
         await fetchPortfolioSummary();
       } catch (e) {
-        triggerConfirm({
-          title: "Lỗi",
-          message: "Lỗi khi lưu giao dịch nhận",
-          variant: "danger",
-          showCancel: false,
-        });
+        alert("Lỗi khi lưu giao dịch nhận");
       }
     }
   }
@@ -2109,37 +2028,25 @@ const submitReceive = async () => {
 };
 
 const deleteTransaction = async (id: string) => {
-  if (!selectedAsset.value) return;
-
-  triggerConfirm({
-    title: "Xác nhận xóa",
-    message: "Bạn có chắc chắn muốn xoá giao dịch này?",
-    variant: "danger",
-    onConfirm: async () => {
-      try {
-        await deleteWalletTransaction(selectedAsset.value!, id);
-        await fetchTransactions();
-        await fetchPortfolioSummary();
-      } catch (e) {
-        triggerConfirm({
-          title: "Lỗi",
-          message: "Không thể xoá giao dịch",
-          variant: "danger",
-          showCancel: false,
-        });
-      }
-    },
-  });
+  if (
+    !selectedAsset.value ||
+    !confirm("Bạn có chắc chắn muốn xoá giao dịch này?")
+  )
+    return;
+  try {
+    await deleteWalletTransaction(selectedAsset.value, id);
+    await fetchTransactions();
+    await fetchPortfolioSummary();
+    // Chú ý: Cần tính toán lại balance của asset sau khi xoá
+    // Trong thực tế, nên reload dữ liệu asset hoàn chỉnh từ server
+  } catch (e) {
+    alert("Không thể xoá giao dịch");
+  }
 };
 
 const handleEdit = (tx: Transaction) => {
   console.log("Edit tx:", tx);
-  triggerConfirm({
-    title: "Đang phát triển",
-    message: "Chức năng chỉnh sửa đang được phát triển",
-    variant: "primary",
-    showCancel: false,
-  });
+  alert("Chức năng chỉnh sửa đang được phát triển");
 };
 
 const confirmDelete = deleteTransaction;
@@ -2198,12 +2105,7 @@ const submitWithdraw = async () => {
         await fetchTransactions();
         await fetchPortfolioSummary();
       } catch (e) {
-        triggerConfirm({
-          title: "Lỗi",
-          message: "Lỗi khi lưu giao dịch rút",
-          variant: "danger",
-          showCancel: false,
-        });
+        alert("Lỗi khi lưu giao dịch rút");
       }
     }
   }

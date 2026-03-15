@@ -476,7 +476,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, onUnmounted } from "vue";
+import { ref, computed, nextTick, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   MessageSquare as MessageSquareIcon,
@@ -678,8 +678,6 @@ onMounted(async () => {
 
 const chatHistoryMap = ref<Record<string, any[]>>({});
 
-const adminSocket = ref<any>(null);
-
 const initChatSocket = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   // Robust lawyer profile detection
@@ -689,19 +687,8 @@ const initChatSocket = () => {
   );
 
   let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-  let socketUrl = baseUrl;
-  try {
-    const url = new URL(baseUrl);
-    if (url.pathname.endsWith('/api')) {
-      url.pathname = url.pathname.slice(0, -4);
-    }
-    socketUrl = url.origin + url.pathname;
-  } catch (e) {
-    socketUrl = baseUrl.replace(/\/api$/, '');
-  }
-  
-  adminSocket.value = io(`${socketUrl}/law`);
-  const socket = adminSocket.value;
+  baseUrl = baseUrl.replace(/\/api$/, '');
+  const socket = io(`${baseUrl}/law`);
 
   socket.on("lawyer_needed", (data: any) => {
     // String cast IDs to ensure strict comparison works for mixed types (string/number)
@@ -773,7 +760,7 @@ const initChatSocket = () => {
   });
 
   // Store socket for later use
-  // (window as any).adminChatSocket = socket; // Removed as per instruction
+  (window as any).adminChatSocket = socket;
 
   socket.on("connect", () => {
     console.log("Admin Socket connected. Fetching active rooms for lawyerId:", myLawyerProfile?.id);
@@ -818,19 +805,6 @@ const initChatSocket = () => {
     }
   });
 };
-
-onUnmounted(() => {
-  if (adminSocket.value) {
-    console.log("Cleaning up admin socket...");
-    adminSocket.value.off("lawyer_needed");
-    adminSocket.value.off("new_message");
-    adminSocket.value.off("connect");
-    adminSocket.value.off("active_rooms_list");
-    adminSocket.value.off("room_closed");
-    adminSocket.value.disconnect();
-    adminSocket.value = null;
-  }
-});
 
 // Live Chat Logic
 const selectedCustomerId = ref("");
@@ -881,7 +855,7 @@ const confirmEndChat = () => {
     cancelText: "Tiếp tục Chat",
     variant: 'danger',
     onConfirm: () => {
-      const socket = adminSocket.value;
+      const socket = (window as any).adminChatSocket;
       if (socket) {
         socket.emit("close_room", { roomId: selectedCustomer.value.roomId });
         // Remove from active list
@@ -894,7 +868,7 @@ const confirmEndChat = () => {
 
 const sendAdminMessage = () => {
   if (!newMessage.value.trim() || !selectedCustomer.value) return;
-  const socket = adminSocket.value;
+  const socket = (window as any).adminChatSocket;
   if (!socket) return;
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");

@@ -77,7 +77,7 @@ router.beforeEach((to, _from, next) => {
     if (user && ["user", "guest"].includes(user.role)) {
       next({ name: "CustomerHome" });
     } else if (user && ["admin", "moderator", "manager", "lawyer"].includes(user.role)) {
-      next({ name: "AdminOverview" });
+      next({ name: "Dashboard" });
     } else {
       next({ name: "Login" });
     }
