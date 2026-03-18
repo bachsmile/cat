@@ -32,6 +32,31 @@
 
         <div>
           <label
+            class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
+            >Nguồn Tiền</label
+          >
+          <select
+            v-model="form.sourceCombined"
+            @change="handleSourceChange"
+            class="w-full bg-[#050508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-bold"
+          >
+            <option value="main">
+              Ví Gốc (Ví Khả Dụng) - {{ formatNumber(availableBalance) }} {{ selectedAsset }}
+            </option>
+            <optgroup v-if="storageWallets?.length" label="Ví Lưu Trữ">
+              <option
+                v-for="w in storageWallets"
+                :key="w.id"
+                :value="`storage:${w.id}`"
+              >
+                {{ w.platform }} - {{ formatNumber(w.quantity) }} {{ selectedAsset }}
+              </option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div>
+          <label
             class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3"
             >Loại Hình Gửi Lãi</label
           >
@@ -119,7 +144,7 @@
               v-model.number="form.quantity"
               step="any"
               min="0"
-              :max="availableBalance"
+              :max="currentAvailableBalance"
               required
               placeholder="0.00"
               class="w-full bg-[#050508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono"
@@ -127,7 +152,7 @@
             <p class="text-[10px] text-gray-500 mt-1">
               Khả dụng:
               <span class="text-white font-bold">{{
-                formatNumber(availableBalance)
+                formatNumber(currentAvailableBalance)
               }}</span>
               {{ selectedAsset }}
             </p>
@@ -261,14 +286,16 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          :disabled="
-            !form.quantity ||
-            !form.annualRate ||
-            !form.platform ||
-            (form.savingsType === 'fixed' && !form.durationDays)
-          "
+          <button
+            type="submit"
+            :disabled="
+              !form.quantity ||
+              !form.annualRate ||
+              !form.platform ||
+              (form.savingsType === 'fixed' && !form.durationDays) ||
+              form.quantity > currentAvailableBalance ||
+              (form.sourceType === 'storage' && !form.storageId)
+            "
           class="w-full py-4 mt-4 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2"
         >
           <PiggyBankIcon class="w-5 h-5" />
@@ -290,6 +317,7 @@ import {
 const props = defineProps<{
   selectedAsset: string | null;
   availableBalance: number;
+  storageWallets?: any[];
 }>();
 
 const emit = defineEmits(["close", "submit"]);
@@ -301,6 +329,29 @@ const form = ref({
   savingsType: "flexible" as "flexible" | "fixed",
   durationDays: null as number | null,
   note: "",
+  sourceType: "main",
+  storageId: null as string | null,
+  sourceCombined: "main",
+});
+
+const handleSourceChange = () => {
+  if (form.value.sourceCombined === "main") {
+    form.value.sourceType = "main";
+    form.value.storageId = null;
+  } else if (form.value.sourceCombined?.startsWith("storage:")) {
+    form.value.sourceType = "storage";
+    const id = form.value.sourceCombined.split(":")[1];
+    form.value.storageId = id || null;
+  }
+};
+
+const currentAvailableBalance = computed(() => {
+  if (form.value.sourceType === "main") return props.availableBalance;
+  if (form.value.sourceType === "storage" && form.value.storageId) {
+    const w = props.storageWallets?.find(w => w.id === form.value.storageId);
+    return w ? w.quantity : 0;
+  }
+  return 0;
 });
 
 const estimatePeriod = ref("day");
@@ -348,6 +399,7 @@ const handleSubmit = () => {
     savingsType: form.value.savingsType,
     durationDays: form.value.durationDays,
     note: form.value.note || null,
+    storageId: form.value.sourceType === 'storage' ? form.value.storageId : undefined,
   });
 };
 

@@ -19,11 +19,14 @@ api.interceptors.request.use(
     }
 
     // Token ví cấp 2 (nếu có asset đang active)
-    const activeAsset = localStorage.getItem("active_wallet_asset");
-    if (activeAsset) {
-      const walletToken = localStorage.getItem(`wallet_token_${activeAsset}`);
-      if (walletToken) {
-        config.headers["X-Wallet-Token"] = walletToken;
+    // CHỈ gán nếu chưa có header này (để cho phép override thủ công)
+    if (!config.headers["X-Wallet-Token"]) {
+      const activeAsset = localStorage.getItem("active_wallet_asset");
+      if (activeAsset) {
+        const walletToken = localStorage.getItem(`wallet_token_${activeAsset}`);
+        if (walletToken) {
+          config.headers["X-Wallet-Token"] = walletToken;
+        }
       }
     }
 

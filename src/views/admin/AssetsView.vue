@@ -36,6 +36,14 @@
         </button>
 
         <button
+          @click="handleClearAllAssets"
+          class="flex-none p-3 md:p-4 bg-red-500/10 hover:bg-red-500 border border-red-500/20 text-red-500 hover:text-white rounded-[1.25rem] transition-all group/clear"
+          title="Làm mới toàn bộ dữ liệu ví"
+        >
+          <RefreshCwIcon class="w-5 h-5 group-hover/clear:rotate-180 transition-transform duration-500" />
+        </button>
+
+        <button
           v-if="selectedAsset"
           @click="selectedAsset = null"
           class="p-3 md:p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all text-gray-400 hover:text-white"
@@ -293,9 +301,15 @@
         >
           <ArrowLeftIcon class="w-5 h-5 text-gray-400" />
         </button>
-        <div>
-          <h3 class="text-2xl font-bold mb-1">
+        <div class="flex flex-col">
+          <h3 class="text-2xl font-bold mb-1 flex items-center gap-3">
             Chi tiết ví {{ selectedAsset }}
+            <span
+              v-if="frozenBalanceOnly > 0"
+              class="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-md"
+            >
+              Tài sản khoá
+            </span>
           </h3>
           <p class="text-gray-500 font-medium">Bảo mật nâng cao đã bật</p>
         </div>
@@ -317,85 +331,72 @@
             <p
               class="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-2 md:mb-3"
             >
-              Số Dư Khả Dụng
+              TỔNG SỐ DƯ
             </p>
-            <p class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6">
+            <p
+              class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6"
+            >
               {{
-                isBalanceVisible ? formatNumber(effectiveBalance) : "********"
+                isBalanceVisible
+                  ? formatNumber(effectiveBalance)
+                  : "********"
               }}
               <span class="text-xl md:text-2xl text-gray-500 font-bold ml-1">{{
                 selectedAsset
               }}</span>
             </p>
-            <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-4 md:gap-10">
-              <div>
-                <p
-                  class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
-                >
-                  Trạng Thái
-                </p>
-                <p
-                  class="text-green-400 font-semibold flex items-center gap-2 text-sm"
-                >
-                  <ActivityIcon class="w-4 h-4" />
-                  Hoạt động
-                </p>
+            <!-- Unified Statistics Cluster -->
+            <div class="flex flex-wrap items-center gap-y-8 gap-x-10 md:gap-x-14 p-6 bg-white/[0.02] border border-white/5 rounded-[2.5rem] mt-8">
+              <!-- Balances Group -->
+              <div class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6">
+                <div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Ví chính</p>
+                  <p class="text-sm font-bold text-white">
+                    {{ isBalanceVisible ? formatNumber(walletBalanceOnly) : "********" }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-teal-400/80 font-bold uppercase tracking-widest mb-1.5">Ví lưu trữ</p>
+                  <p class="text-sm font-bold text-teal-400">
+                    {{ isBalanceVisible ? formatNumber(storageBalanceOnly) : "********" }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mb-1.5">Đóng băng</p>
+                  <p class="text-sm font-bold text-blue-400">
+                    {{ isBalanceVisible ? formatNumber(frozenBalanceOnly) : "********" }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <p
-                  class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
-                >
-                  Đơn giá trung bình
-                </p>
-                <p class="text-lg font-bold">
-                  {{
-                    isBalanceVisible
-                      ? formatNumber(currentProfit?.avgPrice || 0)
-                      : "********"
-                  }}
-                  <span class="text-xs text-gray-500">{{
-                    selectedAsset === "USDT" ? "₫" : "$"
-                  }}</span>
-                </p>
-              </div>
-              <div>
-                <p
-                  class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
-                >
-                  Tổng vốn đầu tư
-                </p>
-                <p class="text-lg font-bold text-white">
-                  {{
-                    isBalanceVisible
-                      ? formatNumber(
-                          includeSavingsInStats
-                            ? selectedAssetData?.totalInvestedPortfolio ||
-                                selectedAssetData?.totalInvested ||
-                                0
-                            : selectedAssetData?.totalInvested || 0,
-                        )
-                      : "********"
-                  }}
-                  <span class="text-xs text-gray-500">{{
-                    selectedAsset === "USDT" ? "₫" : "$"
-                  }}</span>
-                </p>
-              </div>
-              <div v-if="selectedAsset === 'USDT' && currentUsdtPrice">
-                <p
-                  class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
-                >
-                  Tổng Giá Trị (VND)
-                </p>
-                <p class="text-lg font-bold text-white">
-                  ≈
-                  {{
-                    isBalanceVisible
-                      ? formatNumber(effectiveBalance * currentUsdtPrice)
-                      : "********"
-                  }}
-                  ₫
-                </p>
+
+              <!-- Vertical Divider on Desktop -->
+              <div class="hidden xl:block w-px h-10 bg-white/5 mx-2"></div>
+
+              <!-- Investment Stats Group -->
+              <div class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6">
+                <div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Đơn giá TB</p>
+                  <p class="text-sm font-bold">
+                    {{ isBalanceVisible ? formatNumber(currentProfit?.avgPrice || 0) : "********" }}
+                    <span class="text-xs text-gray-500">{{ selectedAsset === "USDT" ? "₫" : "$" }}</span>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Tổng vốn</p>
+                  <p class="text-sm font-bold text-white">
+                    {{ isBalanceVisible ? formatNumber(includeSavingsInStats ? (selectedAssetData?.totalInvestedPortfolio || selectedAssetData?.totalInvested || 0) : (selectedAssetData?.totalInvested || 0)) : "********" }}
+                    <span class="text-xs text-gray-500">{{ selectedAsset === "USDT" ? "₫" : "$" }}</span>
+                  </p>
+                </div>
+                <div v-if="selectedAsset === 'USDT' && currentUsdtPrice">
+                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Giá Trị (VND)</p>
+                  <p class="text-sm font-bold text-white">
+                    ≈ {{ isBalanceVisible ? formatNumber(effectiveBalance * currentUsdtPrice) : "********" }} ₫
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -768,6 +769,21 @@
             ></div>
           </button>
           <button
+            @click="activeSubTab = 'transfer'"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
+            :class="
+              activeSubTab === 'transfer'
+                ? 'text-yellow-400'
+                : 'text-gray-500 hover:text-gray-300'
+            "
+          >
+            Quản lý chuyển
+            <div
+              v-if="activeSubTab === 'transfer'"
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-400 animate-in fade-in zoom-in-50"
+            ></div>
+          </button>
+          <button
             @click="activeSubTab = 'savings'"
             class="pb-4 text-xs md:text-sm font-bold transition-all relative"
             :class="
@@ -782,11 +798,26 @@
               class="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 animate-in fade-in zoom-in-50"
             ></div>
           </button>
+          <button
+            @click="activeSubTab = 'storage'"
+            class="pb-4 text-xs md:text-sm font-bold transition-all relative"
+            :class="
+              activeSubTab === 'storage'
+                ? 'text-teal-400'
+                : 'text-gray-500 hover:text-gray-300'
+            "
+          >
+            Ví lưu trữ
+            <div
+              v-if="activeSubTab === 'storage'"
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-400 animate-in fade-in zoom-in-50"
+            ></div>
+          </button>
         </div>
 
         <!-- Tab Content -->
         <div
-          v-if="['deposit', 'withdraw', 'receive'].includes(activeSubTab)"
+          v-if="['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab)"
           class="animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
           <div
@@ -886,9 +917,9 @@
                     <div class="flex flex-col items-end">
                       <span
                         v-if="tx.type === 'receive'"
-                        class="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest animate-pulse"
+                        class="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest"
                       >
-                        🎁 Token Tặng
+                        {{ tx.source ? tx.source : "🎁 Token Tặng" }}
                       </span>
                       <span v-else class="text-xs text-gray-400 font-medium">{{
                         formatNumber(tx.price)
@@ -942,10 +973,21 @@
                   </td>
                   <td class="px-8 py-5 flex justify-center">
                     <span
-                      class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-green-500/10 text-green-500 border border-green-500/20"
+                      class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border"
+                      :class="
+                        tx.status === 'locked'
+                          ? 'bg-blue-500/10 text-blue-400 border-blue-400/20'
+                          : tx.status === 'completed'
+                            ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                            : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                      "
                     >
                       {{
-                        tx.status === "completed" ? "Thành công" : "Đang xử lý"
+                        tx.status === "completed"
+                          ? "Thành công"
+                          : tx.status === "locked"
+                            ? "Tài sản khoá"
+                            : "Đang xử lý"
                       }}
                     </span>
                   </td>
@@ -1013,7 +1055,9 @@
                     ? "nạp"
                     : activeSubTab === "withdraw"
                       ? "rút"
-                      : "nhận"
+                      : activeSubTab === "transfer"
+                        ? "chuyển nội bộ"
+                        : "nhận"
                 }}
               </h4>
               <p class="text-gray-500 max-w-sm mx-auto text-sm">
@@ -1023,7 +1067,9 @@
                     ? "nạp"
                     : activeSubTab === "withdraw"
                       ? "rút"
-                      : "nhận"
+                      : activeSubTab === "transfer"
+                        ? "chuyển nội bộ"
+                        : "nhận"
                 }}
                 {{ selectedAsset }} của bạn sẽ xuất hiện minh bạch tại đây.
               </p>
@@ -1291,6 +1337,85 @@
           </p>
         </div>
       </div>
+
+      <!-- Storage Wallets Tab Content -->
+      <div
+        v-if="activeSubTab === 'storage'"
+        class="animate-in fade-in slide-in-from-bottom-4 duration-500"
+      >
+        <div class="flex justify-between items-center mb-8">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400"
+            >
+              <WalletIcon class="w-6 h-6" />
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-white tracking-tighter uppercase">
+                Ví Lưu Trữ Riêng Biệt
+              </h3>
+              <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                Phân bổ tài sản tại các nền tảng khác nhau
+              </p>
+            </div>
+          </div>
+          <button
+            @click="showStorageModal = true"
+            class="px-5 py-2.5 bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-teal-500/20 shadow-lg"
+          >
+            + Thêm ví mới
+          </button>
+        </div>
+
+        <div v-if="storageList.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div
+            v-for="wallet in filteredStorageList"
+            :key="wallet.id"
+            class="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-[1.5rem] relative overflow-hidden hover:border-teal-500/30 transition-all group cursor-pointer"
+            @click="openStorageDetails(wallet)"
+          >
+            <div class="relative z-10">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 font-bold text-lg">
+                    {{ selectedAssetData?.icon }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-black text-white">{{ wallet.platform }}</p>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">{{ wallet.assetSymbol }}</p>
+                  </div>
+                </div>
+                <div v-if="wallet.quantity > wallet.initialQuantity" class="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[10px] font-black uppercase">
+                  +{{ formatNumber(wallet.quantity - wallet.initialQuantity) }}
+                </div>
+                <div v-else-if="wallet.quantity < wallet.initialQuantity" class="px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
+                  {{ formatNumber(wallet.quantity - wallet.initialQuantity) }}
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Số dư lưu trữ</p>
+                  <p class="text-2xl font-black text-white">
+                    {{ isBalanceVisible ? formatNumber(wallet.quantity) : "••••" }}
+                    <span class="text-sm text-gray-500 ml-1">{{ wallet.assetSymbol }}</span>
+                  </p>
+                </div>
+                <div class="pt-3 border-t border-white/5 flex justify-between items-center">
+                  <span class="text-[10px] text-gray-500 font-bold uppercase">Tổng nạp</span>
+                  <span class="text-xs font-bold text-white">{{ formatNumber(wallet.initialQuantity) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="text-center py-20 bg-white/5 border border-white/5 rounded-[2rem]">
+          <div class="w-20 h-20 rounded-full bg-teal-500/10 flex items-center justify-center mx-auto mb-6">
+            <WalletIcon class="w-10 h-10 text-teal-400" />
+          </div>
+          <h4 class="text-white font-bold text-lg mb-2">Chưa có ví lưu trữ nào</h4>
+          <p class="text-gray-500 max-w-sm mx-auto text-sm">Bấm "Thêm ví mới" để bắt đầu tổ chức tài sản của bạn.</p>
+        </div>
+      </div>
     </div>
 
     <!-- Modals -->
@@ -1299,6 +1424,7 @@
       :selectedAsset="selectedAsset"
       v-model:formData="depositForm"
       :totalAmount="depositTotal"
+      :vndBalance="assets.find(a => a.symbol === 'VND')?.balance || 0"
       @close="showDepositModal = false"
       @submit="submitDeposit"
     />
@@ -1325,6 +1451,7 @@
       v-if="showSavingsModal"
       :selectedAsset="selectedAsset"
       :availableBalance="selectedAssetData?.balance || 0"
+      :storageWallets="currentAssetStorageWallets"
       @close="showSavingsModal = false"
       @submit="submitSavings"
     />
@@ -1335,6 +1462,199 @@
       @close="showSavingsStatsModal = false"
       @withdraw="handleWithdrawSavings"
     />
+
+    <AssetStorageModal
+      v-if="showStorageModal"
+      :selectedAsset="selectedAsset"
+      :availableBalance="selectedAssetData?.balance || 0"
+      @close="showStorageModal = false"
+      @submit="submitStorage"
+    />
+
+    <CmConfirm
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :icon="confirmModal.icon"
+      :variant="confirmModal.variant"
+      :showCancel="confirmModal.showCancel"
+      :confirmText="confirmModal.confirmText"
+      :cancelText="confirmModal.cancelText"
+      @confirm="handleConfirmAction"
+      @cancel="handleCancelAction"
+    />
+
+    <!-- Storage Details Modal -->
+    <div v-if="selectedStorageWallet" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] p-4 animate-in fade-in backdrop-blur-sm">
+      <div class="bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] p-8 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <button @click="selectedStorageWallet = null" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"><XIcon class="w-6 h-6" /></button>
+        
+        <div class="mb-6">
+          <h3 class="text-2xl font-black text-white mb-1">Chi tiết Ví Lưu Trữ</h3>
+          <p class="text-gray-500 uppercase text-[10px] font-black tracking-widest">{{ selectedStorageWallet.platform }} • {{ selectedStorageWallet.assetSymbol }}</p>
+        </div>
+
+        <div class="overflow-y-auto pr-2 custom-scrollbar space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/5 border border-white/5 p-6 rounded-3xl">
+              <p class="text-[10px] text-gray-500 font-black uppercase mb-2">Số dư hiện tại</p>
+              <p class="text-3xl font-black text-white">
+                {{ formatNumber(selectedStorageWallet.quantity) }}
+                <span class="text-sm text-gray-500 ml-1">{{ selectedStorageWallet.assetSymbol }}</span>
+              </p>
+              
+              <div class="mt-4 flex gap-4">
+                <div class="flex-1 p-2 bg-white/5 rounded-xl">
+                  <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Khả dụng</p>
+                  <p class="text-xs font-black text-emerald-400">{{ formatNumber(Number(selectedStorageWallet.quantity) - totalStakedFromStorage) }}</p>
+                </div>
+                <div class="flex-1 p-2 bg-white/5 rounded-xl">
+                  <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Đóng băng</p>
+                  <p class="text-xs font-black text-orange-400">{{ formatNumber(totalStakedFromStorage) }}</p>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                <div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase flex items-center gap-1.5 mb-1">
+                    Vốn nạp gốc
+                    <button @click="isEditingInitial = !isEditingInitial" class="p-1 hover:bg-white/10 rounded-md text-teal-400 transition-all" title="Chỉnh sửa vốn gốc">
+                      <EditIcon class="w-3 h-3" />
+                    </button>
+                  </p>
+                  <div v-if="isEditingInitial" class="flex items-center gap-2 mt-1">
+                    <input 
+                      v-model="editInitialValue" 
+                      type="number" 
+                      class="w-24 bg-black/60 border border-teal-500/30 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-teal-500 transition-all font-bold"
+                      @keyup.enter="handleSaveInitial"
+                      autoFocus
+                    />
+                    <button @click="handleSaveInitial" class="p-1.5 bg-teal-500/20 hover:bg-teal-500 text-teal-400 hover:text-white rounded-lg transition-all">
+                      <CheckIcon class="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div v-else class="flex flex-col">
+                    <p class="text-sm font-bold text-white">{{ formatNumber(selectedStorageWallet.initialQuantity) }}</p>
+                    <p v-if="Number(selectedStorageWallet.initialQuantity) === 0" class="text-[9px] text-orange-400 font-medium italic mt-0.5">* Chưa có vốn gốc, nhấn nút sửa để cập nhật</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-[10px] text-gray-500 font-bold uppercase">Biến động</p>
+                  <p :class="selectedStorageWallet.quantity >= selectedStorageWallet.initialQuantity ? 'text-green-400' : 'text-red-400'" class="text-xs font-black">
+                    {{ selectedStorageWallet.quantity >= selectedStorageWallet.initialQuantity ? '+' : '' }}{{ formatNumber(selectedStorageWallet.quantity - selectedStorageWallet.initialQuantity) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-teal-500/5 border border-teal-500/10 p-6 rounded-3xl">
+              <p class="text-[10px] text-teal-400 font-black uppercase mb-3">Điều chỉnh số dư</p>
+              <div class="space-y-4">
+                <input v-model="storageAdjustment.amount" type="number" placeholder="Nhập số lượng..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold" />
+                <input v-model="storageAdjustment.note" type="text" placeholder="Ghi chú (tùy chọn)..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[10px] text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold" />
+                <div class="flex gap-3">
+                  <button @click="handleAdjustStorage('increase')" class="flex-1 bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-green-500/20">
+                    + Tăng
+                  </button>
+                  <button @click="handleAdjustStorage('decrease')" class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-500/20">
+                    - Giảm
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Staked from this storage wallet -->
+            <div v-if="activeSavingsForStorage.length > 0" class="bg-emerald-500/5 border border-emerald-500/10 p-6 rounded-3xl md:col-span-2">
+              <p class="text-[10px] text-emerald-400 font-black uppercase mb-3 flex justify-between">
+                <span>Đang gửi lãi</span>
+                <span>{{ formatNumber(totalStakedFromStorage) }} {{ selectedStorageWallet.assetSymbol }}</span>
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div v-for="s in activeSavingsForStorage" :key="s.id" class="p-3 bg-white/5 rounded-xl border border-white/5">
+                  <p class="text-xs font-bold text-white">{{ s.platform }} <span class="text-[10px] text-gray-500 font-normal">({{ s.savingsType === 'flexible' ? 'Linh hoạt' : 'Cố định' }})</span></p>
+                  <p class="text-sm font-black text-emerald-400 mt-0.5">{{ formatNumber(s.quantity) }}</p>
+                  <p class="text-[10px] text-gray-400 mt-1">Lãi suất: <span class="text-white">{{ Number(s.annualRate).toFixed(2) }}%/năm</span></p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div>
+            <h4 class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+              <HistoryIcon class="w-3 h-3" /> Lịch sử lưu ký
+            </h4>
+            <div v-if="storageHistory.length > 0" class="space-y-3">
+              <div v-for="item in storageHistory" :key="item.id" class="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/5 transition-colors">
+                <div class="flex items-center gap-3">
+                   <div :class="{
+                      'bg-green-500/10 text-green-500': item.type === 'increase' || item.type === 'unstake',
+                      'bg-red-500/10 text-red-500': item.type === 'decrease',
+                      'bg-orange-500/10 text-orange-500': item.type === 'stake'
+                    }" class="w-10 h-10 rounded-xl flex items-center justify-center">
+                    <TrendingUpIcon v-if="item.type === 'increase' || item.type === 'unstake'" class="w-5 h-5" />
+                    <TrendingDownIcon v-else-if="item.type === 'decrease'" class="w-5 h-5" />
+                    <PiggyBankIcon v-else class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-white">
+                      {{ 
+                        item.type === 'increase' ? 'Tăng số dư' : 
+                        item.type === 'decrease' ? 'Giảm số dư' :
+                        item.type === 'stake' ? 'Đóng băng (Savings)' : 'Mở khoá (Gốc lãi)'
+                      }}
+                    </p>
+                    <p class="text-[10px] text-gray-500">{{ new Date(item.createdAt).toLocaleString() }}</p>
+                    <p v-if="item.note" class="text-[10px] text-gray-600 italic mt-0.5 line-clamp-1">"{{ item.note }}"</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="text-right">
+                    <p :class="{
+                      'text-green-400': item.type === 'increase' || item.type === 'unstake',
+                      'text-red-400': item.type === 'decrease',
+                      'text-orange-400': item.type === 'stake'
+                    }" class="text-sm font-black">
+                      {{ (item.type === 'increase' || item.type === 'unstake') ? '+' : (item.type === 'stake' ? '🔒 ' : '-') }}{{ formatNumber(item.amount) }}
+                    </p>
+                    <p class="text-[10px] text-gray-600 font-bold">Sau: {{ formatNumber(item.balanceAfter) }}</p>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <button @click="handleEditHistory(item)" class="p-1.5 hover:bg-teal-500/10 text-gray-500 hover:text-teal-400 rounded-lg transition-all" title="Sửa ghi chú">
+                      <EditIcon class="w-3 h-3" />
+                    </button>
+                    <button @click="handleDeleteHistory(item.id)" class="p-1.5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg transition-all" title="Xoá lịch sử">
+                      <TrashIcon class="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center py-10 bg-white/[0.02] border border-dashed border-white/5 rounded-[2rem]">
+              <p class="text-xs text-gray-600 font-bold italic">Chưa có lịch sử biến động</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-white/5 mt-auto flex gap-3">
+          <button
+            @click="handleWithdrawFromStorage(selectedStorageWallet.id)"
+            class="flex-[2] py-4 bg-white/5 hover:bg-teal-500/10 text-white hover:text-teal-400 border border-white/10 hover:border-teal-500/20 rounded-2xl transition-all flex items-center justify-center gap-2 group font-black uppercase text-xs tracking-widest"
+          >
+            <ArrowDownCircleIcon class="w-5 h-5 text-gray-400 group-hover:text-teal-400 transition-colors" />
+            Rút về Ví Khả Dụng
+          </button>
+          <button
+            @click="handleDeleteStorage(selectedStorageWallet.id)"
+            class="flex-1 py-4 bg-red-500/5 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-2xl transition-all flex items-center justify-center gap-2 group font-black uppercase text-xs tracking-widest"
+          >
+            <TrashIcon class="w-5 h-5" />
+            Xoá ví
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1361,6 +1681,17 @@ import {
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
   PiggyBank as PiggyBankIcon,
+  Wallet as WalletIcon,
+  X as XIcon,
+  Check as CheckIcon,
+  ArrowDownCircle as ArrowDownCircleIcon,
+  History as HistoryIcon,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
+  MessageSquare as MessageSquareIcon,
+  CheckCircle as CheckCircleIcon,
+  AlertTriangle as AlertTriangleIcon,
+  RefreshCw as RefreshCwIcon,
 } from "lucide-vue-next";
 import AssetCard from "../../components/AssetCard.vue";
 import AssetPasswordPrompt from "../../components/AssetPasswordPrompt.vue";
@@ -1368,7 +1699,9 @@ import AssetDepositModal from "../../components/AssetDepositModal.vue";
 import AssetWithdrawModal from "../../components/AssetWithdrawModal.vue";
 import AssetReceiveModal from "../../components/AssetReceiveModal.vue";
 import AssetSavingsModal from "../../components/AssetSavingsModal.vue";
+import AssetStorageModal from "../../components/AssetStorageModal.vue";
 import SavingsStatsModal from "../../components/SavingsStatsModal.vue";
+import CmConfirm from "../../components/CmConfirm.vue";
 import { getUsdtVndP2pPrice } from "../../api/market";
 import {
   unlockWallet,
@@ -1382,6 +1715,16 @@ import {
   getSavingsSummary,
   withdrawSavings,
   getPortfolioSummary,
+  getStorage,
+  createStorage,
+  withdrawFromStorage,
+  adjustStorage,
+  getStorageHistory,
+  updateStorageInitialQuantity,
+  deleteStorage,
+  deleteStorageHistory,
+  updateStorageHistory,
+  clearAllWalletData,
 } from "../../api/wallet";
 
 const selectedAsset = ref<string | null>(null);
@@ -1414,7 +1757,9 @@ const fetchPortfolioSummary = async () => {
         if (asset) {
           asset.balance = stat.balance;
           asset.savingsBalance = stat.savingsBalance || 0;
-          asset.totalBalance = stat.totalBalance || (asset.balance + asset.savingsBalance);
+          asset.storageBalance = stat.storageBalance || 0;
+          asset.receivedBalance = stat.receivedBalance || 0;
+          asset.totalBalance = stat.totalBalance || (asset.balance + asset.savingsBalance + asset.storageBalance);
         }
       });
     }
@@ -1442,7 +1787,7 @@ interface Transaction {
   price: number;
   total: number;
   timestamp: Date;
-  status: "completed" | "pending";
+  status: "completed" | "pending" | "locked";
   // For withdrawals
   avgBuyPriceAtTime?: number;
   profitAmount?: number;
@@ -1488,6 +1833,7 @@ const fetchStats = async () => {
       asset.totalInvestedPortfolio =
         status.stats.totalInvestedPortfolio || status.stats.totalInvested;
       asset.savingsBalance = status.stats.savingsBalance;
+      asset.storageBalance = status.stats.storageBalance || 0;
 
       // Sync unlock state if it changed
       if (
@@ -1511,7 +1857,287 @@ const showDepositModal = ref(false);
 const showWithdrawModal = ref(false);
 const showReceiveModal = ref(false);
 const showSavingsModal = ref(false);
+const showStorageModal = ref(false);
 const showSavingsStatsModal = ref(false);
+
+const storageList = ref<any[]>([]);
+const selectedStorageWallet = ref<any>(null);
+const storageHistory = ref<any[]>([]);
+
+const activeSavingsForStorage = computed(() => {
+  if (!selectedStorageWallet.value) return [];
+  return savingsList.value.filter(s => s.storageId === selectedStorageWallet.value.id && s.status === 'active');
+});
+
+const totalStakedFromStorage = computed(() => {
+  return activeSavingsForStorage.value.reduce((sum, s) => sum + Number(s.quantity), 0);
+});
+
+const currentAssetStorageWallets = computed(() => {
+  if (!selectedAsset.value) return [];
+  const symbol = selectedAsset.value.toUpperCase();
+  return (storageList.value || []).filter(s => s.assetSymbol?.toUpperCase() === symbol);
+});
+
+watch(showSavingsModal, (newVal) => {
+  if (newVal) fetchStorageData();
+});
+const storageAdjustment = ref({
+  amount: null as number | null,
+  note: "",
+});
+const isEditingInitial = ref(false);
+const editInitialValue = ref(0);
+
+// Confirmation Modal State
+const confirmModal = ref({
+  show: false,
+  title: "",
+  message: "",
+  icon: MessageSquareIcon,
+  variant: "primary" as "primary" | "danger" | "warning" | "teal",
+  showCancel: true,
+  confirmText: "Xác nhận",
+  cancelText: "Hủy bỏ",
+  resolve: null as ((val: boolean) => void) | null,
+});
+
+const askConfirm = (options: {
+  title: string;
+  message: string;
+  icon?: any;
+  variant?: "primary" | "danger" | "warning" | "teal";
+  showCancel?: boolean;
+  confirmText?: string;
+  cancelText?: string;
+}) => {
+  confirmModal.value = {
+    show: true,
+    title: options.title,
+    message: options.message,
+    icon: options.icon || MessageSquareIcon,
+    variant: options.variant || "primary",
+    showCancel: options.showCancel !== undefined ? options.showCancel : true,
+    confirmText: options.confirmText || "Xác nhận",
+    cancelText: options.cancelText || "Hủy bỏ",
+    resolve: null,
+  };
+  return new Promise<boolean>((resolve) => {
+    confirmModal.value.resolve = resolve;
+  });
+};
+
+const handleConfirmAction = () => {
+  if (confirmModal.value.resolve) confirmModal.value.resolve(true);
+  confirmModal.value.show = false;
+};
+
+const handleCancelAction = () => {
+  if (confirmModal.value.resolve) confirmModal.value.resolve(false);
+  confirmModal.value.show = false;
+};
+
+const showAlert = (message: string, variant: "teal" | "danger" | "warning" = "teal") => {
+  return askConfirm({
+    title: variant === "danger" ? "Lỗi" : variant === "warning" ? "Cảnh báo" : "Thông báo",
+    message,
+    icon: variant === "danger" ? AlertTriangleIcon : CheckCircleIcon,
+    variant,
+    showCancel: false,
+    confirmText: "Đóng",
+  });
+};
+
+const fetchStorageData = async () => {
+  try {
+    storageList.value = await getStorage();
+  } catch (e) {
+    console.error("Failed to fetch storage wallets:", e);
+  }
+};
+
+const handleClearAllAssets = async () => {
+  const ok = await askConfirm({
+    title: "Làm mới toàn bộ ví",
+    message: "Hành động này sẽ XOÁ VĨNH VIỄN toàn bộ giao dịch, tiền gửi và ví lưu trữ. Bạn có chắc chắn muốn thực hiện?",
+    variant: "danger",
+    confirmText: "Xoá tất cả",
+  });
+  if (!ok) return;
+
+  try {
+    await clearAllWalletData();
+    // Reset all local states related to assets
+    transactions.value = [];
+    savingsList.value = [];
+    storageList.value = [];
+    selectedAsset.value = null;
+
+    await fetchStats();
+    await fetchPortfolioSummary();
+    await fetchSavingsData();
+    await fetchStorageData();
+
+    showAlert("Đã làm mới toàn bộ dữ liệu tài sản của bạn.");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi làm mới dữ liệu", "danger");
+  }
+};
+
+const submitStorage = async (data: any) => {
+  try {
+    await createStorage(data);
+    showStorageModal.value = false;
+    await fetchStorageData();
+    await fetchStats();
+    await fetchPortfolioSummary();
+    showAlert("Đã tạo ví lưu trữ thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi tạo ví lưu trữ", "danger");
+  }
+};
+
+const handleWithdrawFromStorage = async (id: string) => {
+  const ok = await askConfirm({
+    title: "Xác nhận rút tiền",
+    message: "Rút số dư này từ ví lưu trữ về ví khả dụng?",
+    variant: "teal",
+  });
+  if (!ok) return;
+
+  try {
+    const res = await withdrawFromStorage(id);
+    showAlert(`Đã rút thành công ${res.quantity} về ví khả dụng`);
+    selectedStorageWallet.value = null;
+    await fetchStorageData();
+    await fetchStats();
+    await fetchTransactions();
+    await fetchPortfolioSummary();
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi rút từ ví lưu trữ", "danger");
+  }
+};
+
+const handleAdjustStorage = async (type: "increase" | "decrease") => {
+  if (!selectedStorageWallet.value || !storageAdjustment.value.amount) {
+    showAlert("Vui lòng nhập số lượng hợp lệ", "warning");
+    return;
+  }
+  try {
+    await adjustStorage(selectedStorageWallet.value.id, {
+      type,
+      amount: storageAdjustment.value.amount,
+      note: storageAdjustment.value.note,
+    });
+
+    await fetchStorageData();
+    const updated = storageList.value.find(
+      (w) => w.id === selectedStorageWallet.value.id,
+    );
+    if (updated) selectedStorageWallet.value = updated;
+
+    storageHistory.value = await getStorageHistory(
+      selectedStorageWallet.value.id,
+    );
+    storageAdjustment.value = { amount: null, note: "" };
+
+    await fetchStats();
+    await fetchPortfolioSummary();
+    showAlert(`Đã ${type === "increase" ? "tăng" : "giảm"} số dư thành công`);
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi cập nhật số dư", "danger");
+  }
+};
+
+const openStorageDetails = async (wallet: any) => {
+  selectedStorageWallet.value = wallet;
+  isEditingInitial.value = false;
+  editInitialValue.value = wallet.initialQuantity;
+  storageHistory.value = [];
+  try {
+    storageHistory.value = await getStorageHistory(wallet.id);
+  } catch (e) {
+    console.error("Failed to fetch storage history", e);
+  }
+};
+
+const handleSaveInitial = async () => {
+  if (!selectedStorageWallet.value) return;
+  try {
+    await updateStorageInitialQuantity(
+      selectedStorageWallet.value.id,
+      editInitialValue.value,
+    );
+    await fetchStorageData();
+    const updated = storageList.value.find(
+      (w) => w.id === selectedStorageWallet.value.id,
+    );
+    if (updated) selectedStorageWallet.value = updated;
+    isEditingInitial.value = false;
+    await fetchStats();
+    showAlert("Đã cập nhật vốn nạp gốc thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi cập nhật tổng nạp", "danger");
+  }
+};
+
+const handleDeleteStorage = async (id: string) => {
+  const ok = await askConfirm({
+    title: "Xoá ví lưu trữ",
+    message: "Bạn có chắc chắn muốn xoá ví này? Toàn bộ lịch sử biến động cũng sẽ bị xoá vĩnh viễn.",
+    variant: "danger",
+    confirmText: "Xoá ngay",
+  });
+  if (!ok) return;
+
+  try {
+    await deleteStorage(id);
+    selectedStorageWallet.value = null;
+    await fetchStorageData();
+    await fetchStats();
+    await fetchPortfolioSummary();
+    showAlert("Đã xoá ví thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi xoá ví", "danger");
+  }
+};
+
+const handleDeleteHistory = async (id: string) => {
+  const ok = await askConfirm({
+    title: "Xoá lịch sử",
+    message: "Bạn có chắc chắn muốn xoá bản ghi lịch sử này?",
+    variant: "danger",
+  });
+  if (!ok) return;
+
+  try {
+    await deleteStorageHistory(id);
+    if (selectedStorageWallet.value) {
+      storageHistory.value = await getStorageHistory(
+        selectedStorageWallet.value.id,
+      );
+    }
+    showAlert("Đã xoá lịch sử thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi xoá lịch sử", "danger");
+  }
+};
+
+const handleEditHistory = async (item: any) => {
+  const newNote = prompt("Nhập ghi chú mới:", item.note || "");
+  if (newNote === null) return;
+  try {
+    await updateStorageHistory(item.id, { note: newNote });
+    if (selectedStorageWallet.value) {
+      storageHistory.value = await getStorageHistory(
+        selectedStorageWallet.value.id,
+      );
+    }
+    showAlert("Đã cập nhật ghi chú thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi cập nhật lịch sử", "danger");
+  }
+};
 
 // Savings state
 const savingsList = ref<any[]>([]);
@@ -1537,23 +2163,30 @@ const submitSavings = async (data: any) => {
     await fetchSavingsData();
     await fetchStats();
     await fetchPortfolioSummary();
+    await fetchStorageData();
+    showAlert("Đã gửi lãi thành công");
   } catch (e: any) {
-    alert(e?.response?.data?.message || "Lỗi khi gửi lãi");
+    showAlert(e?.response?.data?.message || "Lỗi khi gửi lãi", "danger");
   }
 };
 
 const handleWithdrawSavings = async (id: string) => {
-  if (!confirm("Bạn có chắc chắn muốn rút số tiền này về ví không?")) return;
+  const ok = await askConfirm({
+    title: "Rút tiền gửi lãi",
+    message: "Bạn có chắc chắn muốn rút số tiền này về ví không?",
+    variant: "warning",
+  });
+  if (!ok) return;
+
   try {
     const res = await withdrawSavings(id);
-    alert(
-      `Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`,
-    );
+    showAlert(`Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`);
     await fetchSavingsData();
     await fetchStats();
     await fetchPortfolioSummary();
+    await fetchStorageData();
   } catch (e: any) {
-    alert(e?.response?.data?.message || "Lỗi khi rút tiền gửi");
+    showAlert(e?.response?.data?.message || "Lỗi khi rút tiền gửi", "danger");
   }
 };
 
@@ -1593,7 +2226,10 @@ const receivedStats = computed(() => {
 // Realized Statistics from withdrawals
 const realizedStats = computed(() => {
   const sellTransactions = transactions.value.filter(
-    (t) => t.asset === selectedAsset.value && t.type === "withdraw",
+    (t) =>
+      t.asset === selectedAsset.value &&
+      t.type === "withdraw" &&
+      t.status !== "locked",
   );
 
   const totalQuantity = sellTransactions.reduce(
@@ -1618,16 +2254,29 @@ const realizedStats = computed(() => {
 // Transaction History
 const filteredTransactions = computed(() => {
   if (!selectedAsset.value) return transactions.value;
-  return transactions.value
-    .filter(
-      (t) => t.asset === selectedAsset.value && t.type === activeSubTab.value,
-    )
-    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  
+  const relevant = transactions.value.filter(t => t.asset === selectedAsset.value);
+  
+  let result = relevant;
+  if (activeSubTab.value === 'transfer') {
+    result = relevant.filter(t => t.type === 'withdraw' && t.status === 'locked');
+  } else if (activeSubTab.value === 'withdraw') {
+    result = relevant.filter(t => t.type === 'withdraw' && t.status !== 'locked');
+  } else {
+    result = relevant.filter(t => t.type === activeSubTab.value);
+  }
+
+  return result.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 });
 
 const filteredSavingsList = computed(() => {
   if (!selectedAsset.value) return savingsList.value;
   return savingsList.value.filter((s) => s.assetSymbol === selectedAsset.value);
+});
+
+const filteredStorageList = computed(() => {
+  if (!selectedAsset.value) return storageList.value;
+  return storageList.value.filter((s) => s.assetSymbol === selectedAsset.value);
 });
 
 const currentSavingsSummary = computed(() => {
@@ -1682,7 +2331,7 @@ const handleTokenExpired = (event: any) => {
     selectedAsset.value = null;
     const index = unlockedAssets.value.indexOf(asset);
     if (index > -1) unlockedAssets.value.splice(index, 1);
-    alert(`Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`);
+    showAlert(`Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`, "warning");
   }
 };
 
@@ -1691,6 +2340,7 @@ onMounted(() => {
   refreshPrice();
   fetchPortfolioSummary();
   fetchSavingsData();
+  fetchStorageData();
   // Auto-refresh every 5 minutes
   priceInterval = setInterval(() => {
     refreshPrice();
@@ -1712,6 +2362,7 @@ onMounted(() => {
         asset.totalInvestedPortfolio =
           status.stats.totalInvestedPortfolio || status.stats.totalInvested;
         asset.savingsBalance = status.stats.savingsBalance;
+        asset.storageBalance = status.stats.storageBalance || 0;
         asset.totalBalance = status.stats.totalBalance; // Add this line
       }
 
@@ -1742,16 +2393,38 @@ const effectiveBalance = computed(() => {
   if (!selectedAssetData.value) return 0;
   const balance = selectedAssetData.value.balance || 0;
   const savingsBalance = selectedAssetData.value.savingsBalance || 0;
+  const storageBalance = selectedAssetData.value.storageBalance || 0;
   const receivedBalance = selectedAssetData.value.receivedBalance || 0;
 
-  const totalOwnership = balance + savingsBalance;
+  // Available = Main Wallet + Storage Wallets
+  // Frozen = Savings
+  // Total = Available + Frozen
+  const totalOwnership = balance + storageBalance + savingsBalance;
 
   if (includeReceivedInStats.value) {
     return totalOwnership;
   } else {
-    // Return only the "Purchased/Principal" portion
     return Math.max(0, totalOwnership - receivedBalance);
   }
+});
+
+const walletBalanceOnly = computed(() => {
+  if (!selectedAssetData.value) return 0;
+  const balance = selectedAssetData.value.balance || 0;
+  if (includeReceivedInStats.value) return balance;
+
+  const receivedBalance = selectedAssetData.value.receivedBalance || 0;
+  return Math.max(0, balance - receivedBalance);
+});
+
+const storageBalanceOnly = computed(() => {
+  if (!selectedAssetData.value) return 0;
+  return selectedAssetData.value.storageBalance || 0;
+});
+
+const frozenBalanceOnly = computed(() => {
+  if (!selectedAssetData.value) return 0;
+  return selectedAssetData.value.savingsBalance || 0;
 });
 
 const currentProfit = computed(() => {
@@ -1894,6 +2567,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    storageBalance: 0,
     totalBalance: 0,
     bgClass: "bg-green-500/10",
     textClass: "text-green-500",
@@ -1908,6 +2582,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    storageBalance: 0,
     totalBalance: 0,
     bgClass: "bg-orange-500/10",
     textClass: "text-orange-500",
@@ -1922,6 +2597,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    storageBalance: 0,
     totalBalance: 0,
     bgClass: "bg-blue-500/10",
     textClass: "text-blue-500",
@@ -1936,6 +2612,7 @@ const assets = ref([
     totalInvested: 0,
     totalInvestedPortfolio: 0,
     savingsBalance: 0,
+    storageBalance: 0,
     totalBalance: 0,
     bgClass: "bg-red-500/10",
     textClass: "text-red-500",
@@ -1968,6 +2645,14 @@ const submitDeposit = async () => {
       const totalCost = Number(depositTotal.value);
 
       try {
+        if (depositForm.value.source === "VND") {
+          const vndAsset = assets.value.find((a) => a.symbol === "VND");
+          if (vndAsset && vndAsset.balance < totalCost) {
+            showAlert("Số dư ví VND không đủ để thực hiện giao dịch", "warning");
+            return;
+          }
+        }
+
         await createWalletTransaction({
           assetSymbol: selectedAsset.value!,
           type: "deposit",
@@ -1978,13 +2663,12 @@ const submitDeposit = async () => {
           source: depositForm.value.source || undefined,
         });
 
-        // Update local UI
-        assetObj.balance += Number(depositForm.value.quantity);
-        assetObj.totalInvested += totalCost;
         await fetchTransactions();
         await fetchPortfolioSummary();
-      } catch (e) {
-        alert("Lỗi khi lưu giao dịch nạp");
+        await fetchStats();
+        showAlert("Giao dịch nạp tiền đã được ghi lại");
+      } catch (e: any) {
+        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch nạp", "danger");
       }
     }
   }
@@ -2016,8 +2700,9 @@ const submitReceive = async () => {
           (assetObj.receivedBalance || 0) + Number(receiveForm.value.quantity);
         await fetchTransactions();
         await fetchPortfolioSummary();
-      } catch (e) {
-        alert("Lỗi khi lưu giao dịch nhận");
+        showAlert("Đã ghi nhận giao dịch nhận tiền");
+      } catch (e: any) {
+        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch nhận", "danger");
       }
     }
   }
@@ -2028,25 +2713,28 @@ const submitReceive = async () => {
 };
 
 const deleteTransaction = async (id: string) => {
-  if (
-    !selectedAsset.value ||
-    !confirm("Bạn có chắc chắn muốn xoá giao dịch này?")
-  )
-    return;
+  if (!selectedAsset.value) return;
+
+  const ok = await askConfirm({
+    title: "Xoá giao dịch",
+    message: "Bạn có chắc chắn muốn xoá giao dịch này?",
+    variant: "danger",
+  });
+  if (!ok) return;
+
   try {
     await deleteWalletTransaction(selectedAsset.value, id);
     await fetchTransactions();
     await fetchPortfolioSummary();
-    // Chú ý: Cần tính toán lại balance của asset sau khi xoá
-    // Trong thực tế, nên reload dữ liệu asset hoàn chỉnh từ server
-  } catch (e) {
-    alert("Không thể xoá giao dịch");
+    showAlert("Đã xoá giao dịch thành công");
+  } catch (e: any) {
+    showAlert(e.response?.data?.message || "Không thể xoá giao dịch", "danger");
   }
 };
 
 const handleEdit = (tx: Transaction) => {
   console.log("Edit tx:", tx);
-  alert("Chức năng chỉnh sửa đang được phát triển");
+  showAlert("Chức năng chỉnh sửa đang được phát triển", "warning");
 };
 
 const confirmDelete = deleteTransaction;
@@ -2089,23 +2777,12 @@ const submitWithdraw = async () => {
           profitAmount: totalProfit,
         });
 
-        // Update local UI
-        assetObj.balance -= Number(withdrawForm.value.quantity);
-        assetObj.totalInvested -=
-          Number(withdrawForm.value.quantity) * avgPrice;
-
-        if (assetObj.balance < 0) assetObj.balance = 0;
-        if (assetObj.totalInvested < 0) assetObj.totalInvested = 0;
-
-        if (selectedAsset.value !== "VND") {
-          const vndAsset = assets.value.find((a) => a.symbol === "VND");
-          if (vndAsset) vndAsset.balance += totalAmountRec;
-        }
-
         await fetchTransactions();
         await fetchPortfolioSummary();
-      } catch (e) {
-        alert("Lỗi khi lưu giao dịch rút");
+        await fetchStats();
+        showAlert("Giao dịch rút tiền thành công");
+      } catch (e: any) {
+        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch rút", "danger");
       }
     }
   }

@@ -100,6 +100,9 @@
             class="w-full bg-[#050508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
           >
             <option :value="null">-- Chọn nguồn tiền --</option>
+            <option v-if="selectedAsset !== 'VND'" value="VND">
+              Ví VND (Khả dụng: {{ formatNumber(vndBalance) }} ₫)
+            </option>
             <optgroup label="Ví Điện Tử">
               <option value="Momo">Momo</option>
               <option value="ZaloPay">ZaloPay</option>
@@ -140,9 +143,14 @@
 
         <button
           type="submit"
-          class="w-full py-4 mt-8 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-bold transition-all shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
+          :disabled="formData.source === 'VND' && vndBalance < totalAmount"
+          class="w-full py-4 mt-8 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-all shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
         >
-          Xác Nhận Nạp
+          {{
+            formData.source === "VND" && vndBalance < totalAmount
+              ? "Không đủ số dư VND"
+              : "Xác Nhận Nạp"
+          }}
         </button>
       </form>
     </div>
@@ -166,6 +174,7 @@ const props = defineProps<{
     source: string | null;
   };
   totalAmount: number;
+  vndBalance: number;
 }>();
 
 const emit = defineEmits(["close", "submit", "update:formData"]);

@@ -138,4 +138,61 @@ export const lawApi = {
       };
     }
   },
+
+  // Law Applications
+  getApplications: async () => {
+    try {
+      const response = await api.get("/law/applications");
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch applications:", error);
+      return [];
+    }
+  },
+
+  getApplication: async (id: string) => {
+    try {
+      const response = await api.get(`/law/applications/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch application:", error);
+      return null;
+    }
+  },
+
+  createApplication: async (data: any) => {
+    try {
+      const response = await api.post("/law/applications", data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to create application",
+      };
+    }
+  },
+
+  updateApplication: async (id: string, data: any) => {
+    try {
+      const response = await api.patch(`/law/applications/${id}`, data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to update application",
+      };
+    }
+  },
+
+  deleteApplication: async (id: string) => {
+    try {
+      const response = await api.delete(`/law/applications/${id}`);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to delete application",
+      };
+    }
+  },
 };

@@ -16,8 +16,14 @@
         {{ asset.icon }}
       </div>
       <div>
-        <h4 class="font-bold text-lg leading-tight">
+        <h4 class="font-bold text-lg leading-tight flex items-center gap-2">
           {{ asset.name }}
+          <span
+            v-if="isUnlocked && (asset.savingsBalance || 0) > 0"
+            class="px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-black uppercase tracking-widest rounded"
+          >
+            Khoá
+          </span>
         </h4>
         <p class="text-sm text-gray-500 font-medium tracking-wide mt-0.5">
           {{ asset.symbol }}
