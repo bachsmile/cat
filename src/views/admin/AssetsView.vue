@@ -2301,7 +2301,6 @@ import {
   importTransactions,
   importSavings,
   importStorage,
-  deleteSavings,
 } from "../../api/wallet";
 
 const selectedAsset = ref<string | null>(null);
