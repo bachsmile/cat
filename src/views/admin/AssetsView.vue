@@ -31,7 +31,15 @@
           <span
             class="text-xs font-bold text-gray-400 group-hover/btn:text-white uppercase tracking-widest"
           >
-            {{ isBalanceVisible ? (windowWidth < 768 ? "Ẩn" : "Ẩn số dư") : (windowWidth < 768 ? "Hiện" : "Hiện số dư") }}
+            {{
+              isBalanceVisible
+                ? windowWidth < 768
+                  ? "Ẩn"
+                  : "Ẩn số dư"
+                : windowWidth < 768
+                  ? "Hiện"
+                  : "Hiện số dư"
+            }}
           </span>
         </button>
 
@@ -40,7 +48,9 @@
           class="flex-none p-3 md:p-4 bg-red-500/10 hover:bg-red-500 border border-red-500/20 text-red-500 hover:text-white rounded-[1.25rem] transition-all group/clear"
           title="Làm mới toàn bộ dữ liệu ví"
         >
-          <RefreshCwIcon class="w-5 h-5 group-hover/clear:rotate-180 transition-transform duration-500" />
+          <RefreshCwIcon
+            class="w-5 h-5 group-hover/clear:rotate-180 transition-transform duration-500"
+          />
         </button>
 
         <button
@@ -88,9 +98,7 @@
                     : "••••••••"
                 }}
               </h2>
-              <span class="text-xl md:text-3xl text-gray-500 font-bold"
-                >₫</span
-              >
+              <span class="text-xl md:text-3xl text-gray-500 font-bold">₫</span>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 mt-8">
               <div
@@ -117,7 +125,8 @@
                       : 'text-red-400'
                   "
                 >
-                  {{ (portfolioSummary?.dailyChangePercent || 0) >= 0 ? "+" : ""
+                  {{
+                    (portfolioSummary?.dailyChangePercent || 0) >= 0 ? "+" : ""
                   }}{{
                     (portfolioSummary?.dailyChangePercent || 0).toFixed(2)
                   }}% Today (±{{
@@ -125,13 +134,17 @@
                   }}₫)
                 </span>
               </div>
-              <p class="text-[10px] md:text-xs text-gray-500 font-medium italic">
+              <p
+                class="text-[10px] md:text-xs text-gray-500 font-medium italic"
+              >
                 Công cụ tính toán tự động qua Binance P2P & Market API
               </p>
             </div>
           </div>
 
-          <div class="flex flex-col items-start md:items-end gap-1 md:gap-2 md:ml-auto w-full md:w-auto md:text-right">
+          <div
+            class="flex flex-col items-start md:items-end gap-1 md:gap-2 md:ml-auto w-full md:w-auto md:text-right"
+          >
             <p
               class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-1"
             >
@@ -192,7 +205,9 @@
             class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-[60px]"
           ></div>
           <div class="relative z-10">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8"
+            >
               <div class="flex items-center gap-3">
                 <div
                   class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400"
@@ -227,7 +242,9 @@
                 >
                   Tổng tiền đang gửi
                 </p>
-                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
+                <p
+                  class="text-xl md:text-3xl font-black text-white tracking-tight truncate"
+                >
                   {{
                     isBalanceVisible
                       ? formatNumber(savingsSummary.totalVndValue)
@@ -243,7 +260,9 @@
                 >
                   Lợi nhuận ước tính / ngày
                 </p>
-                <p class="text-xl md:text-3xl font-black text-emerald-400 tracking-tight truncate">
+                <p
+                  class="text-xl md:text-3xl font-black text-emerald-400 tracking-tight truncate"
+                >
                   +{{
                     isBalanceVisible
                       ? formatNumber(savingsSummary.totalProfitEstimateVnd)
@@ -259,7 +278,9 @@
                 >
                   Lãi suất trung bình
                 </p>
-                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
+                <p
+                  class="text-xl md:text-3xl font-black text-white tracking-tight truncate"
+                >
                   {{
                     savingsSummary.count > 0
                       ? (
@@ -281,7 +302,9 @@
                 >
                   Số sổ hoạt động
                 </p>
-                <p class="text-xl md:text-3xl font-black text-white tracking-tight truncate">
+                <p
+                  class="text-xl md:text-3xl font-black text-white tracking-tight truncate"
+                >
                   {{ savingsSummary.count }}
                   <span class="text-xs md:text-sm text-gray-500">sổ</span>
                 </p>
@@ -337,37 +360,69 @@
               class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6"
             >
               {{
-                isBalanceVisible
-                  ? formatNumber(effectiveBalance)
-                  : "********"
+                isBalanceVisible ? formatNumber(effectiveBalance) : "********"
               }}
               <span class="text-xl md:text-2xl text-gray-500 font-bold ml-1">{{
                 selectedAsset
               }}</span>
             </p>
             <!-- Unified Statistics Cluster -->
-            <div class="flex flex-wrap items-center gap-y-8 gap-x-10 md:gap-x-14 p-6 bg-white/[0.02] border border-white/5 rounded-[2.5rem] mt-8">
+            <div
+              class="flex flex-wrap items-center gap-y-8 gap-x-10 md:gap-x-14 p-6 bg-white/[0.02] border border-white/5 rounded-[2.5rem] mt-8"
+            >
               <!-- Balances Group -->
-              <div class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6">
+              <div
+                class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6"
+              >
                 <div>
-                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Ví chính</p>
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Ví chính
+                  </p>
                   <p class="text-sm font-bold text-white">
-                    {{ isBalanceVisible ? formatNumber(walletBalanceOnly) : "********" }}
-                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(walletBalanceOnly)
+                        : "********"
+                    }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{
+                      selectedAsset
+                    }}</span>
                   </p>
                 </div>
                 <div>
-                  <p class="text-[10px] text-teal-400/80 font-bold uppercase tracking-widest mb-1.5">Ví lưu trữ</p>
+                  <p
+                    class="text-[10px] text-teal-400/80 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Ví lưu trữ
+                  </p>
                   <p class="text-sm font-bold text-teal-400">
-                    {{ isBalanceVisible ? formatNumber(storageBalanceOnly) : "********" }}
-                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(storageBalanceOnly)
+                        : "********"
+                    }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{
+                      selectedAsset
+                    }}</span>
                   </p>
                 </div>
                 <div>
-                  <p class="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mb-1.5">Đóng băng</p>
+                  <p
+                    class="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Đóng băng
+                  </p>
                   <p class="text-sm font-bold text-blue-400">
-                    {{ isBalanceVisible ? formatNumber(frozenBalanceOnly) : "********" }}
-                    <span class="text-[10px] text-gray-500 ml-0.5">{{ selectedAsset }}</span>
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(frozenBalanceOnly)
+                        : "********"
+                    }}
+                    <span class="text-[10px] text-gray-500 ml-0.5">{{
+                      selectedAsset
+                    }}</span>
                   </p>
                 </div>
               </div>
@@ -376,25 +431,63 @@
               <div class="hidden xl:block w-px h-10 bg-white/5 mx-2"></div>
 
               <!-- Investment Stats Group -->
-              <div class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6">
+              <div
+                class="flex flex-wrap items-center gap-x-10 md:gap-x-14 gap-y-6"
+              >
                 <div>
-                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Đơn giá TB</p>
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Đơn giá TB
+                  </p>
                   <p class="text-sm font-bold">
-                    {{ isBalanceVisible ? formatNumber(currentProfit?.avgPrice || 0) : "********" }}
-                    <span class="text-xs text-gray-500">{{ selectedAsset === "USDT" ? "₫" : "$" }}</span>
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(currentProfit?.avgPrice || 0)
+                        : "********"
+                    }}
+                    <span class="text-xs text-gray-500">{{
+                      selectedAsset === "USDT" ? "₫" : "$"
+                    }}</span>
                   </p>
                 </div>
                 <div>
-                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Tổng vốn</p>
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Tổng vốn
+                  </p>
                   <p class="text-sm font-bold text-white">
-                    {{ isBalanceVisible ? formatNumber(includeSavingsInStats ? (selectedAssetData?.totalInvestedPortfolio || selectedAssetData?.totalInvested || 0) : (selectedAssetData?.totalInvested || 0)) : "********" }}
-                    <span class="text-xs text-gray-500">{{ selectedAsset === "USDT" ? "₫" : "$" }}</span>
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(
+                            includeSavingsInStats
+                              ? selectedAssetData?.totalInvestedPortfolio ||
+                                  selectedAssetData?.totalInvested ||
+                                  0
+                              : selectedAssetData?.totalInvested || 0,
+                          )
+                        : "********"
+                    }}
+                    <span class="text-xs text-gray-500">{{
+                      selectedAsset === "USDT" ? "₫" : "$"
+                    }}</span>
                   </p>
                 </div>
                 <div v-if="selectedAsset === 'USDT' && currentUsdtPrice">
-                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Giá Trị (VND)</p>
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
+                  >
+                    Giá Trị (VND)
+                  </p>
                   <p class="text-sm font-bold text-white">
-                    ≈ {{ isBalanceVisible ? formatNumber(effectiveBalance * currentUsdtPrice) : "********" }} ₫
+                    ≈
+                    {{
+                      isBalanceVisible
+                        ? formatNumber(effectiveBalance * currentUsdtPrice)
+                        : "********"
+                    }}
+                    ₫
                   </p>
                 </div>
               </div>
@@ -420,7 +513,9 @@
               }}</span>
             </p>
 
-            <div class="grid grid-cols-1 md:flex md:flex-wrap items-center gap-4 md:gap-10">
+            <div
+              class="grid grid-cols-1 md:flex md:flex-wrap items-center gap-4 md:gap-10"
+            >
               <div>
                 <p
                   class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
@@ -477,7 +572,9 @@
               }}</span>
             </p>
 
-            <div class="grid grid-cols-2 lg:flex lg:flex-wrap items-center gap-4 md:gap-10">
+            <div
+              class="grid grid-cols-2 lg:flex lg:flex-wrap items-center gap-4 md:gap-10"
+            >
               <div>
                 <p
                   class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5"
@@ -600,7 +697,10 @@
             :title="`Nạp ${selectedAsset}`"
           >
             <span class="text-xl md:text-base">📥</span>
-            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Nạp</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Nạp</span
+            >
           </button>
           <button
             @click="showWithdrawModal = true"
@@ -608,7 +708,10 @@
             :title="`Rút ${selectedAsset}`"
           >
             <span class="text-xl md:text-base">📤</span>
-            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Rút</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Rút</span
+            >
           </button>
           <button
             @click="showReceiveModal = true"
@@ -616,7 +719,10 @@
             :title="`Nhận ${selectedAsset}`"
           >
             <span class="text-xl md:text-base">🎁</span>
-            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Nhận</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Nhận</span
+            >
           </button>
           <button
             @click="showSavingsModal = true"
@@ -624,7 +730,10 @@
             title="Gửi Lãi"
           >
             <span class="text-xl md:text-base">🏦</span>
-            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Gửi Lãi</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Gửi Lãi</span
+            >
           </button>
           <button
             @click="fetchTransactions"
@@ -632,7 +741,10 @@
             title="Làm mới"
           >
             <span class="text-xl md:text-base">📋</span>
-            <span class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case">Làm mới</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Làm mới</span
+            >
           </button>
         </div>
 
@@ -722,7 +834,9 @@
 
       <!-- Management Tabs -->
       <div class="mt-8 md:mt-12">
-        <div class="flex items-center gap-6 md:gap-8 border-b border-white/5 mb-8 overflow-x-auto no-scrollbar whitespace-nowrap px-1">
+        <div
+          class="flex items-center gap-6 md:gap-8 border-b border-white/5 mb-8 overflow-x-auto no-scrollbar whitespace-nowrap px-1"
+        >
           <button
             @click="activeSubTab = 'deposit'"
             class="pb-4 text-xs md:text-sm font-bold transition-all relative"
@@ -817,19 +931,32 @@
 
         <!-- Tab Content -->
         <div
-          v-if="['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab)"
+          v-if="
+            ['deposit', 'withdraw', 'receive', 'transfer'].includes(
+              activeSubTab,
+            )
+          "
           class="animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h4 class="text-lg font-black text-white uppercase tracking-tighter">
-              Lịch sử {{ 
-                activeSubTab === 'deposit' ? 'nạp' : 
-                activeSubTab === 'withdraw' ? 'rút' : 
-                activeSubTab === 'transfer' ? 'chuyển' : 'nhận' 
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+          >
+            <h4
+              class="text-lg font-black text-white uppercase tracking-tighter"
+            >
+              Lịch sử
+              {{
+                activeSubTab === "deposit"
+                  ? "nạp"
+                  : activeSubTab === "withdraw"
+                    ? "rút"
+                    : activeSubTab === "transfer"
+                      ? "chuyển"
+                      : "nhận"
               }}
             </h4>
             <div class="flex items-center gap-2">
-              <button 
+              <button
                 @click="handleExport"
                 class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all"
                 title="Xuất dữ liệu JSON"
@@ -837,7 +964,7 @@
                 <DownloadIcon class="w-3.5 h-3.5" />
                 Export
               </button>
-              <button 
+              <button
                 @click="triggerImport"
                 class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all"
                 title="Nhập dữ liệu JSON"
@@ -849,83 +976,151 @@
           </div>
 
           <!-- Deposit Stats Panel -->
-          <div 
+          <div
             v-if="activeSubTab === 'deposit' && selectedAsset"
             class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative"
           >
             <div class="md:col-span-3 flex items-center justify-between mb-2">
-              <p class="text-[10px] text-teal-400 font-black uppercase tracking-widest">Thống kê nạp {{ selectedAsset }}</p>
-              <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
-                <button 
+              <p
+                class="text-[10px] text-teal-400 font-black uppercase tracking-widest"
+              >
+                Thống kê nạp {{ selectedAsset }}
+              </p>
+              <div
+                class="flex bg-white/5 p-1 rounded-xl border border-white/10"
+              >
+                <button
                   @click="depositDateFilter = 'all'"
                   class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
-                  :class="depositDateFilter === 'all' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
-                >Tất cả</button>
-                <button 
+                  :class="
+                    depositDateFilter === 'all'
+                      ? 'bg-teal-500 text-white shadow-lg'
+                      : 'text-gray-500 hover:text-gray-300'
+                  "
+                >
+                  Tất cả
+                </button>
+                <button
                   @click="depositDateFilter = 'month'"
                   class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
-                  :class="depositDateFilter === 'month' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
-                >Tháng này</button>
-                <button 
+                  :class="
+                    depositDateFilter === 'month'
+                      ? 'bg-teal-500 text-white shadow-lg'
+                      : 'text-gray-500 hover:text-gray-300'
+                  "
+                >
+                  Tháng này
+                </button>
+                <button
                   @click="depositDateFilter = 'today'"
                   class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
-                  :class="depositDateFilter === 'today' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
-                >Hôm nay</button>
-                <button 
+                  :class="
+                    depositDateFilter === 'today'
+                      ? 'bg-teal-500 text-white shadow-lg'
+                      : 'text-gray-500 hover:text-gray-300'
+                  "
+                >
+                  Hôm nay
+                </button>
+                <button
                   v-if="depositCheckpointDate"
                   @click="depositDateFilter = 'checkpoint'"
                   class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all flex items-center gap-1"
-                  :class="depositDateFilter === 'checkpoint' ? 'bg-orange-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
+                  :class="
+                    depositDateFilter === 'checkpoint'
+                      ? 'bg-orange-500 text-white shadow-lg'
+                      : 'text-gray-500 hover:text-gray-300'
+                  "
                   :title="`Từ ngày: ${new Date(depositCheckpointDate).toLocaleString()}`"
                 >
                   🚩 Checkpoint
                 </button>
-                <button 
+                <button
                   @click="setDepositCheckpoint"
                   class="px-2 py-1 text-[9px] font-black uppercase rounded-lg transition-all text-teal-400 hover:bg-teal-400/10"
                   title="Đặt mốc Checkpoint tại thời điểm hiện tại"
                 >
                   <PinIcon class="w-3 h-3" />
                 </button>
-                <div class="flex items-center gap-1 ml-1 px-2 border-l border-white/10">
-                  <input 
-                    type="date" 
+                <div
+                  class="flex items-center gap-1 ml-1 px-2 border-l border-white/10"
+                >
+                  <input
+                    type="date"
                     title="Chọn ngày checkpoint thủ công"
                     class="bg-transparent text-[9px] font-bold text-teal-400 outline-none w-[100px] cursor-pointer hover:scale-105 transition-transform appearance-none"
-                    style="color-scheme: dark;"
-                    :value="depositCheckpointDate ? depositCheckpointDate.substring(0, 10) : ''"
-                    @change="e => manualSetCheckpoint((e.target as HTMLInputElement).value)"
+                    style="color-scheme: dark"
+                    :value="
+                      depositCheckpointDate
+                        ? depositCheckpointDate.substring(0, 10)
+                        : ''
+                    "
+                    @change="
+                      (e) =>
+                        manualSetCheckpoint(
+                          (e.target as HTMLInputElement).value,
+                        )
+                    "
                   />
                 </div>
               </div>
             </div>
-            
-            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
-              <div class="absolute -top-10 -right-10 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl transition-all group-hover:bg-teal-500/20"></div>
+
+            <div
+              class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden"
+            >
+              <div
+                class="absolute -top-10 -right-10 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl transition-all group-hover:bg-teal-500/20"
+              ></div>
               <div class="relative z-10">
-                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Tổng cộng nạp</p>
+                <p
+                  class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1"
+                >
+                  Tổng cộng nạp
+                </p>
                 <p class="text-2xl font-black text-white tracking-tighter">
-                  {{ formatNumber(depositStats.totalQuantity) }} <span class="text-xs text-gray-500 font-bold ml-1">{{ selectedAsset }}</span>
+                  {{ formatNumber(depositStats.totalQuantity) }}
+                  <span class="text-xs text-gray-500 font-bold ml-1">{{
+                    selectedAsset
+                  }}</span>
                 </p>
               </div>
             </div>
 
-            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
-              <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl transition-all group-hover:bg-emerald-500/20"></div>
+            <div
+              class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden"
+            >
+              <div
+                class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl transition-all group-hover:bg-emerald-500/20"
+              ></div>
               <div class="relative z-10">
-                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Giá nạp trung bình</p>
+                <p
+                  class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1"
+                >
+                  Giá nạp trung bình
+                </p>
                 <p class="text-2xl font-black text-white tracking-tighter">
-                  <span class="text-sm text-gray-500 mr-0.5">₫</span>{{ formatNumber(depositStats.avgPrice) }}
+                  <span class="text-sm text-gray-500 mr-0.5">₫</span
+                  >{{ formatNumber(depositStats.avgPrice) }}
                 </p>
               </div>
             </div>
 
-            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
-              <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl transition-all group-hover:bg-purple-500/20"></div>
+            <div
+              class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden"
+            >
+              <div
+                class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl transition-all group-hover:bg-purple-500/20"
+              ></div>
               <div class="relative z-10">
-                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Số lần giao dịch</p>
+                <p
+                  class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1"
+                >
+                  Số lần giao dịch
+                </p>
                 <p class="text-2xl font-black text-white tracking-tighter">
-                  {{ depositStats.count }} <span class="text-xs text-gray-500 font-bold ml-1">lần</span>
+                  {{ depositStats.count }}
+                  <span class="text-xs text-gray-500 font-bold ml-1">lần</span>
                 </p>
               </div>
             </div>
@@ -1203,9 +1398,13 @@
           ></div>
           <div class="relative z-10">
             <div class="flex items-center justify-between mb-8">
-              <p class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Tổng quan tiền gửi</p>
+              <p
+                class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]"
+              >
+                Tổng quan tiền gửi
+              </p>
               <div class="flex items-center gap-2">
-                <button 
+                <button
                   @click="handleExport"
                   class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-400 transition-all"
                   title="Xuất dữ liệu JSON"
@@ -1213,7 +1412,7 @@
                   <DownloadIcon class="w-3 h-3" />
                   Export
                 </button>
-                <button 
+                <button
                   @click="triggerImport"
                   class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-400 transition-all"
                   title="Nhập dữ liệu JSON"
@@ -1479,16 +1678,20 @@
               <WalletIcon class="w-6 h-6" />
             </div>
             <div>
-              <h3 class="text-xl font-black text-white tracking-tighter uppercase">
+              <h3
+                class="text-xl font-black text-white tracking-tighter uppercase"
+              >
                 Ví Lưu Trữ Riêng Biệt
               </h3>
-              <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+              <p
+                class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"
+              >
                 Phân bổ tài sản tại các nền tảng khác nhau
               </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button 
+            <button
               @click="handleExport"
               class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all flex items-center gap-2"
               title="Xuất dữ liệu JSON"
@@ -1496,7 +1699,7 @@
               <DownloadIcon class="w-3.5 h-3.5" />
               Export
             </button>
-            <button 
+            <button
               @click="triggerImport"
               class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all flex items-center gap-2"
               title="Nhập dữ liệu JSON"
@@ -1513,7 +1716,10 @@
           </div>
         </div>
 
-        <div v-if="storageList.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div
+          v-if="storageList.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        >
           <div
             v-for="wallet in filteredStorageList"
             :key="wallet.id"
@@ -1523,43 +1729,76 @@
             <div class="relative z-10">
               <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 font-bold text-lg">
+                  <div
+                    class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 font-bold text-lg"
+                  >
                     {{ selectedAssetData?.icon }}
                   </div>
                   <div>
-                    <p class="text-sm font-black text-white">{{ wallet.platform }}</p>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase">{{ wallet.assetSymbol }}</p>
+                    <p class="text-sm font-black text-white">
+                      {{ wallet.platform }}
+                    </p>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">
+                      {{ wallet.assetSymbol }}
+                    </p>
                   </div>
                 </div>
-                <div v-if="wallet.quantity > wallet.initialQuantity" class="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[10px] font-black uppercase">
+                <div
+                  v-if="wallet.quantity > wallet.initialQuantity"
+                  class="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[10px] font-black uppercase"
+                >
                   +{{ formatNumber(wallet.quantity - wallet.initialQuantity) }}
                 </div>
-                <div v-else-if="wallet.quantity < wallet.initialQuantity" class="px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
+                <div
+                  v-else-if="wallet.quantity < wallet.initialQuantity"
+                  class="px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase"
+                >
                   {{ formatNumber(wallet.quantity - wallet.initialQuantity) }}
                 </div>
               </div>
               <div class="space-y-4">
                 <div>
-                  <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Số dư lưu trữ</p>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">
+                    Số dư lưu trữ
+                  </p>
                   <p class="text-2xl font-black text-white">
-                    {{ isBalanceVisible ? formatNumber(wallet.quantity) : "••••" }}
-                    <span class="text-sm text-gray-500 ml-1">{{ wallet.assetSymbol }}</span>
+                    {{
+                      isBalanceVisible ? formatNumber(wallet.quantity) : "••••"
+                    }}
+                    <span class="text-sm text-gray-500 ml-1">{{
+                      wallet.assetSymbol
+                    }}</span>
                   </p>
                 </div>
-                <div class="pt-3 border-t border-white/5 flex justify-between items-center">
-                  <span class="text-[10px] text-gray-500 font-bold uppercase">Tổng nạp</span>
-                  <span class="text-xs font-bold text-white">{{ formatNumber(wallet.initialQuantity) }}</span>
+                <div
+                  class="pt-3 border-t border-white/5 flex justify-between items-center"
+                >
+                  <span class="text-[10px] text-gray-500 font-bold uppercase"
+                    >Tổng nạp</span
+                  >
+                  <span class="text-xs font-bold text-white">{{
+                    formatNumber(wallet.initialQuantity)
+                  }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div v-else class="text-center py-20 bg-white/5 border border-white/5 rounded-[2rem]">
-          <div class="w-20 h-20 rounded-full bg-teal-500/10 flex items-center justify-center mx-auto mb-6">
+        <div
+          v-else
+          class="text-center py-20 bg-white/5 border border-white/5 rounded-[2rem]"
+        >
+          <div
+            class="w-20 h-20 rounded-full bg-teal-500/10 flex items-center justify-center mx-auto mb-6"
+          >
             <WalletIcon class="w-10 h-10 text-teal-400" />
           </div>
-          <h4 class="text-white font-bold text-lg mb-2">Chưa có ví lưu trữ nào</h4>
-          <p class="text-gray-500 max-w-sm mx-auto text-sm">Bấm "Thêm ví mới" để bắt đầu tổ chức tài sản của bạn.</p>
+          <h4 class="text-white font-bold text-lg mb-2">
+            Chưa có ví lưu trữ nào
+          </h4>
+          <p class="text-gray-500 max-w-sm mx-auto text-sm">
+            Bấm "Thêm ví mới" để bắt đầu tổ chức tài sản của bạn.
+          </p>
         </div>
       </div>
     </div>
@@ -1570,7 +1809,7 @@
       :selectedAsset="selectedAsset"
       v-model:formData="depositForm"
       :totalAmount="depositTotal"
-      :vndBalance="assets.find(a => a.symbol === 'VND')?.balance || 0"
+      :vndBalance="assets.find((a) => a.symbol === 'VND')?.balance || 0"
       @close="showDepositModal = false"
       @submit="submitDeposit"
     />
@@ -1631,154 +1870,330 @@
     />
 
     <!-- Storage Details Modal -->
-    <div v-if="selectedStorageWallet" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] p-4 animate-in fade-in backdrop-blur-sm">
-      <div class="bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] p-8 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
-        <button @click="selectedStorageWallet = null" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"><XIcon class="w-6 h-6" /></button>
-        
+    <div
+      v-if="selectedStorageWallet"
+      class="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] p-4 animate-in fade-in backdrop-blur-sm"
+    >
+      <div
+        class="bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] p-8 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-hidden flex flex-col"
+      >
+        <button
+          @click="selectedStorageWallet = null"
+          class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+        >
+          <XIcon class="w-6 h-6" />
+        </button>
+
         <div class="mb-6">
-          <h3 class="text-2xl font-black text-white mb-1">Chi tiết Ví Lưu Trữ</h3>
-          <p class="text-gray-500 uppercase text-[10px] font-black tracking-widest">{{ selectedStorageWallet.platform }} • {{ selectedStorageWallet.assetSymbol }}</p>
+          <h3 class="text-2xl font-black text-white mb-1">
+            Chi tiết Ví Lưu Trữ
+          </h3>
+          <p
+            class="text-gray-500 uppercase text-[10px] font-black tracking-widest"
+          >
+            {{ selectedStorageWallet.platform }} •
+            {{ selectedStorageWallet.assetSymbol }}
+          </p>
         </div>
 
         <div class="overflow-y-auto pr-2 custom-scrollbar space-y-8">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white/5 border border-white/5 p-6 rounded-3xl">
-              <p class="text-[10px] text-gray-500 font-black uppercase mb-2">Số dư hiện tại</p>
+              <p class="text-[10px] text-gray-500 font-black uppercase mb-2">
+                Số dư hiện tại
+              </p>
               <p class="text-3xl font-black text-white">
                 {{ formatNumber(selectedStorageWallet.quantity) }}
-                <span class="text-sm text-gray-500 ml-1">{{ selectedStorageWallet.assetSymbol }}</span>
+                <span class="text-sm text-gray-500 ml-1">{{
+                  selectedStorageWallet.assetSymbol
+                }}</span>
               </p>
-              
+
               <div class="mt-4 flex gap-4">
                 <div class="flex-1 p-2 bg-white/5 rounded-xl">
-                  <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Khả dụng</p>
-                  <p class="text-xs font-black text-emerald-400">{{ formatNumber(Number(selectedStorageWallet.quantity) - totalStakedFromStorage) }}</p>
+                  <p
+                    class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"
+                  >
+                    Khả dụng
+                  </p>
+                  <p class="text-xs font-black text-emerald-400">
+                    {{
+                      formatNumber(
+                        Number(selectedStorageWallet.quantity) -
+                          totalStakedFromStorage,
+                      )
+                    }}
+                  </p>
                 </div>
                 <div class="flex-1 p-2 bg-white/5 rounded-xl">
-                  <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Đóng băng</p>
-                  <p class="text-xs font-black text-orange-400">{{ formatNumber(totalStakedFromStorage) }}</p>
+                  <p
+                    class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"
+                  >
+                    Đóng băng
+                  </p>
+                  <p class="text-xs font-black text-orange-400">
+                    {{ formatNumber(totalStakedFromStorage) }}
+                  </p>
                 </div>
               </div>
 
-              <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+              <div
+                class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between"
+              >
                 <div>
-                  <p class="text-[10px] text-gray-500 font-bold uppercase flex items-center gap-1.5 mb-1">
+                  <p
+                    class="text-[10px] text-gray-500 font-bold uppercase flex items-center gap-1.5 mb-1"
+                  >
                     Vốn nạp gốc
-                    <button @click="isEditingInitial = !isEditingInitial" class="p-1 hover:bg-white/10 rounded-md text-teal-400 transition-all" title="Chỉnh sửa vốn gốc">
+                    <button
+                      @click="isEditingInitial = !isEditingInitial"
+                      class="p-1 hover:bg-white/10 rounded-md text-teal-400 transition-all"
+                      title="Chỉnh sửa vốn gốc"
+                    >
                       <EditIcon class="w-3 h-3" />
                     </button>
                   </p>
-                  <div v-if="isEditingInitial" class="flex items-center gap-2 mt-1">
-                    <input 
-                      v-model="editInitialValue" 
-                      type="number" 
+                  <div
+                    v-if="isEditingInitial"
+                    class="flex items-center gap-2 mt-1"
+                  >
+                    <input
+                      v-model="editInitialValue"
+                      type="number"
                       class="w-24 bg-black/60 border border-teal-500/30 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-teal-500 transition-all font-bold"
                       @keyup.enter="handleSaveInitial"
                       autoFocus
                     />
-                    <button @click="handleSaveInitial" class="p-1.5 bg-teal-500/20 hover:bg-teal-500 text-teal-400 hover:text-white rounded-lg transition-all">
+                    <button
+                      @click="handleSaveInitial"
+                      class="p-1.5 bg-teal-500/20 hover:bg-teal-500 text-teal-400 hover:text-white rounded-lg transition-all"
+                    >
                       <CheckIcon class="w-3.5 h-3.5" />
                     </button>
                   </div>
                   <div v-else class="flex flex-col">
-                    <p class="text-sm font-bold text-white">{{ formatNumber(selectedStorageWallet.initialQuantity) }}</p>
-                    <p v-if="Number(selectedStorageWallet.initialQuantity) === 0" class="text-[9px] text-orange-400 font-medium italic mt-0.5">* Chưa có vốn gốc, nhấn nút sửa để cập nhật</p>
+                    <p class="text-sm font-bold text-white">
+                      {{ formatNumber(selectedStorageWallet.initialQuantity) }}
+                    </p>
+                    <p
+                      v-if="Number(selectedStorageWallet.initialQuantity) === 0"
+                      class="text-[9px] text-orange-400 font-medium italic mt-0.5"
+                    >
+                      * Chưa có vốn gốc, nhấn nút sửa để cập nhật
+                    </p>
                   </div>
                 </div>
                 <div class="text-right">
-                  <p class="text-[10px] text-gray-500 font-bold uppercase">Biến động</p>
-                  <p :class="selectedStorageWallet.quantity >= selectedStorageWallet.initialQuantity ? 'text-green-400' : 'text-red-400'" class="text-xs font-black">
-                    {{ selectedStorageWallet.quantity >= selectedStorageWallet.initialQuantity ? '+' : '' }}{{ formatNumber(selectedStorageWallet.quantity - selectedStorageWallet.initialQuantity) }}
+                  <p class="text-[10px] text-gray-500 font-bold uppercase">
+                    Biến động
+                  </p>
+                  <p
+                    :class="
+                      selectedStorageWallet.quantity >=
+                      selectedStorageWallet.initialQuantity
+                        ? 'text-green-400'
+                        : 'text-red-400'
+                    "
+                    class="text-xs font-black"
+                  >
+                    {{
+                      selectedStorageWallet.quantity >=
+                      selectedStorageWallet.initialQuantity
+                        ? "+"
+                        : ""
+                    }}{{
+                      formatNumber(
+                        selectedStorageWallet.quantity -
+                          selectedStorageWallet.initialQuantity,
+                      )
+                    }}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div class="bg-teal-500/5 border border-teal-500/10 p-6 rounded-3xl">
-              <p class="text-[10px] text-teal-400 font-black uppercase mb-3">Điều chỉnh số dư</p>
+            <div
+              class="bg-teal-500/5 border border-teal-500/10 p-6 rounded-3xl"
+            >
+              <p class="text-[10px] text-teal-400 font-black uppercase mb-3">
+                Điều chỉnh số dư
+              </p>
               <div class="space-y-4">
-                <input v-model="storageAdjustment.amount" type="number" placeholder="Nhập số lượng..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold" />
-                <input v-model="storageAdjustment.note" type="text" placeholder="Ghi chú (tùy chọn)..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[10px] text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold" />
+                <input
+                  v-model="storageAdjustment.amount"
+                  type="number"
+                  placeholder="Nhập số lượng..."
+                  class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold"
+                />
+                <input
+                  v-model="storageAdjustment.note"
+                  type="text"
+                  placeholder="Ghi chú (tùy chọn)..."
+                  class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[10px] text-white focus:outline-none focus:border-teal-500/50 transition-all font-bold"
+                />
                 <div class="flex gap-3">
-                  <button @click="handleAdjustStorage('increase')" class="flex-1 bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-green-500/20">
+                  <button
+                    @click="handleAdjustStorage('increase')"
+                    class="flex-1 bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-green-500/20"
+                  >
                     + Tăng
                   </button>
-                  <button @click="handleAdjustStorage('decrease')" class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-500/20">
+                  <button
+                    @click="handleAdjustStorage('decrease')"
+                    class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-500/20"
+                  >
                     - Giảm
                   </button>
                 </div>
               </div>
             </div>
-            
+
             <!-- Staked from this storage wallet -->
-            <div v-if="activeSavingsForStorage.length > 0" class="bg-emerald-500/5 border border-emerald-500/10 p-6 rounded-3xl md:col-span-2">
-              <p class="text-[10px] text-emerald-400 font-black uppercase mb-3 flex justify-between">
+            <div
+              v-if="activeSavingsForStorage.length > 0"
+              class="bg-emerald-500/5 border border-emerald-500/10 p-6 rounded-3xl md:col-span-2"
+            >
+              <p
+                class="text-[10px] text-emerald-400 font-black uppercase mb-3 flex justify-between"
+              >
                 <span>Đang gửi lãi</span>
-                <span>{{ formatNumber(totalStakedFromStorage) }} {{ selectedStorageWallet.assetSymbol }}</span>
+                <span
+                  >{{ formatNumber(totalStakedFromStorage) }}
+                  {{ selectedStorageWallet.assetSymbol }}</span
+                >
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div v-for="s in activeSavingsForStorage" :key="s.id" class="p-3 bg-white/5 rounded-xl border border-white/5">
-                  <p class="text-xs font-bold text-white">{{ s.platform }} <span class="text-[10px] text-gray-500 font-normal">({{ s.savingsType === 'flexible' ? 'Linh hoạt' : 'Cố định' }})</span></p>
-                  <p class="text-sm font-black text-emerald-400 mt-0.5">{{ formatNumber(s.quantity) }}</p>
-                  <p class="text-[10px] text-gray-400 mt-1">Lãi suất: <span class="text-white">{{ Number(s.annualRate).toFixed(2) }}%/năm</span></p>
+                <div
+                  v-for="s in activeSavingsForStorage"
+                  :key="s.id"
+                  class="p-3 bg-white/5 rounded-xl border border-white/5"
+                >
+                  <p class="text-xs font-bold text-white">
+                    {{ s.platform }}
+                    <span class="text-[10px] text-gray-500 font-normal"
+                      >({{
+                        s.savingsType === "flexible" ? "Linh hoạt" : "Cố định"
+                      }})</span
+                    >
+                  </p>
+                  <p class="text-sm font-black text-emerald-400 mt-0.5">
+                    {{ formatNumber(s.quantity) }}
+                  </p>
+                  <p class="text-[10px] text-gray-400 mt-1">
+                    Lãi suất:
+                    <span class="text-white"
+                      >{{ Number(s.annualRate).toFixed(2) }}%/năm</span
+                    >
+                  </p>
                 </div>
               </div>
             </div>
-
           </div>
 
           <div>
-            <h4 class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h4
+              class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-4 flex items-center gap-2"
+            >
               <HistoryIcon class="w-3 h-3" /> Lịch sử lưu ký
             </h4>
             <div v-if="storageHistory.length > 0" class="space-y-3">
-              <div v-for="item in storageHistory" :key="item.id" class="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/5 transition-colors">
+              <div
+                v-for="item in storageHistory"
+                :key="item.id"
+                class="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/5 transition-colors"
+              >
                 <div class="flex items-center gap-3">
-                   <div :class="{
-                      'bg-green-500/10 text-green-500': item.type === 'increase' || item.type === 'unstake',
+                  <div
+                    :class="{
+                      'bg-green-500/10 text-green-500':
+                        item.type === 'increase' || item.type === 'unstake',
                       'bg-red-500/10 text-red-500': item.type === 'decrease',
-                      'bg-orange-500/10 text-orange-500': item.type === 'stake'
-                    }" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                    <TrendingUpIcon v-if="item.type === 'increase' || item.type === 'unstake'" class="w-5 h-5" />
-                    <TrendingDownIcon v-else-if="item.type === 'decrease'" class="w-5 h-5" />
+                      'bg-orange-500/10 text-orange-500': item.type === 'stake',
+                    }"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center"
+                  >
+                    <TrendingUpIcon
+                      v-if="item.type === 'increase' || item.type === 'unstake'"
+                      class="w-5 h-5"
+                    />
+                    <TrendingDownIcon
+                      v-else-if="item.type === 'decrease'"
+                      class="w-5 h-5"
+                    />
                     <PiggyBankIcon v-else class="w-5 h-5" />
                   </div>
                   <div>
                     <p class="text-xs font-bold text-white">
-                      {{ 
-                        item.type === 'increase' ? 'Tăng số dư' : 
-                        item.type === 'decrease' ? 'Giảm số dư' :
-                        item.type === 'stake' ? 'Đóng băng (Savings)' : 'Mở khoá (Gốc lãi)'
+                      {{
+                        item.type === "increase"
+                          ? "Tăng số dư"
+                          : item.type === "decrease"
+                            ? "Giảm số dư"
+                            : item.type === "stake"
+                              ? "Đóng băng (Savings)"
+                              : "Mở khoá (Gốc lãi)"
                       }}
                     </p>
-                    <p class="text-[10px] text-gray-500">{{ new Date(item.createdAt).toLocaleString() }}</p>
-                    <p v-if="item.note" class="text-[10px] text-gray-600 italic mt-0.5 line-clamp-1">"{{ item.note }}"</p>
+                    <p class="text-[10px] text-gray-500">
+                      {{ new Date(item.createdAt).toLocaleString() }}
+                    </p>
+                    <p
+                      v-if="item.note"
+                      class="text-[10px] text-gray-600 italic mt-0.5 line-clamp-1"
+                    >
+                      "{{ item.note }}"
+                    </p>
                   </div>
                 </div>
                 <div class="flex items-center gap-3">
                   <div class="text-right">
-                    <p :class="{
-                      'text-green-400': item.type === 'increase' || item.type === 'unstake',
-                      'text-red-400': item.type === 'decrease',
-                      'text-orange-400': item.type === 'stake'
-                    }" class="text-sm font-black">
-                      {{ (item.type === 'increase' || item.type === 'unstake') ? '+' : (item.type === 'stake' ? '🔒 ' : '-') }}{{ formatNumber(item.amount) }}
+                    <p
+                      :class="{
+                        'text-green-400':
+                          item.type === 'increase' || item.type === 'unstake',
+                        'text-red-400': item.type === 'decrease',
+                        'text-orange-400': item.type === 'stake',
+                      }"
+                      class="text-sm font-black"
+                    >
+                      {{
+                        item.type === "increase" || item.type === "unstake"
+                          ? "+"
+                          : item.type === "stake"
+                            ? "🔒 "
+                            : "-"
+                      }}{{ formatNumber(item.amount) }}
                     </p>
-                    <p class="text-[10px] text-gray-600 font-bold">Sau: {{ formatNumber(item.balanceAfter) }}</p>
+                    <p class="text-[10px] text-gray-600 font-bold">
+                      Sau: {{ formatNumber(item.balanceAfter) }}
+                    </p>
                   </div>
                   <div class="flex flex-col gap-1">
-                    <button @click="handleEditHistory(item)" class="p-1.5 hover:bg-teal-500/10 text-gray-500 hover:text-teal-400 rounded-lg transition-all" title="Sửa ghi chú">
+                    <button
+                      @click="handleEditHistory(item)"
+                      class="p-1.5 hover:bg-teal-500/10 text-gray-500 hover:text-teal-400 rounded-lg transition-all"
+                      title="Sửa ghi chú"
+                    >
                       <EditIcon class="w-3 h-3" />
                     </button>
-                    <button @click="handleDeleteHistory(item.id)" class="p-1.5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg transition-all" title="Xoá lịch sử">
+                    <button
+                      @click="handleDeleteHistory(item.id)"
+                      class="p-1.5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg transition-all"
+                      title="Xoá lịch sử"
+                    >
                       <TrashIcon class="w-3 h-3" />
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else class="text-center py-10 bg-white/[0.02] border border-dashed border-white/5 rounded-[2rem]">
-              <p class="text-xs text-gray-600 font-bold italic">Chưa có lịch sử biến động</p>
+            <div
+              v-else
+              class="text-center py-10 bg-white/[0.02] border border-dashed border-white/5 rounded-[2rem]"
+            >
+              <p class="text-xs text-gray-600 font-bold italic">
+                Chưa có lịch sử biến động
+              </p>
             </div>
           </div>
         </div>
@@ -1788,7 +2203,9 @@
             @click="handleWithdrawFromStorage(selectedStorageWallet.id)"
             class="flex-[2] py-4 bg-white/5 hover:bg-teal-500/10 text-white hover:text-teal-400 border border-white/10 hover:border-teal-500/20 rounded-2xl transition-all flex items-center justify-center gap-2 group font-black uppercase text-xs tracking-widest"
           >
-            <ArrowDownCircleIcon class="w-5 h-5 text-gray-400 group-hover:text-teal-400 transition-colors" />
+            <ArrowDownCircleIcon
+              class="w-5 h-5 text-gray-400 group-hover:text-teal-400 transition-colors"
+            />
             Rút về Ví Khả Dụng
           </button>
           <button
@@ -1802,10 +2219,10 @@
       </div>
     </div>
   </div>
-  <input 
-    type="file" 
-    ref="importFileInput" 
-    class="hidden" 
+  <input
+    type="file"
+    ref="importFileInput"
+    class="hidden"
     accept=".json"
     @change="handleImport"
   />
@@ -1919,7 +2336,9 @@ const fetchPortfolioSummary = async () => {
           asset.savingsBalance = stat.savingsBalance || 0;
           asset.storageBalance = stat.storageBalance || 0;
           asset.receivedBalance = stat.receivedBalance || 0;
-          asset.totalBalance = stat.totalBalance || (asset.balance + asset.savingsBalance + asset.storageBalance);
+          asset.totalBalance =
+            stat.totalBalance ||
+            asset.balance + asset.savingsBalance + asset.storageBalance;
         }
       });
     }
@@ -2026,17 +2445,25 @@ const storageHistory = ref<any[]>([]);
 
 const activeSavingsForStorage = computed(() => {
   if (!selectedStorageWallet.value) return [];
-  return savingsList.value.filter(s => s.storageId === selectedStorageWallet.value.id && s.status === 'active');
+  return savingsList.value.filter(
+    (s) =>
+      s.storageId === selectedStorageWallet.value.id && s.status === "active",
+  );
 });
 
 const totalStakedFromStorage = computed(() => {
-  return activeSavingsForStorage.value.reduce((sum, s) => sum + Number(s.quantity), 0);
+  return activeSavingsForStorage.value.reduce(
+    (sum, s) => sum + Number(s.quantity),
+    0,
+  );
 });
 
 const currentAssetStorageWallets = computed(() => {
   if (!selectedAsset.value) return [];
   const symbol = selectedAsset.value.toUpperCase();
-  return (storageList.value || []).filter(s => s.assetSymbol?.toUpperCase() === symbol);
+  return (storageList.value || []).filter(
+    (s) => s.assetSymbol?.toUpperCase() === symbol,
+  );
 });
 
 watch(showSavingsModal, (newVal) => {
@@ -2097,9 +2524,17 @@ const handleCancelAction = () => {
   confirmModal.value.show = false;
 };
 
-const showAlert = (message: string, variant: "teal" | "danger" | "warning" = "teal") => {
+const showAlert = (
+  message: string,
+  variant: "teal" | "danger" | "warning" = "teal",
+) => {
   return askConfirm({
-    title: variant === "danger" ? "Lỗi" : variant === "warning" ? "Cảnh báo" : "Thông báo",
+    title:
+      variant === "danger"
+        ? "Lỗi"
+        : variant === "warning"
+          ? "Cảnh báo"
+          : "Thông báo",
     message,
     icon: variant === "danger" ? AlertTriangleIcon : CheckCircleIcon,
     variant,
@@ -2119,7 +2554,8 @@ const fetchStorageData = async () => {
 const handleClearAllAssets = async () => {
   const ok = await askConfirm({
     title: "Làm mới toàn bộ ví",
-    message: "Hành động này sẽ XOÁ VĨNH VIỄN toàn bộ giao dịch, tiền gửi và ví lưu trữ. Bạn có chắc chắn muốn thực hiện?",
+    message:
+      "Hành động này sẽ XOÁ VĨNH VIỄN toàn bộ giao dịch, tiền gửi và ví lưu trữ. Bạn có chắc chắn muốn thực hiện?",
     variant: "danger",
     confirmText: "Xoá tất cả",
   });
@@ -2140,7 +2576,10 @@ const handleClearAllAssets = async () => {
 
     showAlert("Đã làm mới toàn bộ dữ liệu tài sản của bạn.");
   } catch (e: any) {
-    showAlert(e?.response?.data?.message || "Lỗi khi làm mới dữ liệu", "danger");
+    showAlert(
+      e?.response?.data?.message || "Lỗi khi làm mới dữ liệu",
+      "danger",
+    );
   }
 };
 
@@ -2174,7 +2613,10 @@ const handleWithdrawFromStorage = async (id: string) => {
     await fetchTransactions();
     await fetchPortfolioSummary();
   } catch (e: any) {
-    showAlert(e?.response?.data?.message || "Lỗi khi rút từ ví lưu trữ", "danger");
+    showAlert(
+      e?.response?.data?.message || "Lỗi khi rút từ ví lưu trữ",
+      "danger",
+    );
   }
 };
 
@@ -2237,14 +2679,18 @@ const handleSaveInitial = async () => {
     await fetchStats();
     showAlert("Đã cập nhật vốn nạp gốc thành công");
   } catch (e: any) {
-    showAlert(e?.response?.data?.message || "Lỗi khi cập nhật tổng nạp", "danger");
+    showAlert(
+      e?.response?.data?.message || "Lỗi khi cập nhật tổng nạp",
+      "danger",
+    );
   }
 };
 
 const handleDeleteStorage = async (id: string) => {
   const ok = await askConfirm({
     title: "Xoá ví lưu trữ",
-    message: "Bạn có chắc chắn muốn xoá ví này? Toàn bộ lịch sử biến động cũng sẽ bị xoá vĩnh viễn.",
+    message:
+      "Bạn có chắc chắn muốn xoá ví này? Toàn bộ lịch sử biến động cũng sẽ bị xoá vĩnh viễn.",
     variant: "danger",
     confirmText: "Xoá ngay",
   });
@@ -2295,7 +2741,10 @@ const handleEditHistory = async (item: any) => {
     }
     showAlert("Đã cập nhật ghi chú thành công");
   } catch (e: any) {
-    showAlert(e?.response?.data?.message || "Lỗi khi cập nhật lịch sử", "danger");
+    showAlert(
+      e?.response?.data?.message || "Lỗi khi cập nhật lịch sử",
+      "danger",
+    );
   }
 };
 
@@ -2340,7 +2789,9 @@ const handleWithdrawSavings = async (id: string) => {
 
   try {
     const res = await withdrawSavings(id);
-    showAlert(`Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`);
+    showAlert(
+      `Đã rút thành công ${res.totalAmount} về ví (Bao gồm ${res.accruedInterest} tiền lãi)`,
+    );
     await fetchSavingsData();
     await fetchStats();
     await fetchPortfolioSummary();
@@ -2350,25 +2801,25 @@ const handleWithdrawSavings = async (id: string) => {
   }
 };
 
-const handleDeleteSavings = async (id: string) => {
-  const ok = await askConfirm({
-    title: "Xoá sổ tiền gửi",
-    message: "Bạn có chắc chắn muốn xoá vĩnh viễn sổ tiền gửi này? (Lưu ý: Tiền sẽ KHÔNG được trả lại ví)",
-    variant: "danger",
-    confirmText: "Xoá sổ",
-  });
-  if (!ok) return;
+// const handleDeleteSavings = async (id: string) => {
+//   const ok = await askConfirm({
+//     title: "Xoá sổ tiền gửi",
+//     message: "Bạn có chắc chắn muốn xoá vĩnh viễn sổ tiền gửi này? (Lưu ý: Tiền sẽ KHÔNG được trả lại ví)",
+//     variant: "danger",
+//     confirmText: "Xoá sổ",
+//   });
+//   if (!ok) return;
 
-  try {
-    await deleteSavings(id);
-    await fetchSavingsData();
-    await fetchStats();
-    await fetchPortfolioSummary();
-    showAlert("Đã xoá sổ tiền gửi thành công");
-  } catch (e: any) {
-    showAlert(e?.response?.data?.message || "Lỗi khi xoá sổ tiền gửi", "danger");
-  }
-};
+//   try {
+//     await deleteSavings(id);
+//     await fetchSavingsData();
+//     await fetchStats();
+//     await fetchPortfolioSummary();
+//     showAlert("Đã xoá sổ tiền gửi thành công");
+//   } catch (e: any) {
+//     showAlert(e?.response?.data?.message || "Lỗi khi xoá sổ tiền gửi", "danger");
+//   }
+// };
 
 const depositForm = ref({
   quantity: null as number | null,
@@ -2404,16 +2855,16 @@ const receivedStats = computed(() => {
 });
 
 // Deposit Statistics
-const depositDateFilter = ref<'all' | 'today' | 'month' | 'checkpoint'>('all');
+const depositDateFilter = ref<"all" | "today" | "month" | "checkpoint">("all");
 const depositCheckpointDate = ref<string | null>(
-  localStorage.getItem('deposit_checkpoint_date')
+  localStorage.getItem("deposit_checkpoint_date"),
 );
 
 const setDepositCheckpoint = () => {
   const now = new Date().toISOString();
   depositCheckpointDate.value = now;
-  localStorage.setItem('deposit_checkpoint_date', now);
-  depositDateFilter.value = 'checkpoint';
+  localStorage.setItem("deposit_checkpoint_date", now);
+  depositDateFilter.value = "checkpoint";
 };
 
 const manualSetCheckpoint = (val: string) => {
@@ -2422,8 +2873,8 @@ const manualSetCheckpoint = (val: string) => {
   d.setHours(0, 0, 0, 0);
   const iso = d.toISOString();
   depositCheckpointDate.value = iso;
-  localStorage.setItem('deposit_checkpoint_date', iso);
-  depositDateFilter.value = 'checkpoint';
+  localStorage.setItem("deposit_checkpoint_date", iso);
+  depositDateFilter.value = "checkpoint";
 };
 
 const depositStats = computed(() => {
@@ -2431,37 +2882,45 @@ const depositStats = computed(() => {
     (t) =>
       t.asset === selectedAsset.value &&
       t.type === "deposit" &&
-      t.status !== "locked"
+      t.status !== "locked",
   );
-  
+
   let filtered = depositTransactions;
   const now = new Date();
-  
-  if (depositDateFilter.value === 'today') {
-    filtered = depositTransactions.filter(t => {
+
+  if (depositDateFilter.value === "today") {
+    filtered = depositTransactions.filter((t) => {
       const d = new Date(t.timestamp);
-      return d.getDate() === now.getDate() && 
-             d.getMonth() === now.getMonth() && 
-             d.getFullYear() === now.getFullYear();
+      return (
+        d.getDate() === now.getDate() &&
+        d.getMonth() === now.getMonth() &&
+        d.getFullYear() === now.getFullYear()
+      );
     });
-  } else if (depositDateFilter.value === 'month') {
-    filtered = depositTransactions.filter(t => {
+  } else if (depositDateFilter.value === "month") {
+    filtered = depositTransactions.filter((t) => {
       const d = new Date(t.timestamp);
-      return d.getMonth() === now.getMonth() && 
-             d.getFullYear() === now.getFullYear();
+      return (
+        d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+      );
     });
-  } else if (depositDateFilter.value === 'checkpoint' && depositCheckpointDate.value) {
+  } else if (
+    depositDateFilter.value === "checkpoint" &&
+    depositCheckpointDate.value
+  ) {
     const checkpoint = new Date(depositCheckpointDate.value);
-    filtered = depositTransactions.filter(t => new Date(t.timestamp) >= checkpoint);
+    filtered = depositTransactions.filter(
+      (t) => new Date(t.timestamp) >= checkpoint,
+    );
   }
-  
+
   const totalQuantity = filtered.reduce((sum, t) => sum + t.quantity, 0);
   const totalCost = filtered.reduce((sum, t) => sum + t.total, 0);
-  
+
   return {
     totalQuantity,
     avgPrice: totalQuantity > 0 ? totalCost / totalQuantity : 0,
-    count: filtered.length
+    count: filtered.length,
   };
 });
 
@@ -2496,16 +2955,20 @@ const realizedStats = computed(() => {
 // Transaction History
 const filteredTransactions = computed(() => {
   if (!selectedAsset.value) return transactions.value;
-  
-  const relevant = transactions.value.filter(t => t.asset === selectedAsset.value);
-  
+
+  const relevant = transactions.value.filter(
+    (t) => t.asset === selectedAsset.value,
+  );
+
   let result = relevant;
-  if (activeSubTab.value === 'transfer') {
-    result = relevant.filter(t => t.status === 'locked');
-  } else if (activeSubTab.value === 'withdraw') {
-    result = relevant.filter(t => t.type === 'withdraw' && t.status !== 'locked');
+  if (activeSubTab.value === "transfer") {
+    result = relevant.filter((t) => t.status === "locked");
+  } else if (activeSubTab.value === "withdraw") {
+    result = relevant.filter(
+      (t) => t.type === "withdraw" && t.status !== "locked",
+    );
   } else {
-    result = relevant.filter(t => t.type === activeSubTab.value);
+    result = relevant.filter((t) => t.type === activeSubTab.value);
   }
 
   return result.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
@@ -2573,7 +3036,10 @@ const handleTokenExpired = (event: any) => {
     selectedAsset.value = null;
     const index = unlockedAssets.value.indexOf(asset);
     if (index > -1) unlockedAssets.value.splice(index, 1);
-    showAlert(`Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`, "warning");
+    showAlert(
+      `Phiên làm việc của ví ${asset} đã hết hạn. Vui lòng mở khóa lại.`,
+      "warning",
+    );
   }
 };
 
@@ -2890,7 +3356,10 @@ const submitDeposit = async () => {
         if (depositForm.value.source === "VND") {
           const vndAsset = assets.value.find((a) => a.symbol === "VND");
           if (vndAsset && vndAsset.balance < totalCost) {
-            showAlert("Số dư ví VND không đủ để thực hiện giao dịch", "warning");
+            showAlert(
+              "Số dư ví VND không đủ để thực hiện giao dịch",
+              "warning",
+            );
             return;
           }
         }
@@ -2910,7 +3379,10 @@ const submitDeposit = async () => {
         await fetchStats();
         showAlert("Giao dịch nạp tiền đã được ghi lại");
       } catch (e: any) {
-        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch nạp", "danger");
+        showAlert(
+          e.response?.data?.message || "Lỗi khi lưu giao dịch nạp",
+          "danger",
+        );
       }
     }
   }
@@ -2944,7 +3416,10 @@ const submitReceive = async () => {
         await fetchPortfolioSummary();
         showAlert("Đã ghi nhận giao dịch nhận tiền");
       } catch (e: any) {
-        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch nhận", "danger");
+        showAlert(
+          e.response?.data?.message || "Lỗi khi lưu giao dịch nhận",
+          "danger",
+        );
       }
     }
   }
@@ -3024,7 +3499,10 @@ const submitWithdraw = async () => {
         await fetchStats();
         showAlert("Giao dịch rút tiền thành công");
       } catch (e: any) {
-        showAlert(e.response?.data?.message || "Lỗi khi lưu giao dịch rút", "danger");
+        showAlert(
+          e.response?.data?.message || "Lỗi khi lưu giao dịch rút",
+          "danger",
+        );
       }
     }
   }
@@ -3043,21 +3521,25 @@ const triggerImport = () => {
 const handleExport = () => {
   let dataToExport: any = [];
   let fileName = "";
-  
-  if (['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab.value)) {
+
+  if (
+    ["deposit", "withdraw", "receive", "transfer"].includes(activeSubTab.value)
+  ) {
     dataToExport = filteredTransactions.value;
-    fileName = `transactions_${activeSubTab.value}_${selectedAsset.value || 'all'}.json`;
-  } else if (activeSubTab.value === 'savings') {
+    fileName = `transactions_${activeSubTab.value}_${selectedAsset.value || "all"}.json`;
+  } else if (activeSubTab.value === "savings") {
     dataToExport = filteredSavingsList.value;
-    fileName = `savings_${selectedAsset.value || 'all'}.json`;
-  } else if (activeSubTab.value === 'storage') {
+    fileName = `savings_${selectedAsset.value || "all"}.json`;
+  } else if (activeSubTab.value === "storage") {
     dataToExport = filteredStorageList.value;
-    fileName = `storage_${selectedAsset.value || 'all'}.json`;
+    fileName = `storage_${selectedAsset.value || "all"}.json`;
   }
-  
-  const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+
+  const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
   link.click();
@@ -3067,7 +3549,7 @@ const handleExport = () => {
 const handleImport = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (!file) return;
-  
+
   const reader = new FileReader();
   reader.onload = async (e) => {
     try {
@@ -3076,31 +3558,38 @@ const handleImport = async (event: Event) => {
         showAlert("Dữ liệu JSON phải là một mảng", "danger");
         return;
       }
-      
+
       const ok = await askConfirm({
         title: "Xác nhận nhập dữ liệu",
         message: `Bạn có chắc chắn muốn nhập ${json.length} bản ghi?`,
         variant: "warning",
       });
       if (!ok) return;
-      
-      if (['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab.value)) {
+
+      if (
+        ["deposit", "withdraw", "receive", "transfer"].includes(
+          activeSubTab.value,
+        )
+      ) {
         await importTransactions(json);
         await fetchTransactions();
-      } else if (activeSubTab.value === 'savings') {
+      } else if (activeSubTab.value === "savings") {
         await importSavings(json);
         await fetchSavingsData();
-      } else if (activeSubTab.value === 'storage') {
+      } else if (activeSubTab.value === "storage") {
         await importStorage(json);
         await fetchStorageData();
       }
-      
+
       showAlert("Nhập dữ liệu thành công");
       await fetchStats();
       await fetchPortfolioSummary();
     } catch (err: any) {
       console.error(err);
-      showAlert(`Lỗi khi đọc file hoặc nhập dữ liệu: ${err.message || 'Lỗi không xác định'}`, "danger");
+      showAlert(
+        `Lỗi khi đọc file hoặc nhập dữ liệu: ${err.message || "Lỗi không xác định"}`,
+        "danger",
+      );
     } finally {
       if (importFileInput.value) importFileInput.value.value = "";
     }
