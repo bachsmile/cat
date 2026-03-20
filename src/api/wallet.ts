@@ -159,3 +159,24 @@ export const clearAllWalletData = async () => {
   const response = await client.delete("/wallet/clear-all");
   return response.data;
 };
+
+export const importTransactions = async (transactions: any[]) => {
+  const response = await client.post("/wallet/transactions/import", {
+    transactions,
+  });
+  return response.data;
+};
+
+export const importSavings = async (savings: any[]) => {
+  const response = await client.post("/wallet/savings/import", { savings });
+  return response.data;
+};
+
+export const importStorage = async (storage: any[]) => {
+  const response = await client.post("/wallet/storage/import", { storage });
+  return response.data;
+};
+export const deleteSavings = async (id: string) => {
+  const response = await client.delete(`/wallet/savings/${id}`);
+  return response.data;
+};

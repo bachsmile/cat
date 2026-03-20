@@ -820,6 +820,116 @@
           v-if="['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab)"
           class="animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h4 class="text-lg font-black text-white uppercase tracking-tighter">
+              Lịch sử {{ 
+                activeSubTab === 'deposit' ? 'nạp' : 
+                activeSubTab === 'withdraw' ? 'rút' : 
+                activeSubTab === 'transfer' ? 'chuyển' : 'nhận' 
+              }}
+            </h4>
+            <div class="flex items-center gap-2">
+              <button 
+                @click="handleExport"
+                class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all"
+                title="Xuất dữ liệu JSON"
+              >
+                <DownloadIcon class="w-3.5 h-3.5" />
+                Export
+              </button>
+              <button 
+                @click="triggerImport"
+                class="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all"
+                title="Nhập dữ liệu JSON"
+              >
+                <UploadIcon class="w-3.5 h-3.5" />
+                Import
+              </button>
+            </div>
+          </div>
+
+          <!-- Deposit Stats Panel -->
+          <div 
+            v-if="activeSubTab === 'deposit' && selectedAsset"
+            class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative"
+          >
+            <div class="md:col-span-3 flex items-center justify-between mb-2">
+              <p class="text-[10px] text-teal-400 font-black uppercase tracking-widest">Thống kê nạp {{ selectedAsset }}</p>
+              <div class="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                <button 
+                  @click="depositDateFilter = 'all'"
+                  class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
+                  :class="depositDateFilter === 'all' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
+                >Tất cả</button>
+                <button 
+                  @click="depositDateFilter = 'month'"
+                  class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
+                  :class="depositDateFilter === 'month' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
+                >Tháng này</button>
+                <button 
+                  @click="depositDateFilter = 'today'"
+                  class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all"
+                  :class="depositDateFilter === 'today' ? 'bg-teal-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
+                >Hôm nay</button>
+                <button 
+                  v-if="depositCheckpointDate"
+                  @click="depositDateFilter = 'checkpoint'"
+                  class="px-3 py-1 text-[9px] font-black uppercase rounded-lg transition-all flex items-center gap-1"
+                  :class="depositDateFilter === 'checkpoint' ? 'bg-orange-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'"
+                  :title="`Từ ngày: ${new Date(depositCheckpointDate).toLocaleString()}`"
+                >
+                  🚩 Checkpoint
+                </button>
+                <button 
+                  @click="setDepositCheckpoint"
+                  class="px-2 py-1 text-[9px] font-black uppercase rounded-lg transition-all text-teal-400 hover:bg-teal-400/10"
+                  title="Đặt mốc Checkpoint tại thời điểm hiện tại"
+                >
+                  <PinIcon class="w-3 h-3" />
+                </button>
+                <div class="flex items-center gap-1 ml-1 px-2 border-l border-white/10">
+                  <input 
+                    type="date" 
+                    title="Chọn ngày checkpoint thủ công"
+                    class="bg-transparent text-[9px] font-bold text-teal-400 outline-none w-[100px] cursor-pointer hover:scale-105 transition-transform appearance-none"
+                    style="color-scheme: dark;"
+                    :value="depositCheckpointDate ? depositCheckpointDate.substring(0, 10) : ''"
+                    @change="e => manualSetCheckpoint((e.target as HTMLInputElement).value)"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl transition-all group-hover:bg-teal-500/20"></div>
+              <div class="relative z-10">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Tổng cộng nạp</p>
+                <p class="text-2xl font-black text-white tracking-tighter">
+                  {{ formatNumber(depositStats.totalQuantity) }} <span class="text-xs text-gray-500 font-bold ml-1">{{ selectedAsset }}</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl transition-all group-hover:bg-emerald-500/20"></div>
+              <div class="relative z-10">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Giá nạp trung bình</p>
+                <p class="text-2xl font-black text-white tracking-tighter">
+                  <span class="text-sm text-gray-500 mr-0.5">₫</span>{{ formatNumber(depositStats.avgPrice) }}
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 p-6 rounded-3xl relative group overflow-hidden">
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl transition-all group-hover:bg-purple-500/20"></div>
+              <div class="relative z-10">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Số lần giao dịch</p>
+                <p class="text-2xl font-black text-white tracking-tighter">
+                  {{ depositStats.count }} <span class="text-xs text-gray-500 font-bold ml-1">lần</span>
+                </p>
+              </div>
+            </div>
+          </div>
           <div
             v-if="filteredTransactions.length > 0"
             class="overflow-x-auto bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] shadow-xl no-scrollbar"
@@ -1092,6 +1202,27 @@
             class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-[60px]"
           ></div>
           <div class="relative z-10">
+            <div class="flex items-center justify-between mb-8">
+              <p class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Tổng quan tiền gửi</p>
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="handleExport"
+                  class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-400 transition-all"
+                  title="Xuất dữ liệu JSON"
+                >
+                  <DownloadIcon class="w-3 h-3" />
+                  Export
+                </button>
+                <button 
+                  @click="triggerImport"
+                  class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-400 transition-all"
+                  title="Nhập dữ liệu JSON"
+                >
+                  <UploadIcon class="w-3 h-3" />
+                  Import
+                </button>
+              </div>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
                 <p
@@ -1289,10 +1420,7 @@
                 </div>
 
                 <div
-                  v-if="
-                    saving.status === 'active' &&
-                    saving.savingsType === 'flexible'
-                  "
+                  v-if="saving.status === 'active'"
                   class="flex items-center gap-3"
                 >
                   <div
@@ -1359,12 +1487,30 @@
               </p>
             </div>
           </div>
-          <button
-            @click="showStorageModal = true"
-            class="px-5 py-2.5 bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-teal-500/20 shadow-lg"
-          >
-            + Thêm ví mới
-          </button>
+          <div class="flex items-center gap-2">
+            <button 
+              @click="handleExport"
+              class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all flex items-center gap-2"
+              title="Xuất dữ liệu JSON"
+            >
+              <DownloadIcon class="w-3.5 h-3.5" />
+              Export
+            </button>
+            <button 
+              @click="triggerImport"
+              class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all flex items-center gap-2"
+              title="Nhập dữ liệu JSON"
+            >
+              <UploadIcon class="w-3.5 h-3.5" />
+              Import
+            </button>
+            <button
+              @click="showStorageModal = true"
+              class="px-5 py-2.5 bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-teal-500/20 shadow-lg flex items-center gap-2"
+            >
+              <span>+ Thêm ví mới</span>
+            </button>
+          </div>
         </div>
 
         <div v-if="storageList.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -1656,6 +1802,13 @@
       </div>
     </div>
   </div>
+  <input 
+    type="file" 
+    ref="importFileInput" 
+    class="hidden" 
+    accept=".json"
+    @change="handleImport"
+  />
 </template>
 
 <script setup lang="ts">
@@ -1692,6 +1845,9 @@ import {
   CheckCircle as CheckCircleIcon,
   AlertTriangle as AlertTriangleIcon,
   RefreshCw as RefreshCwIcon,
+  Download as DownloadIcon,
+  Upload as UploadIcon,
+  Pin as PinIcon,
 } from "lucide-vue-next";
 import AssetCard from "../../components/AssetCard.vue";
 import AssetPasswordPrompt from "../../components/AssetPasswordPrompt.vue";
@@ -1725,6 +1881,10 @@ import {
   deleteStorageHistory,
   updateStorageHistory,
   clearAllWalletData,
+  importTransactions,
+  importSavings,
+  importStorage,
+  deleteSavings,
 } from "../../api/wallet";
 
 const selectedAsset = ref<string | null>(null);
@@ -2190,6 +2350,26 @@ const handleWithdrawSavings = async (id: string) => {
   }
 };
 
+const handleDeleteSavings = async (id: string) => {
+  const ok = await askConfirm({
+    title: "Xoá sổ tiền gửi",
+    message: "Bạn có chắc chắn muốn xoá vĩnh viễn sổ tiền gửi này? (Lưu ý: Tiền sẽ KHÔNG được trả lại ví)",
+    variant: "danger",
+    confirmText: "Xoá sổ",
+  });
+  if (!ok) return;
+
+  try {
+    await deleteSavings(id);
+    await fetchSavingsData();
+    await fetchStats();
+    await fetchPortfolioSummary();
+    showAlert("Đã xoá sổ tiền gửi thành công");
+  } catch (e: any) {
+    showAlert(e?.response?.data?.message || "Lỗi khi xoá sổ tiền gửi", "danger");
+  }
+};
+
 const depositForm = ref({
   quantity: null as number | null,
   price: null as number | null,
@@ -2220,6 +2400,68 @@ const receivedStats = computed(() => {
   return {
     totalQuantity,
     count: receiveTransactions.length,
+  };
+});
+
+// Deposit Statistics
+const depositDateFilter = ref<'all' | 'today' | 'month' | 'checkpoint'>('all');
+const depositCheckpointDate = ref<string | null>(
+  localStorage.getItem('deposit_checkpoint_date')
+);
+
+const setDepositCheckpoint = () => {
+  const now = new Date().toISOString();
+  depositCheckpointDate.value = now;
+  localStorage.setItem('deposit_checkpoint_date', now);
+  depositDateFilter.value = 'checkpoint';
+};
+
+const manualSetCheckpoint = (val: string) => {
+  if (!val) return;
+  const d = new Date(val);
+  d.setHours(0, 0, 0, 0);
+  const iso = d.toISOString();
+  depositCheckpointDate.value = iso;
+  localStorage.setItem('deposit_checkpoint_date', iso);
+  depositDateFilter.value = 'checkpoint';
+};
+
+const depositStats = computed(() => {
+  const depositTransactions = transactions.value.filter(
+    (t) =>
+      t.asset === selectedAsset.value &&
+      t.type === "deposit" &&
+      t.status !== "locked"
+  );
+  
+  let filtered = depositTransactions;
+  const now = new Date();
+  
+  if (depositDateFilter.value === 'today') {
+    filtered = depositTransactions.filter(t => {
+      const d = new Date(t.timestamp);
+      return d.getDate() === now.getDate() && 
+             d.getMonth() === now.getMonth() && 
+             d.getFullYear() === now.getFullYear();
+    });
+  } else if (depositDateFilter.value === 'month') {
+    filtered = depositTransactions.filter(t => {
+      const d = new Date(t.timestamp);
+      return d.getMonth() === now.getMonth() && 
+             d.getFullYear() === now.getFullYear();
+    });
+  } else if (depositDateFilter.value === 'checkpoint' && depositCheckpointDate.value) {
+    const checkpoint = new Date(depositCheckpointDate.value);
+    filtered = depositTransactions.filter(t => new Date(t.timestamp) >= checkpoint);
+  }
+  
+  const totalQuantity = filtered.reduce((sum, t) => sum + t.quantity, 0);
+  const totalCost = filtered.reduce((sum, t) => sum + t.total, 0);
+  
+  return {
+    totalQuantity,
+    avgPrice: totalQuantity > 0 ? totalCost / totalQuantity : 0,
+    count: filtered.length
   };
 });
 
@@ -2259,7 +2501,7 @@ const filteredTransactions = computed(() => {
   
   let result = relevant;
   if (activeSubTab.value === 'transfer') {
-    result = relevant.filter(t => t.type === 'withdraw' && t.status === 'locked');
+    result = relevant.filter(t => t.status === 'locked');
   } else if (activeSubTab.value === 'withdraw') {
     result = relevant.filter(t => t.type === 'withdraw' && t.status !== 'locked');
   } else {
@@ -2789,5 +3031,80 @@ const submitWithdraw = async () => {
 
   withdrawForm.value = { quantity: null, price: null, source: null };
   showWithdrawModal.value = false;
+};
+
+// Export & Import Logic
+const importFileInput = ref<HTMLInputElement | null>(null);
+
+const triggerImport = () => {
+  importFileInput.value?.click();
+};
+
+const handleExport = () => {
+  let dataToExport: any = [];
+  let fileName = "";
+  
+  if (['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab.value)) {
+    dataToExport = filteredTransactions.value;
+    fileName = `transactions_${activeSubTab.value}_${selectedAsset.value || 'all'}.json`;
+  } else if (activeSubTab.value === 'savings') {
+    dataToExport = filteredSavingsList.value;
+    fileName = `savings_${selectedAsset.value || 'all'}.json`;
+  } else if (activeSubTab.value === 'storage') {
+    dataToExport = filteredStorageList.value;
+    fileName = `storage_${selectedAsset.value || 'all'}.json`;
+  }
+  
+  const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+const handleImport = async (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const json = JSON.parse(e.target?.result as string);
+      if (!Array.isArray(json)) {
+        showAlert("Dữ liệu JSON phải là một mảng", "danger");
+        return;
+      }
+      
+      const ok = await askConfirm({
+        title: "Xác nhận nhập dữ liệu",
+        message: `Bạn có chắc chắn muốn nhập ${json.length} bản ghi?`,
+        variant: "warning",
+      });
+      if (!ok) return;
+      
+      if (['deposit', 'withdraw', 'receive', 'transfer'].includes(activeSubTab.value)) {
+        await importTransactions(json);
+        await fetchTransactions();
+      } else if (activeSubTab.value === 'savings') {
+        await importSavings(json);
+        await fetchSavingsData();
+      } else if (activeSubTab.value === 'storage') {
+        await importStorage(json);
+        await fetchStorageData();
+      }
+      
+      showAlert("Nhập dữ liệu thành công");
+      await fetchStats();
+      await fetchPortfolioSummary();
+    } catch (err: any) {
+      console.error(err);
+      showAlert(`Lỗi khi đọc file hoặc nhập dữ liệu: ${err.message || 'Lỗi không xác định'}`, "danger");
+    } finally {
+      if (importFileInput.value) importFileInput.value.value = "";
+    }
+  };
+  reader.readAsText(file);
 };
 </script>
