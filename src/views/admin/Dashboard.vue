@@ -580,38 +580,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import {
-  LayoutDashboard as LayoutDashboardIcon,
   Activity as ActivityIcon,
-  Shield as SecurityIcon,
-  Database as StorageIcon,
-  Cpu as CpuIcon,
-  Terminal as TerminalIcon,
-  LogOut as LogOutIcon,
   Bell as BellIcon,
   ChevronDown as ChevronDownIcon,
-  Zap as ZapIcon,
   Clock as ClockIcon,
+  Cpu as CpuIcon,
+  LayoutDashboard as LayoutDashboardIcon,
+  LogOut as LogOutIcon,
   Menu as MenuIcon,
-  X as XIcon,
-  Wallet as WalletIcon,
+  Shield as SecurityIcon,
+  Database as StorageIcon,
+  Terminal as TerminalIcon,
   Users as UsersIcon,
+  Wallet as WalletIcon,
+  X as XIcon,
+  Zap as ZapIcon,
 } from "lucide-vue-next";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import StatCard from "../../components/StatCard.vue";
 import LawView from "../law/AdminLawView.vue";
 import UserManagementView from "./UserManagementView.vue";
 
-import ReportsView from "./ReportsView.vue";
+import { useWeb3 } from "../../composables/useWeb3";
 import AssetReportsView from "./AssetReportsView.vue";
 import AssetsContainer from "./AssetsContainer.vue";
 import BlockchainView from "./BlockchainView.vue";
+import ReportsView from "./ReportsView.vue";
 import WalletsVaultView from "./WalletsVaultView.vue";
-import { useWeb3 } from "../../composables/useWeb3";
 
-const { account, connect, isConnecting, balance, fzBalance } = useWeb3();
+const { account, connect, isConnecting, fzBalance } = useWeb3();
 
 const isMobileMenuOpen = ref(false);
 const router = useRouter();

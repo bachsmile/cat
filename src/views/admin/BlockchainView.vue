@@ -335,9 +335,7 @@
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-slate-400">Node Nội bộ</span>
-              <span class="text-emerald-400 font-bold"
-                >{{ rpcUrl }}</span
-              >
+              <span class="text-emerald-400 font-bold">{{ rpcUrl }}</span>
             </div>
           </div>
         </div>

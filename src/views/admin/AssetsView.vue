@@ -2407,7 +2407,6 @@ import {
   faucet,
 } from "../../api/wallet";
 import finzoIcon from "../../assets/images/finzo2.png";
-import finzoBanner from "../../assets/images/finzo_banner.png";
 
 const selectedAsset = ref<string | null>(null);
 
