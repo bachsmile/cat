@@ -10,10 +10,11 @@
   >
     <div class="flex items-center gap-4 mb-4">
       <div
-        class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0"
+        class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 overflow-hidden"
         :class="asset.bgClass + ' ' + asset.textClass"
       >
-        {{ asset.icon }}
+        <img v-if="asset.image" :src="asset.image" class="w-full h-full object-cover" style="-webkit-mask-image: radial-gradient(circle, black 65%, transparent 70%); mask-image: radial-gradient(circle, black 65%, transparent 70%);" />
+        <span v-else>{{ asset.icon }}</span>
       </div>
       <div>
         <h4 class="font-bold text-lg leading-tight flex items-center gap-2">

@@ -628,10 +628,11 @@
 
           <div class="flex flex-col items-center gap-3 shrink-0">
             <div
-              class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold bg-white/5 border border-white/5 shadow-inner"
+              class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold bg-white/5 border border-white/5 shadow-inner overflow-hidden"
               :class="selectedAssetData?.textClass"
             >
-              {{ selectedAssetData?.icon }}
+              <img v-if="selectedAssetData?.image" :src="selectedAssetData.image" class="w-full h-full object-cover" />
+              <span v-else>{{ selectedAssetData?.icon }}</span>
             </div>
             <!-- Live Price & Profit Badge -->
             <div
@@ -733,6 +734,18 @@
             <span
               class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
               >Gửi Lãi</span
+            >
+          </button>
+          <button
+            v-if="selectedAsset === 'FZ' || selectedAsset === 'VND'"
+            @click="handleFaucet"
+            class="flex flex-col items-center justify-center gap-2 p-3 md:px-8 md:py-4 bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 border border-purple-500/30 rounded-xl font-bold transition-all focus:ring-2 focus:ring-purple-500/20"
+            title="Faucet (Thử nghiệm nội bộ)"
+          >
+            <span class="text-xl md:text-base">🎁</span>
+            <span
+              class="text-[9px] md:text-base font-black uppercase tracking-tighter md:tracking-normal md:normal-case"
+              >Nhận FZ Miễn Phí</span
             >
           </button>
           <button
@@ -975,6 +988,41 @@
             </div>
           </div>
 
+          <!-- Bulk Edit Panel for Withdrawals -->
+          <div
+            v-if="activeSubTab === 'withdraw' && selectedTxIds.length > 0"
+            class="flex items-center justify-between bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl mb-6 animate-in slide-in-from-top-4"
+          >
+            <div class="flex items-center gap-4">
+              <span class="text-xs font-black text-orange-400 uppercase tracking-widest">
+                Đã chọn {{ selectedTxIds.length }} bản ghi
+              </span>
+              <div class="h-4 w-px bg-orange-500/20"></div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] text-gray-400 font-bold uppercase">Cập nhật giá vốn:</span>
+                <input
+                  v-model="bulkAvgPriceValue"
+                  type="number"
+                  placeholder="Nhập giá..."
+                  class="w-32 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500/50 transition-all font-bold"
+                />
+                <button
+                  @click="handleBulkUpdateAvgPrice"
+                  class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-500/20"
+                >
+                  Áp dụng tất cả
+                </button>
+              </div>
+            </div>
+            <button
+              @click="selectedTxIds = []"
+              class="text-[10px] text-gray-500 hover:text-white font-bold uppercase underline underline-offset-4 decoration-white/20"
+            >
+              Bỏ chọn
+            </button>
+          </div>
+
+
           <!-- Deposit Stats Panel -->
           <div
             v-if="activeSubTab === 'deposit' && selectedAsset"
@@ -1132,6 +1180,16 @@
             <table class="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr class="bg-white/5 border-b border-white/5">
+                  <th v-if="activeSubTab === 'withdraw'" class="px-4 py-5 text-center w-12">
+                    <input
+                      type="checkbox"
+                      :checked="selectedTxIds.length === filteredTransactions.length && filteredTransactions.length > 0"
+                      @change="toggleAllSelection"
+                      class="w-4 h-4 rounded border-white/10 bg-white/5 text-orange-500 focus:ring-orange-500/20 transition-all cursor-pointer"
+                    />
+                  </th>
+                  <th
+
                   <th
                     class="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
                   >
@@ -1181,7 +1239,17 @@
                   v-for="tx in filteredTransactions"
                   :key="tx.id"
                   class="hover:bg-white/5 transition-colors group"
+                  :class="{ 'bg-orange-500/5': selectedTxIds.includes(tx.id) }"
                 >
+                  <td v-if="activeSubTab === 'withdraw'" class="px-4 py-5 text-center">
+                    <input
+                      type="checkbox"
+                      :checked="selectedTxIds.includes(tx.id)"
+                      @change="toggleTxSelection(tx.id)"
+                      class="w-4 h-4 rounded border-white/10 bg-white/5 text-orange-500 focus:ring-orange-500/20 transition-all cursor-pointer"
+                    />
+                  </td>
+
                   <td class="px-8 py-5">
                     <div class="flex flex-col">
                       <span class="text-xs font-bold text-white">{{
@@ -1229,15 +1297,48 @@
                       <span v-else class="text-xs text-gray-400 font-medium">{{
                         formatNumber(tx.price)
                       }}</span>
-                      <span
-                        v-if="tx.type === 'withdraw' && tx.avgBuyPriceAtTime"
-                        class="text-[9px] text-gray-500 italic mt-0.5"
-                      >
-                        Vốn: {{ formatNumber(tx.avgBuyPriceAtTime) }}
-                        {{ tx.asset === "USDT" ? "₫" : "$" }}
-                      </span>
+                      
+                      <!-- Editable Average Price (Vốn) -->
+                      <div v-if="tx.type === 'withdraw'" class="mt-0.5">
+                        <div v-if="editingAvgPriceId === tx.id" class="flex items-center gap-2 justify-end">
+                          <input
+                            v-model="editAvgPriceValue"
+                            type="number"
+                            class="w-24 bg-black/60 border border-orange-500/30 rounded-lg px-2 py-1 text-[10px] text-white focus:outline-none focus:border-orange-500 transition-all font-bold text-right"
+                            @keyup.enter="handleSaveAvgPrice(tx)"
+                            @keyup.esc="editingAvgPriceId = null"
+                            autoFocus
+                          />
+                          <button
+                            @click="handleSaveAvgPrice(tx)"
+                            class="p-1 bg-green-500/20 hover:bg-green-500 text-green-400 hover:text-white rounded transition-all"
+                          >
+                            <CheckIcon class="w-3 h-3" />
+                          </button>
+                          <button
+                            @click="editingAvgPriceId = null"
+                            class="p-1 bg-white/5 hover:bg-white/10 text-gray-400 rounded transition-all"
+                          >
+                            <XIcon class="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div 
+                          v-else 
+                          class="flex items-center gap-1.5 justify-end group/edit text-right"
+                          @click="activeSubTab === 'withdraw' && handleStartEditAvgPrice(tx)"
+                        >
+                          <span
+                            class="text-[9px] text-gray-500 italic cursor-pointer hover:text-orange-400 transition-colors"
+                          >
+                            Vốn: {{ formatNumber(tx.avgBuyPriceAtTime || 0) }}
+                            {{ tx.asset === "USDT" ? "₫" : "$" }}
+                          </span>
+                          <EditIcon class="w-2.5 h-2.5 text-gray-600 opacity-0 group-hover/edit:opacity-100 transition-opacity cursor-pointer" />
+                        </div>
+                      </div>
                     </div>
                   </td>
+
                   <td class="px-8 py-5 text-right">
                     <div
                       v-if="
@@ -2266,6 +2367,8 @@ import {
   Upload as UploadIcon,
   Pin as PinIcon,
 } from "lucide-vue-next";
+import { updateWalletTransaction } from "../../api/wallet";
+
 import AssetCard from "../../components/AssetCard.vue";
 import AssetPasswordPrompt from "../../components/AssetPasswordPrompt.vue";
 import AssetDepositModal from "../../components/AssetDepositModal.vue";
@@ -2301,7 +2404,10 @@ import {
   importTransactions,
   importSavings,
   importStorage,
+  faucet,
 } from "../../api/wallet";
+import finzoIcon from "../../assets/images/finzo2.png";
+import finzoBanner from "../../assets/images/finzo_banner.png";
 
 const selectedAsset = ref<string | null>(null);
 
@@ -2346,15 +2452,7 @@ const fetchPortfolioSummary = async () => {
   }
 };
 
-// Sync selectedAsset to localStorage for the API interceptor
-watch(selectedAsset, async (newVal) => {
-  if (newVal) {
-    localStorage.setItem("active_wallet_asset", newVal);
-    await fetchTransactions();
-  } else {
-    localStorage.removeItem("active_wallet_asset");
-  }
-});
+
 
 // Transaction History
 interface Transaction {
@@ -2372,6 +2470,105 @@ interface Transaction {
   source?: string;
 }
 const transactions = ref<Transaction[]>([]);
+const selectedTxIds = ref<string[]>([]);
+const editingAvgPriceId = ref<string | null>(null);
+const editAvgPriceValue = ref<number | null>(null);
+const isBulkEditing = ref(false);
+const bulkAvgPriceValue = ref<number | null>(null);
+
+const toggleTxSelection = (id: string) => {
+  const index = selectedTxIds.value.indexOf(id);
+  if (index > -1) {
+    selectedTxIds.value.splice(index, 1);
+  } else {
+    selectedTxIds.value.push(id);
+  }
+};
+
+const toggleAllSelection = () => {
+  if (selectedTxIds.value.length === filteredTransactions.value.length) {
+    selectedTxIds.value = [];
+  } else {
+    selectedTxIds.value = filteredTransactions.value.map((tx) => tx.id);
+  }
+};
+
+const handleStartEditAvgPrice = (tx: Transaction) => {
+  editingAvgPriceId.value = tx.id;
+  editAvgPriceValue.value = tx.avgBuyPriceAtTime || 0;
+};
+
+const handleSaveAvgPrice = async (tx: Transaction) => {
+  if (editAvgPriceValue.value === null || !selectedAsset.value) return;
+  try {
+    const profitAmount = (tx.price - editAvgPriceValue.value) * tx.quantity;
+    await updateWalletTransaction(selectedAsset.value, tx.id, {
+      avgBuyPriceAtTime: editAvgPriceValue.value,
+      profitAmount: profitAmount,
+    });
+    editingAvgPriceId.value = null;
+    await fetchTransactions();
+    await fetchPortfolioSummary();
+    showAlert("Đã cập nhật giá trung bình thành công");
+  } catch (e: any) {
+    showAlert(e.response?.data?.message || "Lỗi khi cập nhật giá trung bình", "danger");
+  }
+};
+
+const handleBulkUpdateAvgPrice = async () => {
+  if (bulkAvgPriceValue.value === null || !selectedAsset.value || selectedTxIds.value.length === 0) return;
+  
+  const ok = await askConfirm({
+    title: "Sửa hàng loạt",
+    message: `Bạn có chắc chắn muốn cập nhật giá trung bình cho ${selectedTxIds.value.length} bản ghi đã chọn?`,
+    variant: "warning",
+  });
+  if (!ok) return;
+
+  try {
+    const promises = selectedTxIds.value.map(async (id) => {
+      const tx = transactions.value.find((t) => t.id === id);
+      if (tx && tx.type === 'withdraw') {
+        const profitAmount = (tx.price - bulkAvgPriceValue.value!) * tx.quantity;
+        return updateWalletTransaction(selectedAsset.value!, id, {
+          avgBuyPriceAtTime: bulkAvgPriceValue.value!,
+          profitAmount: profitAmount,
+        });
+      }
+    });
+
+    const count = selectedTxIds.value.length;
+    await Promise.all(promises);
+    selectedTxIds.value = [];
+    isBulkEditing.value = false;
+    bulkAvgPriceValue.value = null;
+    await fetchTransactions();
+    await fetchPortfolioSummary();
+    showAlert(`Đã cập nhật hàng loạt cho ${count} bản ghi thành công`);
+  } catch (e: any) {
+    showAlert(e.response?.data?.message || "Lỗi khi cập nhật hàng loạt", "danger");
+  }
+};
+
+const handleFaucet = async () => {
+  if (!selectedAsset.value) return;
+  try {
+    const ok = await askConfirm({
+      title: "Faucet nội bộ",
+      message: `Bạn có muốn nhận 1,000 ${selectedAsset.value} miễn phí để thử nghiệm nội bộ không?`,
+      variant: "teal",
+    });
+    if (!ok) return;
+
+    await faucet(selectedAsset.value);
+    await fetchTransactions();
+    await fetchPortfolioSummary();
+    showAlert(`Đã nhận 1,000 ${selectedAsset.value} thành công!`, "teal");
+  } catch (e: any) {
+    showAlert(e.response?.data?.message || "Lỗi khi gọi faucet", "danger");
+  }
+};
+
 
 const fetchTransactions = async () => {
   if (!selectedAsset.value) return;
@@ -2429,6 +2626,22 @@ const fetchStats = async () => {
 const currentUsdtPrice = ref<number | undefined>(undefined);
 const activeSubTab = ref("deposit");
 const cardMode = ref<"portfolio" | "realized" | "received">("portfolio");
+
+// Sync selectedAsset to localStorage for the API interceptor
+watch(selectedAsset, async (newVal) => {
+  selectedTxIds.value = []; // Reset selection when asset changes
+  if (newVal) {
+    localStorage.setItem("active_wallet_asset", newVal);
+    await fetchTransactions();
+  } else {
+    localStorage.removeItem("active_wallet_asset");
+  }
+});
+
+watch(activeSubTab, () => {
+  selectedTxIds.value = []; // Reset selection when tab changes
+});
+
 
 // Receive & Modals Logic
 const showDepositModal = ref(false);
@@ -3324,6 +3537,22 @@ const assets = ref([
     bgClass: "bg-red-500/10",
     textClass: "text-red-500",
     gradClass: "from-red-500/20 to-red-500",
+  },
+  {
+    name: "Finzo Token",
+    symbol: "FZ",
+    icon: "F",
+    image: finzoIcon,
+    balance: 0,
+    receivedBalance: 0,
+    totalInvested: 0,
+    totalInvestedPortfolio: 0,
+    savingsBalance: 0,
+    storageBalance: 0,
+    totalBalance: 0,
+    bgClass: "bg-purple-500/10",
+    textClass: "text-purple-400",
+    gradClass: "from-purple-500/20 to-purple-600",
   },
 ]);
 

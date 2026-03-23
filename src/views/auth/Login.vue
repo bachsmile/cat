@@ -151,7 +151,7 @@ import {
 import { authApi } from "../../api/auth";
 
 const router = useRouter();
-const email = ref("vikingshome86@gmail.com");
+const email = ref("admin@gmail.com");
 const password = ref("123123");
 const error = ref("");
 const loading = ref(false);
@@ -202,6 +202,9 @@ const handleTrial = async () => {
 
 const saveAuth = (data: any) => {
   localStorage.setItem("token", data.access_token);
+  if (data.refresh_token) {
+    localStorage.setItem("refresh_token", data.refresh_token);
+  }
   localStorage.setItem("user", JSON.stringify(data.user));
 };
 </script>

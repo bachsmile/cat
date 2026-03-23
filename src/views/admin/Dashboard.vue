@@ -16,8 +16,62 @@
       </div>
 
       <nav class="flex-1 space-y-2">
-        <template v-for="item in menuItems" :key="item.name">
+        <div v-for="item in menuItems" :key="item.name" class="space-y-1">
+          <!-- Main Menu Item -->
+          <div v-if="item.children" class="flex flex-col">
+            <button
+              @click="toggleSubmenu(item.name)"
+              class="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200 group relative text-gray-500 hover:text-white hover:bg-white/5"
+            >
+              <div class="flex items-center gap-3">
+                <component
+                  :is="item.icon"
+                  class="w-5 h-5 group-hover:scale-110 transition-transform relative z-10"
+                />
+                <span class="font-medium relative z-10">{{ item.name }}</span>
+              </div>
+              <ChevronDownIcon
+                class="w-4 h-4 transition-transform duration-300"
+                :class="{ 'rotate-180': expandedMenus.includes(item.name) }"
+              />
+            </button>
+
+            <!-- Submenu Items (Accordion) -->
+            <div
+              v-show="expandedMenus.includes(item.name)"
+              class="mt-1 ml-4 pl-4 border-l border-white/5 space-y-1 overflow-hidden"
+            >
+              <a
+                v-for="sub in item.children"
+                :key="sub.name"
+                href="#"
+                @click.prevent="handleMenuClick(sub.name)"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
+                :class="
+                  activeTab === sub.name
+                    ? 'text-purple-400 bg-purple-500/5'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
+                "
+              >
+                <div
+                  v-if="activeTab === sub.name"
+                  class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                ></div>
+                <component
+                  v-if="sub.icon"
+                  :is="sub.icon"
+                  class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                />
+                <span :class="{ 'font-bold': activeTab === sub.name }">{{
+                  sub.name
+                }}</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Single Menu Item -->
           <a
+            v-else
             href="#"
             @click.prevent="handleMenuClick(item.name)"
             class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden"
@@ -37,7 +91,7 @@
               class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"
             ></div>
           </a>
-        </template>
+        </div>
       </nav>
 
       <div class="mt-auto pt-6 border-t border-white/5">
@@ -83,8 +137,46 @@
       </div>
 
       <nav class="flex-1 space-y-2">
-        <template v-for="item in menuItems" :key="item.name">
+        <div v-for="item in menuItems" :key="item.name" class="space-y-1">
+          <div v-if="item.children" class="flex flex-col">
+            <button
+              @click="toggleSubmenu(item.name)"
+              class="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200 text-gray-500"
+            >
+              <div class="flex items-center gap-3">
+                <component :is="item.icon" class="w-5 h-5" />
+                <span class="font-medium">{{ item.name }}</span>
+              </div>
+              <ChevronDownIcon
+                class="w-4 h-4 transition-transform duration-300"
+                :class="{ 'rotate-180': expandedMenus.includes(item.name) }"
+              />
+            </button>
+            <div
+              v-show="expandedMenus.includes(item.name)"
+              class="ml-4 pl-4 border-l border-white/5 space-y-1"
+            >
+              <a
+                v-for="sub in item.children"
+                :key="sub.name"
+                href="#"
+                @click.prevent="
+                  handleMenuClick(sub.name);
+                  isMobileMenuOpen = false;
+                "
+                class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-xs"
+                :class="
+                  activeTab === sub.name
+                    ? 'text-purple-400 bg-purple-500/5'
+                    : 'text-gray-500'
+                "
+              >
+                <span>{{ sub.name }}</span>
+              </a>
+            </div>
+          </div>
           <a
+            v-else
             href="#"
             @click.prevent="
               handleMenuClick(item.name);
@@ -100,7 +192,7 @@
             <component :is="item.icon" class="w-5 h-5" />
             <span class="font-medium">{{ item.name }}</span>
           </a>
-        </template>
+        </div>
       </nav>
 
       <!-- Mobile Wallet Section -->
@@ -126,9 +218,30 @@
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xs text-gray-500">Balance</span>
-            <span class="text-xs font-bold text-white"
-              >{{ parseFloat(balance || "0").toFixed(6) }} ETH</span
-            >
+            <div class="flex items-center gap-1 group/token cursor-help">
+              <span
+                class="text-sm font-bold text-white group-hover/token:text-purple-400 transition-colors"
+                >{{ fzBalance || "0.0" }}</span
+              >
+              <img
+                src="../../assets/images/finzo2.png"
+                alt="FZ"
+                class="w-7 h-7 object-contain transition-all duration-500 group-hover/token:scale-125 group-hover/token:rotate-12"
+                style="
+                  -webkit-mask-image: radial-gradient(
+                    circle,
+                    black 65%,
+                    transparent 70%
+                  );
+                  mask-image: radial-gradient(
+                    circle,
+                    black 65%,
+                    transparent 70%
+                  );
+                  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.8));
+                "
+              />
+            </div>
           </div>
         </div>
 
@@ -174,9 +287,19 @@
           </div>
           <div class="hidden md:block">
             <h2 class="text-2xl md:text-3xl font-bold text-white">
-              System Dashboard
+              {{
+                activeTab === "Báo cáo tổng quan"
+                  ? "Financial Overview"
+                  : "System Dashboard"
+              }}
             </h2>
-            <p class="text-gray-500 mt-1">Welcome back, Administrator</p>
+            <p class="text-gray-500 mt-1">
+              {{
+                activeTab === "Báo cáo tổng quan"
+                  ? "Quản lý tài chính và dòng tiền cá nhân"
+                  : "Welcome back, Administrator"
+              }}
+            </p>
           </div>
           <div class="md:hidden">
             <h2 class="text-xl font-bold text-white">Dashboard</h2>
@@ -224,9 +347,29 @@
             </button>
             <div
               v-if="account"
-              class="px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[10px] font-mono text-purple-400"
+              class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-purple-500/30 font-black text-purple-400 uppercase tracking-widest shadow-[inset_0_0_15px_rgba(168,85,247,0.1)] group/token cursor-pointer"
             >
-              {{ parseFloat(balance || "0").toFixed(4) }} ETH
+              <span
+                class="text-[10px] group-hover/token:text-white transition-colors"
+                >{{ fzBalance || "0.0" }}</span
+              >
+              <img
+                src="../../assets/images/finzo2.png"
+                alt="FZ"
+                class="w-6 h-6 object-contain transition-transform duration-500 group-hover/token:scale-110"
+                style="
+                  -webkit-mask-image: radial-gradient(
+                    circle,
+                    black 65%,
+                    transparent 70%
+                  );
+                  mask-image: radial-gradient(
+                    circle,
+                    black 65%,
+                    transparent 70%
+                  );
+                "
+              />
             </div>
           </div>
 
@@ -369,12 +512,12 @@
         </div>
       </div>
 
-      <!-- Assets Tab Content -->
+      <!-- Assets Tab Content (Container) -->
       <div
         v-else-if="activeTab === 'Tài sản'"
         class="animate-in fade-in duration-300"
       >
-        <AssetsView />
+        <AssetsContainer />
       </div>
 
       <!-- Law Tab Content -->
@@ -392,6 +535,38 @@
       >
         <UserManagementView />
       </div>
+
+      <!-- Asset Reports Tab Content -->
+      <div
+        v-else-if="activeTab === 'Báo cáo tổng quan'"
+        class="animate-in fade-in duration-300"
+      >
+        <AssetReportsView />
+      </div>
+
+      <!-- System Reports Tab Content (Old ReportsView) -->
+      <div
+        v-else-if="activeTab === 'Hiệu suất hệ thống'"
+        class="animate-in fade-in duration-300"
+      >
+        <ReportsView />
+      </div>
+
+      <!-- Blockchain Explorer Content -->
+      <div
+        v-else-if="activeTab === 'Blockchain Explorer'"
+        class="animate-in fade-in duration-300"
+      >
+        <BlockchainView />
+      </div>
+
+      <!-- Wallets Vault Content -->
+      <div
+        v-else-if="activeTab === 'Wallets Vault'"
+        class="animate-in fade-in duration-300"
+      >
+        <WalletsVaultView />
+      </div>
     </main>
 
     <!-- Right Accent Blobs -->
@@ -408,7 +583,7 @@
 import { ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
-  LayoutDashboard as DashboardIcon,
+  LayoutDashboard as LayoutDashboardIcon,
   Activity as ActivityIcon,
   Shield as SecurityIcon,
   Database as StorageIcon,
@@ -426,12 +601,17 @@ import {
 } from "lucide-vue-next";
 
 import StatCard from "../../components/StatCard.vue";
-import AssetsView from "./AssetsView.vue";
 import LawView from "../law/AdminLawView.vue";
 import UserManagementView from "./UserManagementView.vue";
+
+import ReportsView from "./ReportsView.vue";
+import AssetReportsView from "./AssetReportsView.vue";
+import AssetsContainer from "./AssetsContainer.vue";
+import BlockchainView from "./BlockchainView.vue";
+import WalletsVaultView from "./WalletsVaultView.vue";
 import { useWeb3 } from "../../composables/useWeb3";
 
-const { account, connect, isConnecting, balance } = useWeb3();
+const { account, connect, isConnecting, balance, fzBalance } = useWeb3();
 
 const isMobileMenuOpen = ref(false);
 const router = useRouter();
@@ -444,25 +624,107 @@ const logout = () => {
   router.push("/");
 };
 
+const expandedMenus = ref<string[]>(["Quản lý", "Báo cáo"]);
+
+const toggleSubmenu = (name: string) => {
+  const index = expandedMenus.value.indexOf(name);
+  if (index > -1) {
+    expandedMenus.value.splice(index, 1);
+  } else {
+    expandedMenus.value.push(name);
+  }
+};
+
 const menuItems = [
-  { name: "Overview", icon: DashboardIcon, path: "/dashboard", module: "overview" },
-  { name: "Tài sản", icon: SecurityIcon, path: "/assets", module: "assets" },
-  { name: "Luật", icon: SecurityIcon, path: "/law-admin", module: "law" },
-  { name: "Quản lý người dùng", icon: UsersIcon, path: "/users", module: "users" },
-  { name: "Database Nodes", icon: StorageIcon, path: "/db-nodes", module: "db-nodes" },
-  { name: "Usage Metrics", icon: ActivityIcon, path: "/metrics", module: "metrics" },
+  {
+    name: "Overview",
+    icon: LayoutDashboardIcon,
+    path: "/dashboard",
+    module: "overview",
+  },
+  { name: "Tài sản", icon: WalletIcon, path: "/assets", module: "assets" },
+
+  {
+    name: "Quản lý",
+    icon: SecurityIcon,
+    children: [
+      { name: "Luật", icon: SecurityIcon, path: "/law-admin", module: "law" },
+      {
+        name: "Quản lý người dùng",
+        icon: UsersIcon,
+        path: "/users",
+        module: "users",
+      },
+    ],
+  },
+
+  {
+    name: "Báo cáo",
+    icon: ActivityIcon,
+    children: [
+      {
+        name: "Báo cáo tổng quan",
+        icon: LayoutDashboardIcon,
+        path: "/reports",
+        module: "reports",
+      },
+      {
+        name: "Hiệu suất hệ thống",
+        icon: ActivityIcon,
+        path: "/metrics",
+        module: "metrics",
+      },
+    ],
+  },
+  {
+    name: "Cơ sở hạ tầng",
+    icon: StorageIcon,
+    children: [
+      {
+        name: "Database Nodes",
+        icon: StorageIcon,
+        path: "/db-nodes",
+        module: "db-nodes",
+      },
+      {
+        name: "Blockchain Explorer",
+        icon: CpuIcon,
+        path: "/blockchain",
+        module: "blockchain",
+      },
+      {
+        name: "Wallets Vault",
+        icon: SecurityIcon,
+        path: "/vault",
+        module: "vault",
+      },
+    ],
+  },
 ];
+
+const findMenuItem = (nameOrModule: string) => {
+  for (const item of menuItems) {
+    if (item.name === nameOrModule || item.module === nameOrModule) return item;
+    if (item.children) {
+      const sub = item.children.find(
+        (s) => s.name === nameOrModule || s.module === nameOrModule,
+      );
+      if (sub) return sub;
+    }
+  }
+  return null;
+};
 
 const route = useRoute();
 const activeTab = computed(() => {
   const currentModule = route.meta.module as string;
-  const item = menuItems.find(i => i.module === currentModule);
+  const item = findMenuItem(currentModule);
   return item ? item.name : "Overview";
 });
 
 const handleMenuClick = (tabName: string) => {
-  const item = menuItems.find(i => i.name === tabName);
-  if (item) {
+  const item = findMenuItem(tabName);
+  if (item && item.path) {
     router.push(item.path);
   }
 };

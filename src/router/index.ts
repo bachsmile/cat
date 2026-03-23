@@ -33,6 +33,37 @@ const routes = [
     meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "users" },
   },
   { 
+    path: "/reports", 
+    name: "AdminReports", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "reports" },
+  },
+  { 
+    path: "/metrics", 
+    name: "AdminMetrics", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "metrics" },
+  },
+  { 
+    path: "/db-nodes", 
+    name: "AdminDBNodes", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "db-nodes" },
+  },
+  { 
+    path: "/blockchain", 
+    name: "AdminBlockchain", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "blockchain" },
+  },
+  { 
+    path: "/vault", 
+    name: "AdminVault", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "vault" },
+  },
+
+  { 
     path: "/admin", 
     redirect: "/dashboard"
   },

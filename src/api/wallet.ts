@@ -52,6 +52,8 @@ export const updateWalletTransaction = async (
     quantity?: number;
     price?: number;
     total?: number;
+    avgBuyPriceAtTime?: number;
+    profitAmount?: number;
   },
 ) => {
   const response = await client.put(
@@ -178,5 +180,10 @@ export const importStorage = async (storage: any[]) => {
 };
 export const deleteSavings = async (id: string) => {
   const response = await client.delete(`/wallet/savings/${id}`);
+  return response.data;
+};
+
+export const faucet = async (assetSymbol: string) => {
+  const response = await client.post("/wallet/faucet", { assetSymbol });
   return response.data;
 };
