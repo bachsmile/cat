@@ -14,6 +14,7 @@ export const DOMAINS = [
     icon: Scale,
     color: "text-blue-400",
     themeColor: "blue",
+    hexColor: "#60a5fa",
     shadow: "shadow-blue-500/20",
     features: [
       { title: "Quản lý Nhân sự & Phòng ban", desc: "Tối ưu hóa sơ đồ tổ chức, quản trị nhân lực và phân quyền chuyên sâu cho các phòng ban.", icon: Users },
@@ -33,6 +34,7 @@ export const DOMAINS = [
     icon: LineChart,
     color: "text-emerald-400",
     themeColor: "emerald",
+    hexColor: "#34d399",
     shadow: "shadow-emerald-500/20",
     features: [
       { title: "Quản lý Dòng tiền", desc: "Theo dõi dòng tiền ra vào theo thời gian thực with hệ thống phân loại giao dịch tự động.", icon: Receipt },
@@ -52,6 +54,7 @@ export const DOMAINS = [
     icon: Stethoscope,
     color: "text-cyan-400",
     themeColor: "cyan",
+    hexColor: "#22d3ee",
     shadow: "shadow-cyan-500/20",
     features: [
       { title: "Hồ sơ Bệnh án EMR", desc: "Hệ thống bệnh án điện tử tập trung, bảo mật và dễ dàng truy xuất lịch sử điều trị.", icon: Database },
@@ -71,6 +74,7 @@ export const DOMAINS = [
     icon: BookOpen,
     color: "text-orange-400",
     themeColor: "orange",
+    hexColor: "#fb923c",
     shadow: "shadow-orange-500/20",
     features: [
       { title: "Quản lý Đào tạo", desc: "Thiết kế lộ trình học tập, quản lý khóa học và phân bổ tài nguyên giảng dạy.", icon: GraduationCap },
@@ -90,6 +94,7 @@ export const DOMAINS = [
     icon: ShoppingBag,
     color: "text-rose-400",
     themeColor: "rose",
+    hexColor: "#fb7185",
     shadow: "shadow-rose-500/20",
     features: [
       { title: "Quản lý Kho hàng", desc: "Theo dõi tồn kho đa điểm, cảnh báo nhập hàng và tối ưu hóa vòng quay hàng tồn.", icon: Database },
@@ -109,6 +114,7 @@ export const DOMAINS = [
     icon: Truck,
     color: "text-indigo-400",
     themeColor: "indigo",
+    hexColor: "#818cf8",
     shadow: "shadow-indigo-500/20",
     features: [
       { title: "Quản lý Đội xe", desc: "Theo dõi lộ trình, nhiên liệu và lịch bảo trì bảo dưỡng phương tiện trực tuyến.", icon: Truck },

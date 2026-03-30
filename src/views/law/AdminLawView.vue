@@ -159,7 +159,8 @@
             <div class="flex items-center justify-between mb-8">
               <h3 class="text-xl font-bold italic tracking-tight flex items-center gap-3">
                 <CalendarIcon class="w-6 h-6 text-teal-400" />
-                Duyệt & Quản lý Lịch hẹn
+                Duyệt & Quản lý Lịch hẹn 
+                <span v-if="currentUserRole === 'lawyer'" class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-md border border-indigo-500/20 ml-2">Lịch cá nhân</span>
               </h3>
               <div class="flex items-center gap-4">
                 <button 
@@ -172,9 +173,9 @@
               </div>
             </div>
 
-            <div v-if="appointmentList.length === 0" class="py-20 text-center grayscale opacity-40">
+            <div v-if="filteredAppointments.length === 0" class="py-20 text-center grayscale opacity-40">
               <CalendarIcon class="w-16 h-16 mx-auto mb-4 text-gray-500" />
-              <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Chưa có lịch hẹn nào được ghi nhận</p>
+              <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Chưa có lịch hẹn nào{{ currentUserRole === 'lawyer' ? ' dành cho bạn' : '' }}</p>
             </div>
 
             <div v-else class="overflow-x-auto">
@@ -189,7 +190,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="ap in appointmentList" :key="ap.id" class="group bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+                  <tr v-for="ap in filteredAppointments" :key="ap.id" class="group bg-white/[0.02] hover:bg-white/[0.04] transition-all">
                     <td class="py-5 px-6 rounded-l-2xl">
                       <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
@@ -228,7 +229,7 @@
                       </span>
                     </td>
                     <td class="py-5 px-6 text-right rounded-r-2xl border-l border-white/5">
-                      <div class="flex items-center justify-end gap-2">
+                      <div v-if="canManageAppointment(ap)" class="flex items-center justify-end gap-2">
                         <button 
                           v-if="ap.status === 'pending'"
                           @click="handleConfirmAppointment(ap.id)"
@@ -245,6 +246,9 @@
                         >
                           <XCircleIcon class="w-4 h-4" />
                         </button>
+                      </div>
+                      <div v-else class="text-[9px] text-gray-700 italic uppercase font-bold pr-2">
+                        Read Only
                       </div>
                     </td>
                   </tr>
@@ -317,10 +321,17 @@
 
                     <!-- Player Info -->
                     <div class="flex-1 flex flex-col items-center justify-start text-center p-6 z-20 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f] to-transparent">
-                      <h4 class="text-xl font-black uppercase tracking-tight text-white mb-2 drop-shadow-md">{{ lawyer.user?.displayName || 'Ẩn Danh' }}</h4>
+                      <h4 class="text-xl font-black uppercase tracking-tight text-white mb-1 drop-shadow-md">{{ lawyer.user?.displayName || 'Ẩn Danh' }}</h4>
+                      
+                      <!-- Professional Title Badge -->
+                      <div v-if="lawyer.title" class="mb-2">
+                        <span class="px-3 py-0.5 bg-yellow-500 text-black font-black text-[8px] rounded-md uppercase tracking-[0.2em] shadow-lg shadow-yellow-500/20 border border-yellow-400/50">
+                          {{ lawyer.title }}
+                        </span>
+                      </div>
                       
                       <!-- Gold Line separator -->
-                      <div class="h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent my-2"></div>
+                      <div class="h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent my-1"></div>
                       
                       <!-- FIFA attributes -->
                       <div class="grid grid-cols-2 gap-x-12 gap-y-2 w-full px-6 text-left mt-2">
@@ -816,6 +827,21 @@
           </div>
 
           <div class="space-y-2">
+            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Chức danh / Cấp bậc</label>
+            <select 
+              v-model="lawyerForm.title"
+              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-teal-500 text-white appearance-none"
+            >
+              <option value="">-- Mặc định --</option>
+              <option value="Luật sư cao cấp">Luật sư cao cấp</option>
+              <option value="Cố vấn pháp lý">Cố vấn pháp lý</option>
+              <option value="Trưởng phòng">Trưởng phòng</option>
+              <option value="Thành viên hợp danh">Thành viên hợp danh</option>
+              <option value="Chuyên gia phân tích">Chuyên gia phân tích</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Tiểu sử / Giới thiệu</label>
             <textarea 
               v-model="lawyerForm.bio"
@@ -1020,6 +1046,19 @@ const activeSubTab = computed({
   }
 });
 
+// User Identity & RBAC
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+const currentUserRole = computed(() => currentUser.role || 'user');
+const currentUserId = computed(() => currentUser.id);
+
+const myLawyerProfile = computed(() => {
+  return lawyerList.value.find(l => l.userId === currentUserId.value);
+});
+
+const isAdminOrManager = computed(() => {
+  return ['admin', 'manager', 'moderator'].includes(currentUserRole.value);
+});
+
 const officeSchedules = ref<Record<string, any[]>>({});
 const currentSchedulingOfficeId = ref<string | null>(null);
 
@@ -1093,6 +1132,7 @@ const lawyerForm = ref({
   userId: "",
   specialty: "",
   bio: "",
+  title: "",
   isVerified: false
 });
 
@@ -1253,6 +1293,30 @@ const fetchAppointments = async () => {
   }
 };
 
+const filteredAppointments = computed(() => {
+  // Admins and Managers see everything
+  if (isAdminOrManager.value) return appointmentList.value;
+  
+  // Lawyers see only their assigned appointments
+  if (currentUserRole.value === 'lawyer' && myLawyerProfile.value) {
+    return appointmentList.value.filter(ap => 
+      ap.lawyerId === myLawyerProfile.value.id || 
+      (ap.lawyer?.id === myLawyerProfile.value.id)
+    );
+  }
+  
+  // Default to nothing or strictly check permissions
+  return [];
+});
+
+const canManageAppointment = (ap: any) => {
+  if (isAdminOrManager.value) return true;
+  if (currentUserRole.value === 'lawyer' && myLawyerProfile.value) {
+    return ap.lawyerId === myLawyerProfile.value.id || (ap.lawyer?.id === myLawyerProfile.value.id);
+  }
+  return false;
+};
+
 const handleConfirmAppointment = async (id: string) => {
   const res = await lawApi.confirmAppointment(id);
   if (res.status === 200) {
@@ -1390,11 +1454,12 @@ const openLawyerModal = async (lawyer?: any) => {
       userId: lawyer.userId,
       specialty: lawyer.specialty || "",
       bio: lawyer.bio || "",
+      title: lawyer.title || "",
       isVerified: lawyer.isVerified || false
     };
   } else {
     editingLawyerId.value = null;
-    lawyerForm.value = { userId: "", specialty: "", bio: "", isVerified: false };
+    lawyerForm.value = { userId: "", specialty: "", bio: "", title: "", isVerified: false };
     await fetchAvailableUsers();
   }
   showLawyerModal.value = true;

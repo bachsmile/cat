@@ -10,6 +10,7 @@ export interface User {
   status: 'active' | 'suspended';
   joinedDate?: string;
   createdAt?: string;
+  loginCount?: number;
   modules?: string[];
   subscriptionPlan?: string;
   subscriptionExpiresAt?: string;

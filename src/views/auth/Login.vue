@@ -168,6 +168,7 @@ const handleLogin = async () => {
 
   if (result.status === 200 || result.status === 201) {
     saveAuth(result.data);
+    
     const userRole = result.data.user.role;
     if (["admin", "moderator", "manager", "lawyer"].includes(userRole)) {
       router.push("/dashboard");

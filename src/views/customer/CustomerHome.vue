@@ -1,42 +1,25 @@
 <template>
   <div class="min-h-screen bg-[#050508] text-white font-['Inter',_sans-serif]">
     <!-- Simple Navbar for Customers -->
-    <nav
-      class="border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md sticky top-0 z-50"
-    >
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
-      >
+    <nav class="border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div
-            class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center"
-          >
+          <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
             <TerminalIcon class="w-4 h-4 text-white" />
           </div>
           <span class="text-lg font-bold">NovaClient</span>
         </div>
 
         <div class="hidden md:flex items-center gap-8">
-          <a
-            v-for="item in navItems"
-            :key="item"
-            href="#"
-            class="text-sm text-gray-400 hover:text-white transition-colors"
-            >{{ item }}</a
-          >
+          <a v-for="item in navItems" :key="item" href="#" class="text-sm text-gray-400 hover:text-white transition-colors">{{ item }}</a>
         </div>
 
         <div class="flex items-center gap-4">
-          <button
-            @click="logout"
-            class="text-sm text-gray-400 hover:text-red-400 flex items-center gap-2"
-          >
+          <button @click="logout" class="text-sm text-gray-400 hover:text-red-400 flex items-center gap-2">
             <LogOutIcon class="w-4 h-4" />
             <span>Thoát</span>
           </button>
-          <div
-            class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
-          >
+          <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
             <UserIcon class="w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -49,14 +32,10 @@
         <div>
           <h1 class="text-5xl font-extrabold leading-tight mb-6">
             Nền tảng dịch vụ <br />
-            <span
-              class="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
-              >Kỹ thuật số Thế hệ mới</span
-            >
+            <span class="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Kỹ thuật số Thế hệ mới</span>
           </h1>
           <p class="text-gray-400 text-lg mb-8 leading-relaxed">
-            Trải nghiệm các module dành cho khách hàng với giao diện hiện đại,
-            tốc độ vượt trội và hỗ trợ chuyên nghiệp 24/7.
+            Trải nghiệm các module dành cho khách hàng với giao diện hiện đại, tốc độ vượt trội và hỗ trợ chuyên nghiệp 24/7.
           </p>
           
           <div class="space-y-4">
@@ -76,27 +55,15 @@
           </div>
         </div>
         <div class="relative">
-          <div
-            class="absolute inset-0 bg-purple-600/20 blur-[100px] rounded-full"
-          ></div>
-          <img
-            :src="dogImage"
-            class="w-full h-auto relative z-10 animate-pulse"
-            style="animation-duration: 8s"
-          />
+          <div class="absolute inset-0 bg-purple-600/20 blur-[100px] rounded-full"></div>
+          <img :src="dogImage" class="w-full h-auto relative z-10 animate-pulse" style="animation-duration: 8s" />
         </div>
       </div>
 
       <!-- Features Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          v-for="feat in features"
-          :key="feat.title"
-          class="p-8 bg-[#0a0a0f] border border-white/5 rounded-3xl hover:border-purple-500/30 transition-all group"
-        >
-          <div
-            class="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-          >
+        <div v-for="feat in features" :key="feat.title" class="p-8 bg-[#0a0a0f] border border-white/5 rounded-3xl hover:border-purple-500/30 transition-all group">
+          <div class="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <component :is="feat.icon" class="w-6 h-6 text-purple-400" />
           </div>
           <h3 class="text-xl font-bold mb-3">{{ feat.title }}</h3>
@@ -105,23 +72,8 @@
       </div>
     </main>
 
-    <!-- Transition Overlay -->
-    <Transition name="gate">
-      <div v-if="isTransitioning" class="fixed inset-0 z-[100] flex">
-        <div class="flex-1 bg-black translate-x-0" id="gate-left"></div>
-        <div class="w-1 bg-indigo-500/50 shadow-[0_0_20px_indigo]"></div>
-        <div class="flex-1 bg-black translate-x-0" id="gate-right"></div>
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-20 h-20 border-2 border-indigo-500 rounded-full animate-ping opacity-50"></div>
-          <ScaleIcon class="w-16 h-16 text-indigo-400 absolute animate-pulse" />
-        </div>
-      </div>
-    </Transition>
-
     <!-- Footer Blobs -->
-    <div
-      class="fixed bottom-0 left-0 w-[50vw] h-[50vh] bg-blue-600/5 blur-[150px] -z-10 pointer-events-none"
-    ></div>
+    <div class="fixed bottom-0 left-0 w-[50vw] h-[50vh] bg-blue-600/5 blur-[150px] -z-10 pointer-events-none"></div>
   </div>
 </template>
 
@@ -144,8 +96,6 @@ import {
 } from "lucide-vue-next";
 
 const router = useRouter();
-const isTransitioning = ref(false);
-
 const navItems = ["Trang chủ", "Dịch vụ", "Hỗ trợ", "Tin tức"];
 
 const categories = [
@@ -175,15 +125,15 @@ const features = [
   },
 ];
 
-const navigate = (cat: any) => {
-  if (cat.route === "/law") {
-     isTransitioning.value = true;
-     setTimeout(() => {
-       router.push(cat.route);
-     }, 1200);
+const navigate = async (cat: any) => {
+  if ((window as any).$pageTransition) {
+     await (window as any).$pageTransition.trigger(cat.route, {
+       icon: cat.icon,
+       color: cat.hexColor,
+       label: cat.name
+     });
   } else {
-    // alert("Tính năng đang phát triển!");
-    router.push(cat.route);
+     router.push(cat.route);
   }
 };
 
@@ -192,35 +142,3 @@ const logout = () => {
   router.push("/");
 };
 </script>
-
-<style scoped>
-.gate-enter-active, .gate-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.gate-enter-from, .gate-leave-to {
-  opacity: 0;
-}
-
-#gate-left {
-  animation: slideLeft 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-}
-
-#gate-right {
-  animation: slideRight 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-}
-
-@keyframes slideLeft {
-  0% { transform: translateX(-100%); }
-  45% { transform: translateX(0); }
-  55% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-@keyframes slideRight {
-  0% { transform: translateX(100%); }
-  45% { transform: translateX(0); }
-  55% { transform: translateX(0); }
-  100% { transform: translateX(100%); }
-}
-</style>

@@ -728,6 +728,7 @@ import {
 
 import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { DOMAINS } from "../../constants/modules";
 
 import StatCard from "../../components/StatCard.vue";
 import LawView from "../law/AdminLawView.vue";
@@ -1083,10 +1084,21 @@ const activeTab = computed(() => {
   return item ? item.name : "Overview";
 });
 
-const handleMenuClick = (tabName: string) => {
+const handleMenuClick = async (tabName: string) => {
   const item = findMenuItem(tabName);
   if (item && item.path) {
-    router.push(item.path);
+    if ((window as any).$pageTransition) {
+      // Find extra info from DOMAINS if it's a primary module
+      const domainInfo = DOMAINS.find(d => d.id === item.module);
+      
+      await (window as any).$pageTransition.trigger(item.path, {
+        icon: item.icon,
+        color: domainInfo?.hexColor || "#a855f7", // fallback to purple
+        label: item.name
+      });
+    } else {
+      router.push(item.path);
+    }
   }
 };
 

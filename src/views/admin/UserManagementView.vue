@@ -115,9 +115,9 @@
                   Trạng thái
                 </th>
                 <th
-                  class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest"
+                  class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center"
                 >
-                  Ngày tham gia
+                  Số lần Login
                 </th>
                 <th
                   class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest text-right"
@@ -133,8 +133,8 @@
             </thead>
             <tbody class="divide-y divide-white/5">
               <tr
-                v-for="user in filteredUsers"
-                :key="user.email"
+                v-for="u in filteredUsers"
+                :key="u.email"
                 class="hover:bg-white/[0.02] transition-colors group"
               >
                 <td class="px-6 py-5">
@@ -142,15 +142,15 @@
                     <div class="relative">
                       <img
                         :src="
-                          user.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
+                          u.avatar ||
+                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.email}`
                         "
                         class="w-10 h-10 rounded-full border border-white/10"
                       />
                       <div
                         class="absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-[#0a0a0f] rounded-full"
                         :class="
-                          user.status === 'active'
+                          u.status === 'active'
                             ? 'bg-green-500'
                             : 'bg-gray-600'
                         "
@@ -160,10 +160,10 @@
                       <p
                         class="font-bold text-sm text-white group-hover:text-blue-400 transition-colors"
                       >
-                        {{ user.displayName || user.email.split('@')[0] }}
+                        {{ u.displayName || u.email.split('@')[0] }}
                       </p>
                       <p class="text-[10px] text-gray-500 font-mono">
-                        {{ user.email }}
+                        {{ u.email }}
                       </p>
                     </div>
                   </div>
@@ -171,27 +171,27 @@
                 <td class="px-6 py-5">
                   <div class="flex flex-wrap gap-1 justify-center">
                     <span 
-                      v-for="modId in user.modules || []" 
+                      v-for="modId in u.modules || []" 
                       :key="modId"
                       class="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md text-[9px] font-bold uppercase"
                     >
                       {{ modId }}
                     </span>
-                    <span v-if="!user.modules?.length" class="text-[9px] text-gray-600">--</span>
+                    <span v-if="!u.modules?.length" class="text-[9px] text-gray-600">--</span>
                   </div>
                 </td>
                 <td class="px-6 py-5">
                   <span
                     class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border"
-                    :class="getRoleStyles(user.role)"
+                    :class="getRoleStyles(u.role)"
                   >
-                    {{ user.role }}
+                    {{ u.role }}
                   </span>
                 </td>
-                <td class="px-6 py-5">
+                <td class="px-6 py-5 text-nowrap">
                   <div class="flex items-center gap-2">
                     <span
-                      v-if="user.status === 'active'"
+                      v-if="u.status === 'active'"
                       class="text-green-400 text-xs flex items-center gap-1.5"
                     >
                       <CheckCircleIcon class="w-3.5 h-3.5" /> Hoạt động
@@ -204,30 +204,38 @@
                     </span>
                   </div>
                 </td>
+                <td class="px-6 py-5 text-center">
+                  <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-xs font-mono font-bold">
+                    {{ u.loginCount || 0 }} lần
+                  </span>
+                </td>
                 <td class="px-6 py-5 text-right">
                   <div class="flex flex-col items-end gap-1">
                     <span 
                       class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border"
-                      :class="getPlanStyles(user.subscriptionPlan)"
+                      :class="getPlanStyles(u.subscriptionPlan)"
                     >
-                      {{ user.subscriptionPlan || 'none' }}
+                      {{ u.subscriptionPlan || 'none' }}
                     </span>
-                    <span v-if="user.subscriptionExpiresAt" class="text-[9px] text-gray-500">
-                      Hết hạn: {{ new Date(user.subscriptionExpiresAt).toLocaleDateString("en-CA") }}
+                    <span v-if="u.subscriptionExpiresAt" class="text-[9px] text-gray-500">
+                      Hết hạn: {{ new Date(u.subscriptionExpiresAt).toLocaleDateString("en-CA") }}
+                    </span>
+                    <span v-else class="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">
+                      Vĩnh viễn
                     </span>
                   </div>
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center justify-end gap-2">
                     <button
-                      @click="openModal(user)"
+                      @click="openModal(u)"
                       class="p-2 hover:bg-blue-500/10 text-gray-500 hover:text-blue-400 rounded-lg transition-all"
                       title="Chỉnh sửa"
                     >
                       <EditIcon class="w-4 h-4" />
                     </button>
                     <button
-                      @click="handleDelete(user.id)"
+                      @click="handleDelete(u.id)"
                       class="p-2 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg transition-all"
                       title="Xóa"
                     >
@@ -603,19 +611,19 @@ const filteredUsers = computed(() => {
   });
 });
 
-const openModal = (user?: User) => {
-  if (user) {
+const openModal = (u?: User) => {
+  if (u) {
     isEditing.value = true;
-    editingId.value = user.id;
+    editingId.value = u.id;
     form.value = {
-      displayName: (user.displayName as string) || "",
-      email: (user.email as string),
+      displayName: (u.displayName as string) || "",
+      email: (u.email as string),
       password: "",
-      role: (user.role as string),
-      status: (user.status as any) || "active",
-      modules: (user.modules as string[]) || [],
-      subscriptionPlan: (user.subscriptionPlan as string) || "none",
-      subscriptionExpiresAt: user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toISOString().split('T')[0] : ""
+      role: (u.role as string),
+      status: (u.status as any) || "active",
+      modules: (u.modules as string[]) || [],
+      subscriptionPlan: (u.subscriptionPlan as string) || "none",
+      subscriptionExpiresAt: u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).toISOString().split('T')[0] : ""
     };
   } else {
     isEditing.value = false;
@@ -643,6 +651,11 @@ const handleSubmit = async () => {
   const payload: any = { ...form.value };
   if (isEditing.value && !payload.password) {
     delete payload.password;
+  }
+
+  // Handle permanent subscription (empty date = null)
+  if (!payload.subscriptionExpiresAt || payload.subscriptionExpiresAt === "") {
+    payload.subscriptionExpiresAt = null;
   }
 
   let result;

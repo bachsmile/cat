@@ -248,9 +248,17 @@ const startSurvey = () => {
   phase.value = "survey";
 };
 
-const selectDomain = (domain: any) => {
+const selectDomain = async (domain: any) => {
   if (introInterval) clearInterval(introInterval);
-  router.push(`/welcome-trial/${domain.id}`);
+  if ((window as any).$pageTransition) {
+    await (window as any).$pageTransition.trigger(`/welcome-trial/${domain.id}`, {
+      icon: domain.icon,
+      color: domain.hexColor,
+      label: domain.name
+    });
+  } else {
+    router.push(`/welcome-trial/${domain.id}`);
+  }
 };
 
 onMounted(() => {

@@ -11,5 +11,3 @@ README.md
 electron
 *.log
 *.txt
-nginx.conf
-Dockerfile

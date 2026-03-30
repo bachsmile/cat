@@ -123,7 +123,7 @@
       </section>
 
       <!-- Panel: Detailed Interaction -->
-      <section ref="interactionPanel" class="bg-[#0a0a0f] border border-white/5 rounded-[3rem] p-1 md:p-12 shadow-3xl mb-16 relative overflow-hidden group">
+      <section ref="interactionPanel" class="bg-[#0a0a0f] border border-white/5 rounded-[3rem] p-10 md:p-20 shadow-3xl mb-16 relative overflow-hidden group">
         <!-- Inner Border Animation -->
         <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-transparent to-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"></div>
         
@@ -156,7 +156,7 @@
           </div>
 
           <!-- Right: Dynamic Interface Area -->
-          <div class="lg:col-span-8 bg-black/40 border border-white/5 rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden min-h-[500px]">
+          <div class="lg:col-span-8 bg-black/40 border border-white/5 rounded-[2.5rem] p-10 md:p-14 relative overflow-hidden min-h-[500px]">
             <Transition name="fade-slide" mode="out-in">
               <div :key="activeSubTab" class="h-full">
                 <!-- Lịch hẹn của tôi View -->
