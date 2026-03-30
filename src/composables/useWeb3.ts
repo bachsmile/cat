@@ -9,8 +9,19 @@ export function useWeb3() {
   const error = ref<string | null>(null);
 
   const fzBalance = ref<string | null>(null);
-  // Default address for local deployment (Hardhat Node)
-  const fzAddress = import.meta.env.VITE_FZ_CONTRACT_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3'; 
+  const fzAddress = ref<string>(import.meta.env.VITE_FZ_CONTRACT_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3'); 
+
+  const fetchFzAddress = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/wallet/system-config/fz_contract_address`);
+      const data = await response.json();
+      if (data && typeof data === 'string') {
+        fzAddress.value = data;
+      }
+    } catch (e) {
+      console.warn('Could not fetch FZ address from backend, using default.', e);
+    }
+  };
 
   const FZ_ABI = [
     "function balanceOf(address account) view returns (uint256)",
@@ -27,7 +38,7 @@ export function useWeb3() {
     if (!account.value || typeof (window as any).ethereum === 'undefined') return;
     try {
       const provider = new BrowserProvider((window as any).ethereum);
-      const contract = new Contract(fzAddress, FZ_ABI, provider) as any;
+      const contract = new Contract(fzAddress.value, FZ_ABI, provider) as any;
       const bal = await contract.balanceOf(account.value);
       fzBalance.value = formatEther(bal);
     } catch (e) {
@@ -39,7 +50,7 @@ export function useWeb3() {
     if (!account.value) throw new Error('Wallet not connected');
     const provider = new BrowserProvider((window as any).ethereum);
     const signer = await provider.getSigner();
-    const contract = new Contract(fzAddress, FZ_ABI, signer) as any;
+    const contract = new Contract(fzAddress.value, FZ_ABI, signer) as any;
     const tx = await contract.transfer(to, parseEther(amount.toString()));
     return await tx.wait();
   };
@@ -48,7 +59,7 @@ export function useWeb3() {
     if (!account.value) throw new Error('Wallet not connected');
     const provider = new BrowserProvider((window as any).ethereum);
     const signer = await provider.getSigner();
-    const contract = new Contract(fzAddress, FZ_ABI, signer) as any;
+    const contract = new Contract(fzAddress.value, FZ_ABI, signer) as any;
     const tx = await contract.mint(to, parseEther(amount.toString()));
     return await tx.wait();
   };
@@ -57,7 +68,7 @@ export function useWeb3() {
     if (!account.value) throw new Error('Wallet not connected');
     const provider = new BrowserProvider((window as any).ethereum);
     const signer = await provider.getSigner();
-    const contract = new Contract(fzAddress, FZ_ABI, signer) as any;
+    const contract = new Contract(fzAddress.value, FZ_ABI, signer) as any;
     const tx = await contract.burn(parseEther(amount.toString()));
     return await tx.wait();
   };
@@ -109,6 +120,7 @@ export function useWeb3() {
   };
 
   onMounted(async () => {
+    await fetchFzAddress();
     if ((window as any).ethereum) {
       initListeners();
       const provider = new BrowserProvider((window as any).ethereum);

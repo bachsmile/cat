@@ -1333,7 +1333,7 @@
                             Vốn: {{ formatNumber(tx.avgBuyPriceAtTime || 0) }}
                             {{ tx.asset === "USDT" ? "₫" : "$" }}
                           </span>
-                          <EditIcon class="w-2.5 h-2.5 text-gray-600 opacity-0 group-hover/edit:opacity-100 transition-opacity cursor-pointer" />
+                          <EditIcon class="w-2.5 h-2.5 text-gray-500 hover:text-orange-400 transition-colors cursor-pointer" />
                         </div>
                       </div>
                     </div>
@@ -1399,7 +1399,7 @@
                   </td>
                   <td class="px-8 py-5">
                     <div
-                      class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      class="flex items-center justify-end gap-2 transition-all"
                     >
                       <button
                         @click.stop="handleEdit(tx)"
@@ -3041,7 +3041,7 @@ const depositForm = ref({
 const withdrawForm = ref({
   quantity: null as number | null,
   price: null as number | null,
-  source: null as string | null,
+  platform: null as string | null,
 });
 
 const receiveForm = ref({
@@ -3719,6 +3719,7 @@ const submitWithdraw = async () => {
           total: totalAmountRec,
           avgBuyPriceAtTime: avgPrice,
           profitAmount: totalProfit,
+          source: withdrawForm.value.platform || undefined,
         });
 
         await fetchTransactions();
@@ -3734,7 +3735,7 @@ const submitWithdraw = async () => {
     }
   }
 
-  withdrawForm.value = { quantity: null, price: null, source: null };
+  withdrawForm.value = { quantity: null, price: null, platform: null };
   showWithdrawModal.value = false;
 };
 

@@ -36,36 +36,72 @@
               />
             </button>
 
-            <!-- Submenu Items (Accordion) -->
+            <!-- Submenu Items (3-Level support) -->
             <div
               v-show="expandedMenus.includes(item.name)"
-              class="mt-1 ml-4 pl-4 border-l border-white/5 space-y-1 overflow-hidden"
+              class="mt-1 ml-4 pl-4 border-l border-white/5 space-y-4 overflow-hidden py-2"
             >
-              <a
-                v-for="sub in item.children"
-                :key="sub.name"
-                href="#"
-                @click.prevent="handleMenuClick(sub.name)"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
-                :class="
-                  activeTab === sub.name
-                    ? 'text-purple-400 bg-purple-500/5'
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
-                "
-              >
-                <div
-                  v-if="activeTab === sub.name"
-                  class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
-                ></div>
-                <component
-                  v-if="sub.icon"
-                  :is="sub.icon"
-                  class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
-                />
-                <span :class="{ 'font-bold': activeTab === sub.name }">{{
-                  sub.name
-                }}</span>
-              </a>
+              <div v-for="sub in (item.children as any[])" :key="sub.name" class="space-y-2">
+                <!-- If sub has children (Sub-group) -->
+                <div v-if="sub.children" class="space-y-1">
+                  <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2 pl-4 select-none">
+                    {{ sub.name }}
+                  </p>
+                  <div class="space-y-1">
+                    <a
+                      v-for="leaf in sub.children"
+                      :key="leaf.name"
+                      href="#"
+                      @click.prevent="handleMenuClick(leaf.name)"
+                      class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
+                      :class="
+                        activeTab === leaf.name
+                          ? 'text-purple-400 bg-purple-500/5'
+                          : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
+                      "
+                    >
+                      <div
+                        v-if="activeTab === leaf.name"
+                        class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      ></div>
+                      <component
+                        v-if="leaf.icon"
+                        :is="leaf.icon"
+                        class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                      />
+                      <span :class="{ 'font-bold': activeTab === leaf.name }">{{
+                        leaf.name
+                      }}</span>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- If sub is a leaf item (Direct child) -->
+                <a
+                  v-else
+                  href="#"
+                  @click.prevent="handleMenuClick(sub.name)"
+                  class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
+                  :class="
+                    activeTab === sub.name
+                      ? 'text-purple-400 bg-purple-500/5'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
+                  "
+                >
+                  <div
+                    v-if="activeTab === sub.name"
+                    class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                  ></div>
+                  <component
+                    v-if="sub.icon"
+                    :is="sub.icon"
+                    class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                  />
+                  <span :class="{ 'font-bold': activeTab === sub.name }">{{
+                    sub.name
+                  }}</span>
+                </a>
+              </div>
             </div>
           </div>
 
@@ -94,7 +130,16 @@
         </div>
       </nav>
 
-      <div class="mt-auto pt-6 border-t border-white/5">
+      <div class="mt-auto pt-6 border-t border-white/5 space-y-2">
+        <button
+          @click="router.push('/law')" 
+          class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-teal-400 transition-colors w-full group"
+        >
+          <UserIcon
+            class="w-5 h-5 group-hover:scale-110 transition-transform"
+          />
+          <span class="font-medium">Chế độ người dùng</span>
+        </button>
         <button
           @click="logout"
           class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 transition-colors w-full group"
@@ -259,7 +304,14 @@
         </button>
       </div>
 
-      <div class="mt-auto pt-6 border-t border-white/5">
+      <div class="mt-auto pt-6 border-t border-white/5 space-y-2">
+        <button
+          @click="router.push('/law')"
+          class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-teal-400 transition-colors w-full group"
+        >
+          <UserIcon class="w-5 h-5" />
+          <span class="font-medium">Chế độ người dùng</span>
+        </button>
         <button
           @click="logout"
           class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 transition-colors w-full group"
@@ -393,7 +445,7 @@
 
       <!-- Tab Content Area -->
       <div
-        v-if="activeTab === 'Overview'"
+        v-if="route.meta.module === 'overview'"
         class="animate-in fade-in duration-300"
       >
         <!-- Stats Grid -->
@@ -512,60 +564,114 @@
         </div>
       </div>
 
-      <!-- Assets Tab Content (Container) -->
+      <!-- Assets Module Content -->
       <div
-        v-else-if="activeTab === 'Tài sản'"
+        v-else-if="route.meta.module === 'assets'"
         class="animate-in fade-in duration-300"
       >
         <AssetsContainer />
       </div>
 
-      <!-- Law Tab Content -->
+      <!-- User Management Module -->
       <div
-        v-else-if="activeTab === 'Luật'"
-        class="animate-in fade-in duration-300"
-      >
-        <LawView />
-      </div>
-
-      <!-- User Management Tab Content -->
-      <div
-        v-else-if="activeTab === 'Quản lý người dùng'"
+        v-else-if="route.meta.module === 'users'"
         class="animate-in fade-in duration-300"
       >
         <UserManagementView />
       </div>
 
-      <!-- Asset Reports Tab Content -->
+      <!-- Law Module Views -->
       <div
-        v-else-if="activeTab === 'Báo cáo tổng quan'"
+        v-else-if="route.meta.module === 'law'"
+        class="animate-in fade-in duration-300"
+      >
+        <LawView :key="route.fullPath" />
+      </div>
+
+      <!-- Retail Module View -->
+      <div
+        v-else-if="route.meta.module === 'retail'"
+        class="animate-in fade-in duration-300 h-full"
+      >
+        <RetailView :key="route.fullPath" />
+      </div>
+
+      <!-- Other Modules Placeholders -->
+      <div
+        v-else-if="['finance', 'medical', 'education', 'logistics'].includes(route.meta.module as string)"
+        class="animate-in fade-in duration-300 h-full"
+      >
+        <div class="bg-[#0a0a0f] rounded-3xl border border-white/5 p-20 text-center min-h-[500px] flex flex-col items-center justify-center">
+          <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <LayersIcon class="w-10 h-10 text-blue-400" />
+          </div>
+          <h3 class="text-xl font-bold mb-2">{{ activeTab }}</h3>
+          <p class="text-gray-500">Kênh quản trị đang được cấu hình đồng bộ...</p>
+        </div>
+      </div>
+
+      <!-- Reports Module -->
+      <div
+        v-else-if="route.meta.module === 'reports'"
         class="animate-in fade-in duration-300"
       >
         <AssetReportsView />
       </div>
 
-      <!-- System Reports Tab Content (Old ReportsView) -->
+      <!-- Performance Metrics Module -->
       <div
-        v-else-if="activeTab === 'Hiệu suất hệ thống'"
+        v-else-if="route.meta.module === 'metrics'"
         class="animate-in fade-in duration-300"
       >
         <ReportsView />
       </div>
 
-      <!-- Blockchain Explorer Content -->
+      <!-- Blockchain Explorer -->
       <div
-        v-else-if="activeTab === 'Blockchain Explorer'"
+        v-else-if="route.meta.module === 'blockchain'"
         class="animate-in fade-in duration-300"
       >
         <BlockchainView />
       </div>
 
-      <!-- Wallets Vault Content -->
+      <!-- Wallets Vault -->
       <div
-        v-else-if="activeTab === 'Wallets Vault'"
+        v-else-if="route.meta.module === 'vault'"
         class="animate-in fade-in duration-300"
       >
         <WalletsVaultView />
+      </div>
+
+      <!-- Module Management -->
+      <div
+        v-else-if="route.meta.module === 'system_modules'"
+        class="animate-in fade-in duration-300"
+      >
+        <ModuleManagementView />
+      </div>
+
+      <!-- License Management -->
+      <div
+        v-else-if="route.meta.module === 'licenses'"
+        class="animate-in fade-in duration-300"
+      >
+        <LicenseManagementView />
+      </div>
+
+      <!-- AI Playground -->
+      <div
+        v-else-if="route.meta.module === 'ai'"
+        class="animate-in fade-in duration-300"
+      >
+        <AiTestView />
+      </div>
+
+      <!-- Law View (Keep old one for compat if any) -->
+      <div
+        v-else-if="activeTab === 'Luật'"
+        class="animate-in fade-in duration-300"
+      >
+        <LawView />
       </div>
     </main>
 
@@ -596,13 +702,42 @@ import {
   Wallet as WalletIcon,
   X as XIcon,
   Zap as ZapIcon,
+  Scale as ScaleIcon,
+  LineChart as LineChartIcon,
+  Stethoscope as StethoscopeIcon,
+  BookOpen as BookOpenIcon,
+  FileText as FileTextIcon,
+  Calendar as CalendarIcon,
+  Book as BookIcon,
+  Layers as LayersIcon,
+  MessageSquare as MessageSquareIcon,
+  MessageCircle as ChatIcon,
+  GraduationCap as GraduationCapIcon,
+  Users2 as Users2Icon,
+  Store as StoreIcon,
+  Truck as TruckIcon,
+  Package as PackageIcon,
+  ShoppingBag as ShoppingBagIcon,
+  Box as BoxIcon,
+  BriefcaseBusiness as BriefcaseBusinessIcon,
+  User as UserIcon,
+  ShieldCheck as ShieldCheckIcon,
+  Sparkles as SparklesIcon,
+  Bot as BotIcon
 } from "lucide-vue-next";
-import { computed, ref } from "vue";
+
+import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import StatCard from "../../components/StatCard.vue";
 import LawView from "../law/AdminLawView.vue";
 import UserManagementView from "./UserManagementView.vue";
+import RetailView from "../retail/RetailManagementView.vue";
+import ModuleManagementView from "./ModuleManagementView.vue";
+import LicenseManagementView from "./LicenseManagementView.vue";
+import AiTestView from "./AiTestView.vue";
+
+
 
 import { useWeb3 } from "../../composables/useWeb3";
 import AssetReportsView from "./AssetReportsView.vue";
@@ -611,20 +746,21 @@ import BlockchainView from "./BlockchainView.vue";
 import ReportsView from "./ReportsView.vue";
 import WalletsVaultView from "./WalletsVaultView.vue";
 
+
 const { account, connect, isConnecting, fzBalance } = useWeb3();
 
 const isMobileMenuOpen = ref(false);
 const router = useRouter();
-const user = JSON.parse(
-  localStorage.getItem("user") || '{"email": "Guest", "role": "guest"}',
-);
+const user = ref(JSON.parse(
+  localStorage.getItem("user") || '{"email": "Guest", "role": "guest"}'
+));
 
 const logout = () => {
   localStorage.clear();
   router.push("/");
 };
 
-const expandedMenus = ref<string[]>(["Quản lý", "Báo cáo"]);
+const expandedMenus = ref<string[]>(["Hệ thống", "Quản lý", "Báo cáo"]);
 
 const toggleSubmenu = (name: string) => {
   const index = expandedMenus.value.indexOf(name);
@@ -635,7 +771,27 @@ const toggleSubmenu = (name: string) => {
   }
 };
 
-const menuItems = [
+onMounted(() => {
+  // Auto-expand parent of current active tab
+  allModules.forEach((item: any) => {
+    const isMatched = item.children && item.children.some((sub: any) => {
+      if (sub.children) {
+        return sub.children.some((leaf: any) => leaf.path === route.path);
+      }
+      return sub.path === route.path || (route.path === '/law-admin' && sub.path === '/law-admin/chat');
+    });
+
+    if (isMatched) {
+      if (!expandedMenus.value.includes(item.name)) {
+        expandedMenus.value.push(item.name);
+      }
+    }
+  });
+
+  // Also expand PHÁP LÝ by default for trial or specific roles if needed, already handled above
+});
+
+const allModules = [
   {
     name: "Overview",
     icon: LayoutDashboardIcon,
@@ -645,22 +801,163 @@ const menuItems = [
   { name: "Tài sản", icon: WalletIcon, path: "/assets", module: "assets" },
 
   {
+    name: "PHÁP LÝ",
+    icon: ScaleIcon,
+    children: [
+      {
+        name: "Dịch vụ Khách hàng",
+        children: [
+          { name: "Quản lý Lịch hẹn", icon: CalendarIcon, path: "/law-admin/appointments", module: "law" },
+          { name: "Tư vấn Trực tuyến", icon: ChatIcon, path: "/law-admin/chat", module: "law" },
+        ]
+      },
+      {
+        name: "Nhân sự & Cơ sở",
+        children: [
+          { name: "Phòng Luật & Lịch", icon: BriefcaseBusinessIcon, path: "/law-admin/offices", module: "law" },
+          { name: "Đội ngũ Luật sư", icon: UsersIcon, path: "/law-admin/lawyers", module: "law" },
+        ]
+      },
+      {
+        name: "Hồ sơ & Kiến thức",
+        children: [
+          { name: "Hồ sơ Khách hàng", icon: FileTextIcon, path: "/law-admin/applications", module: "law" },
+          { name: "Hỏi đáp Pháp luật", icon: MessageSquareIcon, path: "/law-admin/questions", module: "law" },
+          { name: "Thư viện Bài viết", icon: BookOpenIcon, path: "/law-admin/posts", module: "law" },
+        ]
+      }
+    ],
+  },
+  {
+    name: "Tài chính",
+    icon: LineChartIcon,
+    module: "finance",
+    children: [
+      { name: "Danh mục đầu tư", icon: WalletIcon, path: "/finance/portfolio", module: "finance" },
+      { name: "Thị trường AI", icon: ZapIcon, path: "/finance/markets", module: "finance" },
+      { name: "Phân tích xu hướng", icon: ActivityIcon, path: "/finance/trends", module: "finance" },
+    ],
+  },
+  {
+    name: "Y tế",
+    icon: StethoscopeIcon,
+    module: "medical",
+    children: [
+      { name: "Hồ sơ bệnh án", icon: FileTextIcon, path: "/medical/records", module: "medical" },
+      { name: "Lịch khám bệnh", icon: CalendarIcon, path: "/medical/appointments", module: "medical" },
+      { name: "Tư vấn Sức khỏe AI", icon: ActivityIcon, path: "/medical/ai-consult", module: "medical" },
+    ],
+  },
+  {
+    name: "Giáo dục",
+    icon: BookOpenIcon,
+    module: "education",
+    children: [
+      {
+        name: "Quản lý Đào tạo",
+        children: [
+          { name: "Quản lý Khóa học", icon: BookIcon, path: "/education/courses", module: "education" },
+          { name: "Bài giảng AI", icon: LayersIcon, path: "/education/lectures", module: "education" },
+          { name: "Quản lý Lớp", icon: LayersIcon, path: "/education/classes", module: "education" },
+          { name: "Quản lý Bộ môn", icon: BookOpenIcon, path: "/education/departments", module: "education" },
+        ]
+      },
+      {
+        name: "Nhân sự & Học sinh",
+        children: [
+          { name: "Quản lý Giáo viên", icon: Users2Icon, path: "/education/teachers", module: "education" },
+          { name: "Quản lý Học sinh", icon: GraduationCapIcon, path: "/education/students", module: "education" },
+          { name: "Sinh viên & Điểm", icon: ActivityIcon, path: "/education/grades", module: "education" },
+        ]
+      }
+    ],
+  },
+  {
+    name: "Kinh doanh Store",
+    icon: StoreIcon,
+    module: "retail",
+    children: [
+      {
+        name: "Quản lý Bán hàng",
+        children: [
+          { name: "Lập đơn hàng", icon: ShoppingBagIcon, path: "/retail/orders", module: "retail" },
+          { name: "Khách hàng", icon: UsersIcon, path: "/retail/customers", module: "retail" },
+          { name: "Báo cáo doanh thu", icon: LineChartIcon, path: "/retail/sales", module: "retail" },
+        ]
+      },
+      {
+        name: "Quản lý Sản phẩm",
+        children: [
+          { name: "Hàng hóa", icon: BoxIcon, path: "/retail/products", module: "retail" },
+          { name: "Kho & Tồn kho", icon: PackageIcon, path: "/retail/inventory", module: "retail" },
+        ]
+      }
+    ],
+  },
+  {
+    name: "Logistics",
+    icon: TruckIcon,
+    module: "logistics",
+    children: [
+      {
+        name: "Vận hành",
+        children: [
+          { name: "Đội xe & Tài xế", icon: UsersIcon, path: "/logistics/fleet", module: "logistics" },
+          { name: "Lộ trình giao hàng", icon: ActivityIcon, path: "/logistics/routes", module: "logistics" },
+        ]
+      },
+      {
+        name: "Kho bãi",
+        children: [
+          { name: "Nhập / Xuất kho", icon: PackageIcon, path: "/logistics/warehouse", module: "logistics" },
+          { name: "Kiểm kê", icon: FileTextIcon, path: "/logistics/audit", module: "logistics" },
+        ]
+      }
+    ],
+  },
+
+  {
+    name: "AI & Thông minh",
+    icon: SparklesIcon,
+    module: "ai_group",
+    children: [
+      { name: "AI Playground", icon: BotIcon, path: "/ai-playground", module: "ai" },
+    ],
+  },
+  {
+    name: "Hệ thống",
+
+    icon: TerminalIcon,
+    module: "system_group",
+    children: [
+      { name: "Quản lý Module", icon: ZapIcon, path: "/system/modules", module: "system_modules" },
+    ],
+  },
+  {
     name: "Quản lý",
     icon: SecurityIcon,
+    module: "admin_group",
     children: [
-      { name: "Luật", icon: SecurityIcon, path: "/law-admin", module: "law" },
       {
         name: "Quản lý người dùng",
         icon: UsersIcon,
         path: "/users",
         module: "users",
       },
+      {
+        name: "Cấp License NPM",
+        icon: ShieldCheckIcon,
+        path: "/licenses",
+        module: "licenses",
+      },
+
     ],
   },
 
   {
     name: "Báo cáo",
     icon: ActivityIcon,
+    module: "reports_group",
     children: [
       {
         name: "Báo cáo tổng quan",
@@ -679,6 +976,7 @@ const menuItems = [
   {
     name: "Cơ sở hạ tầng",
     icon: StorageIcon,
+    module: "infra_group",
     children: [
       {
         name: "Database Nodes",
@@ -702,14 +1000,58 @@ const menuItems = [
   },
 ];
 
+const menuItems = computed(() => {
+  const authorizedModules = user.value.modules || (user.value.module ? [user.value.module] : []);
+  
+  // Real Admin sees everything, Trial Manager sees limited
+  const isSuperAdmin = user.value.role === "admin";
+  
+  if (isSuperAdmin) return allModules;
+
+  // Clone and filter
+  return allModules
+    .map(item => ({ ...item, children: item.children ? [...item.children] : undefined }))
+    .filter(item => {
+      // Basic modules like overview are always allowed
+      if (item.module === "overview") return true;
+      
+      // If it has children, check if any child is authorized
+      if (item.children) {
+        const allowedChildren = item.children.filter((child: any) => {
+          if (child.children) {
+            const allowedLeafs = child.children.filter((leaf: any) => authorizedModules.includes(leaf.module));
+            if (allowedLeafs.length > 0) {
+              child.children = allowedLeafs;
+              return true;
+            }
+            return false;
+          }
+          return authorizedModules.includes(child.module);
+        });
+        
+        if (allowedChildren.length > 0) {
+          item.children = allowedChildren;
+          return true;
+        }
+        return false;
+      }
+      
+      // Individual items
+      return authorizedModules.includes(item.module as any);
+    });
+});
+
 const findMenuItem = (nameOrModule: string) => {
-  for (const item of menuItems) {
-    if (item.name === nameOrModule || item.module === nameOrModule) return item;
+  for (const item of allModules) {
+    if (item.name === nameOrModule || (item as any).module === nameOrModule) return item;
     if (item.children) {
-      const sub = item.children.find(
-        (s) => s.name === nameOrModule || s.module === nameOrModule,
-      );
-      if (sub) return sub;
+      for (const sub of item.children) {
+        if (sub.name === nameOrModule || (sub as any).module === nameOrModule) return sub;
+        if ((sub as any).children) {
+           const leaf = (sub as any).children.find((l: any) => l.name === nameOrModule || l.module === nameOrModule);
+           if (leaf) return leaf;
+        }
+      }
     }
   }
   return null;
@@ -717,6 +1059,25 @@ const findMenuItem = (nameOrModule: string) => {
 
 const route = useRoute();
 const activeTab = computed(() => {
+  const currentPath = route.path;
+  
+  // First try exact path match for sub-items
+  for (const item of allModules) {
+    if ((item as any).path === currentPath) return item.name;
+    if (item.children) {
+      for (const sub of item.children) {
+        if ((sub as any).path === currentPath) return sub.name;
+        if ((sub as any).children) {
+           const leaf = (sub as any).children.find((l: any) => l.path === currentPath);
+           if (leaf) return leaf.name;
+        }
+      }
+    }
+  }
+
+  // Special handle for root /law-admin which defaults to chat
+  if (currentPath === '/law-admin') return "Tư vấn Trực tuyến";
+
   const currentModule = route.meta.module as string;
   const item = findMenuItem(currentModule);
   return item ? item.name : "Overview";

@@ -10,6 +10,9 @@ export interface User {
   status: 'active' | 'suspended';
   joinedDate?: string;
   createdAt?: string;
+  modules?: string[];
+  subscriptionPlan?: string;
+  subscriptionExpiresAt?: string;
 }
 
 export const userApi = {

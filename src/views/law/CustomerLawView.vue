@@ -17,11 +17,28 @@
         </div>
         
         <div class="flex items-center gap-8">
-          <div class="hidden md:flex items-center gap-6">
-            <a v-for="link in navLinks" :key="link.name" href="#" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">{{ link.name }}</a>
-          </div>
-          <button @click="router.push('/home')" class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all">
+            <div class="hidden md:flex items-center gap-10">
+              <a 
+                v-for="link in navLinks" 
+                :key="link.name" 
+                href="#"
+                @click.prevent="link.handler()"
+                class="text-xs font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-colors"
+              >
+                {{ link.name }}
+              </a>
+            </div>
+          <button @click="router.push('/home')" class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all" title="Trang chủ">
             <HomeIcon class="w-5 h-5 text-gray-400" />
+          </button>
+          
+          <button 
+            v-if="isAdminOrLawyer"
+            @click="router.push('/law-admin')" 
+            class="flex items-center gap-2 px-4 py-2.5 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white rounded-xl border border-blue-500/20 hover:border-blue-500 transition-all font-black text-[10px] uppercase tracking-widest shadow-lg hover:shadow-blue-500/40"
+          >
+            <ShieldCheckIcon class="w-4 h-4" />
+            Admin Mode
           </button>
         </div>
       </div>
@@ -106,7 +123,7 @@
       </section>
 
       <!-- Panel: Detailed Interaction -->
-      <section class="bg-[#0a0a0f] border border-white/5 rounded-[3rem] p-1 md:p-12 shadow-3xl mb-16 relative overflow-hidden group">
+      <section ref="interactionPanel" class="bg-[#0a0a0f] border border-white/5 rounded-[3rem] p-1 md:p-12 shadow-3xl mb-16 relative overflow-hidden group">
         <!-- Inner Border Animation -->
         <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-transparent to-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"></div>
         
@@ -224,8 +241,9 @@
 
                   <div class="space-y-6">
                     <div class="space-y-2">
-                      <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Chủ đề cần tư vấn</label>
+                      <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Tiêu đề vướng mắc</label>
                       <input 
+                        id="question-title"
                         v-model="newQuestion.title"
                         placeholder="Ví dụ: Thủ tục tranh chấp thừa kế tài sản..."
                         class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-600 focus:bg-white/[0.08]"
@@ -254,6 +272,33 @@
                       >
                         XÁC NHẬN GỬI
                       </button>
+                    </div>
+                  </div>
+
+                  <!-- My Questions History Section -->
+                  <div v-if="myQuestions.length > 0" class="pt-10 border-t border-white/5 space-y-6">
+                    <h4 class="text-sm font-black uppercase tracking-widest text-gray-400">Yêu cầu đã gửi của tôi</h4>
+                    <div class="space-y-4">
+                      <div v-for="q in myQuestions" :key="q.id" class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-white/[0.04] transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                          <h5 class="text-sm font-bold text-white">{{ q.title }}</h5>
+                          <span 
+                            class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest"
+                            :class="q.status === 'Answered' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'"
+                          >
+                            {{ q.status === 'Answered' ? 'Đã phản hồi' : 'Đang xử lý' }}
+                          </span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 line-clamp-2 mb-4 leading-relaxed">{{ q.content }}</p>
+                        
+                        <!-- Admin Answer area if exists -->
+                        <div v-if="q.status === 'Answered' && q.answer" class="mt-4 p-4 bg-blue-500/5 border-l-2 border-blue-500 rounded-r-xl">
+                          <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                             <ZapIcon class="w-3 h-3" /> Phản hồi từ Luật sư
+                          </p>
+                          <p class="text-xs text-gray-300 italic leading-relaxed">{{ q.answer }}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -711,6 +756,17 @@
             </div>
           </div>
         </div>
+
+        <div class="flex justify-center pt-10 pb-20">
+          <button 
+            @click="goToAsk()"
+            class="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-4 group shadow-xl"
+          >
+            BẠN KHÔNG TÌM THẤY CÂU TRẢ LỜI? 
+            <span class="text-blue-400 group-hover:text-white transition-colors">GỬI CÂU HỎI MỚI NGAY</span>
+            <ArrowRightIcon class="w-4 h-4 text-blue-400 group-hover:translate-x-2 transition-transform" />
+          </button>
+        </div>
       </section>
     </main>
 
@@ -751,12 +807,41 @@ import {
   Send as SendIcon,
   XCircle as XCircleIcon,
   Users as UsersIcon,
+  ShieldCheck as ShieldCheckIcon,
 } from 'lucide-vue-next';
 import { lawApi } from '../../api/law';
 import { io } from 'socket.io-client';
 
 const router = useRouter();
 const activeSubTab = ref('ask');
+
+const currentUser = computed(() => {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) return null;
+  try {
+    return JSON.parse(userStr);
+  } catch {
+    return null;
+  }
+});
+
+const isAdminOrLawyer = computed(() => {
+  if (!currentUser.value) return false;
+  // Use lowercase for standard role checking
+  const roles = (currentUser.value.roles || [currentUser.value.role] || []).map((r: string) => r?.toLowerCase());
+  return roles.includes('admin') || roles.includes('lawyer');
+});
+
+const interactionPanel = ref<HTMLElement | null>(null);
+
+import { nextTick } from 'vue';
+const goToAsk = () => {
+  activeSubTab.value = 'ask';
+  nextTick(() => {
+    interactionPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('question-title')?.focus();
+  });
+};
 
 const showModal = ref(false);
 const modalConfig = ref({
@@ -1272,10 +1357,10 @@ const performBooking = async () => {
 };
 
 const navLinks = [
-  { name: "Chuyên gia", link: "#" },
-  { name: "Thư viện", link: "#" },
-  { name: "Quy trình", link: "#" },
-  { name: "Biểu phí", link: "#" },
+  { name: "Yêu cầu", handler: () => goToAsk() },
+  { name: "Chuyên gia", handler: () => { activeSubTab.value = 'schedule'; interactionPanel.value?.scrollIntoView({ behavior: 'smooth' }); } },
+  { name: "Thư viện", handler: () => { window.scrollTo({ top: 1500, behavior: 'smooth' }); } },
+  { name: "Liên hệ", handler: () => { activeSubTab.value = 'chat'; interactionPanel.value?.scrollIntoView({ behavior: 'smooth' }); } },
 ];
 
 const mainActions = [
@@ -1286,7 +1371,10 @@ const mainActions = [
     iconBg: "bg-blue-600/10",
     iconColor: "text-blue-400",
     glowClass: "from-blue-600/20 to-transparent",
-    handler: () => { activeSubTab.value = 'chat' }
+    handler: () => { 
+      activeSubTab.value = 'chat';
+      interactionPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   },
   {
     title: "Gửi Câu hỏi",
@@ -1295,7 +1383,10 @@ const mainActions = [
     iconBg: "bg-indigo-600/10",
     iconColor: "text-indigo-400",
     glowClass: "from-indigo-600/20 to-transparent",
-    handler: () => { activeSubTab.value = 'ask' }
+    handler: () => { 
+      activeSubTab.value = 'ask';
+      interactionPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   },
   {
     title: "Lịch hẹn của tôi",
@@ -1304,12 +1395,15 @@ const mainActions = [
     iconBg: "bg-teal-600/10",
     iconColor: "text-teal-400",
     glowClass: "from-teal-600/20 to-transparent",
-    handler: () => { activeSubTab.value = 'my-appointments' }
+    handler: () => { 
+      activeSubTab.value = 'my-appointments';
+      interactionPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   },
 ];
 
 const interactionTabs = [
-  { id: 'ask', label: 'Gửi hồ sơ', sub: 'Nhận tư vấn văn bản', icon: MessageSquareIcon },
+  { id: 'ask', label: 'Hỏi đáp & Hồ sơ', sub: 'Gửi câu hỏi & yêu cầu', icon: MessageSquareIcon },
   { id: 'chat', label: 'Chat nhanh', sub: 'Luật sư trực tuyến', icon: ChatIcon },
   { id: 'schedule', label: 'Lịch tư vấn', sub: 'Gặp mặt chuyên sâu', icon: CalendarIcon },
   { id: 'my-appointments', label: 'Lịch của tôi', sub: 'Quản lý lịch hẹn', icon: ActivityIcon },
@@ -1338,19 +1432,80 @@ const questions = ref([
   }
 ]);
 
-const submitQuestion = () => {
-  if (!newQuestion.value.title || !newQuestion.value.content) return;
+const fetchMyQuestions = async () => {
+  try {
+    const data = await lawApi.getMyQuestions();
+    // Prepend real questions to the reference list or show in a separate section
+    // For now, let's update the 'questions' ref used for reference to be the combination
+    // and maybe add a 'myQuestions' ref if we want a separate view.
+    // The user request says "người dùng có thể tạo bài viết ở view người dùng and admin quản lý"
+    // I'll update the 'questions' list to show public/answered questions, 
+    // and maybe a dedicated list for user's own questions.
+    myQuestions.value = data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const myQuestions = ref<any[]>([]);
+
+const submitQuestion = async () => {
+  if (!newQuestion.value.title || !newQuestion.value.content) {
+    triggerModal({
+      title: "Thông tin trống",
+      message: "Vui lòng điền đầy đủ tiêu đề và nội dung yêu cầu của bạn.",
+      icon: XCircleIcon,
+      variant: 'danger'
+    });
+    return;
+  }
   
-  questions.value.unshift({
+  const res = await lawApi.createQuestion({
     title: newQuestion.value.title,
     content: newQuestion.value.content,
-    date: new Date().toLocaleDateString('en-GB').replace(/\//g, '-'),
-    category: "Yêu Cầu Mới",
+    category: "Yêu Cầu Mới"
   });
-  
-  newQuestion.value = { title: '', content: '' };
-  alert("Yêu cầu của bạn đã được gửi thành công!");
+
+  if (res.status === 200 || res.status === 201) {
+    triggerModal({
+      title: "Thành công",
+      message: "Yêu cầu của bạn đã được gửi tới đội ngũ luật sư. Chúng tôi sẽ phản hồi sớm nhất có thể.",
+      icon: ZapIcon,
+      variant: 'teal'
+    });
+    newQuestion.value = { title: '', content: '' };
+    fetchMyQuestions();
+  } else {
+    triggerModal({
+      title: "Lỗi",
+      message: res.message || "Không thể gửi yêu cầu.",
+      icon: XCircleIcon,
+      variant: 'danger'
+    });
+  }
 };
+
+const fetchPublicQuestions = async () => {
+  try {
+    const data = await lawApi.getQuestions();
+    // Show only answered questions to the public
+    questions.value = data.filter((q: any) => q.status === 'Answered').map((q: any) => ({
+      title: q.title,
+      content: q.content,
+      date: new Date(q.createdAt).toLocaleDateString('vi-VN'),
+      category: q.category || "Tư vấn",
+      answer: q.answer
+    }));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+import { onMounted } from 'vue';
+onMounted(() => {
+  fetchMyQuestions();
+  fetchPublicQuestions();
+});
 </script>
 
 <style scoped>

@@ -1,6 +1,7 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/auth/Login.vue";
 import Register from "../views/auth/Register.vue";
+import TrialWelcome from "../views/auth/TrialWelcome.vue";
 import Dashboard from "../views/admin/Dashboard.vue";
 import CustomerHome from "../views/customer/CustomerHome.vue";
 import CustomerLawView from "../views/law/CustomerLawView.vue";
@@ -8,6 +9,7 @@ import CustomerLawView from "../views/law/CustomerLawView.vue";
 const routes = [
   { path: "/", name: "Login", component: Login },
   { path: "/register", name: "Register", component: Register },
+  { path: "/welcome-trial", name: "TrialWelcome", component: TrialWelcome },
   { 
     path: "/dashboard", 
     name: "AdminOverview", 
@@ -31,6 +33,36 @@ const routes = [
     name: "AdminUsers", 
     component: Dashboard,
     meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "users" },
+  },
+  { 
+    path: "/finance/:tab?", 
+    name: "AdminFinance", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "finance" },
+  },
+  { 
+    path: "/medical/:tab?", 
+    name: "AdminMedical", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "medical" },
+  },
+  { 
+    path: "/education/:tab?", 
+    name: "AdminEducation", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "education" },
+  },
+  { 
+    path: "/retail/:tab?", 
+    name: "AdminRetail", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "retail" },
+  },
+  { 
+    path: "/logistics/:tab?", 
+    name: "AdminLogistics", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "logistics" },
   },
   { 
     path: "/reports", 
@@ -62,6 +94,24 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"], module: "vault" },
   },
+  { 
+    path: "/ai-playground", 
+    name: "AdminAi", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin"], module: "ai" },
+  },
+  { 
+    path: "/licenses", 
+    name: "AdminLicenses", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin"], module: "licenses" },
+  },
+  { 
+    path: "/system/modules", 
+    name: "AdminModules", 
+    component: Dashboard,
+    meta: { requiresAuth: true, role: ["admin"], module: "system_modules" },
+  },
 
   { 
     path: "/admin", 
@@ -79,10 +129,22 @@ const routes = [
     component: CustomerLawView,
     meta: { requiresAuth: true, role: ['user', 'guest', 'admin', 'manager', 'lawyer'] } 
   },
+  {
+    path: "/law-admin/templates/create",
+    name: "LawTemplateCreate",
+    component: () => import("../views/law/LawTemplateEditorView.vue"),
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"] }
+  },
+  {
+    path: "/law-admin/templates/:id/edit",
+    name: "LawTemplateEdit",
+    component: () => import("../views/law/LawTemplateEditorView.vue"),
+    meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"] }
+  }
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 
@@ -108,9 +170,28 @@ router.beforeEach((to, _from, next) => {
     if (user && ["user", "guest"].includes(user.role)) {
       next({ name: "CustomerHome" });
     } else if (user && ["admin", "moderator", "manager", "lawyer"].includes(user.role)) {
-      next({ name: "Dashboard" });
+      next({ name: "AdminOverview" });
     } else {
       next({ name: "Login" });
+    }
+  } else if (
+    to.meta.module &&
+    user &&
+    to.meta.module !== "overview" // Allow overview for everyone
+  ) {
+    // Multi-module Domain restriction
+    const authorizedModules = user.modules || (user.module ? [user.module] : []);
+    const isAuthorized = user.role === "admin" || authorizedModules.includes(to.meta.module);
+    
+    if (!isAuthorized) {
+      // Redirect to the first authorized module if available
+      if (authorizedModules.includes("law")) {
+        next({ name: "AdminLaw" });
+      } else {
+        next({ name: "AdminOverview" });
+      }
+    } else {
+      next();
     }
   } else {
     next();

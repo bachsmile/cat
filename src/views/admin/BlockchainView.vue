@@ -80,18 +80,22 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-black/20 rounded-xl border border-white/5">
-              <span class="text-xs text-slate-500 block mb-1"
+              <span class="text-xs text-slate-500 block mb-2"
                 >Địa chỉ (Contract Address)</span
               >
-              <div class="flex items-center justify-between">
-                <span class="font-mono text-purple-300 text-sm truncate mr-2">{{
-                  fzAddress
-                }}</span>
+              <div class="flex gap-2">
+                <input
+                  v-model="newFzAddress"
+                  type="text"
+                  placeholder="0x..."
+                  class="flex-1 bg-black/40 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-purple-500 transition-colors"
+                />
                 <button
-                  @click="copy(fzAddress)"
-                  class="text-xs hover:text-white transition-colors"
+                  @click="updateFzAddress"
+                  :disabled="updatingAddress"
+                  class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-all"
                 >
-                  📄
+                  {{ updatingAddress ? '...' : 'Cập nhật' }}
                 </button>
               </div>
             </div>
@@ -367,6 +371,36 @@ const transferTo = ref("");
 const transferAmount = ref("");
 const burnAmount = ref("");
 const loading = ref(false);
+const newFzAddress = ref(fzAddress.value);
+const updatingAddress = ref(false);
+
+const updateFzAddress = async () => {
+  if (!newFzAddress.value || newFzAddress.value.length < 42) return;
+  updatingAddress.value = true;
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/wallet/system-config`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ key: 'fz_contract_address', value: newFzAddress.value })
+    });
+    
+    if (response.ok) {
+      alert("Đã cập nhật địa chỉ Token hệ thống!");
+      window.location.reload(); // Reload to pick up new address everywhere
+    } else {
+      const err = await response.json();
+      alert("Lỗi: " + err.message);
+    }
+  } catch (e: any) {
+    alert("Lỗi kết nối: " + e.message);
+  } finally {
+    updatingAddress.value = false;
+  }
+};
 
 const truncateAddress = (addr: string) => {
   return addr.slice(0, 6) + "..." + addr.slice(-4);
@@ -425,8 +459,4 @@ const handleTransfer = async () => {
   }
 };
 
-const copy = (text: string) => {
-  navigator.clipboard.writeText(text);
-  alert("Đã copy: " + text);
-};
 </script>

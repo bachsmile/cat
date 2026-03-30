@@ -181,23 +181,7 @@ const handleLogin = async () => {
 };
 
 const handleTrial = async () => {
-  loading.value = true;
-  error.value = "";
-
-  const result = await authApi.trial();
-
-  if (result.status === 200 || result.status === 201) {
-    saveAuth(result.data);
-    const userRole = result.data.user.role;
-    if (["admin", "moderator", "lawyer"].includes(userRole)) {
-      router.push("/dashboard");
-    } else {
-      router.push("/home");
-    }
-  } else {
-    error.value = result.message || "Trial failed";
-  }
-  loading.value = false;
+  router.push('/welcome-trial');
 };
 
 const saveAuth = (data: any) => {

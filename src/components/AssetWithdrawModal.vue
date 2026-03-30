@@ -105,9 +105,55 @@
           </p>
         </div>
 
+        <div>
+          <label
+            class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
+            >Nơi Rút Về</label
+          >
+          <select
+            :value="formData.platform"
+            @change="(e: any) => handleInput('platform', e.target.value)"
+            required
+            class="w-full bg-[#050508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+          >
+            <option :value="null" disabled>-- Chọn nơi rút về --</option>
+            <optgroup label="Sàn Giao Dịch">
+              <option value="Binance">Binance</option>
+              <option value="OKX">OKX</option>
+              <option value="MEXC">MEXC</option>
+              <option value="Bybit">Bybit</option>
+              <option value="Gate.io">Gate.io</option>
+              <option value="Bitget">Bitget</option>
+              <option value="HTX">HTX (Huobi)</option>
+              <option value="KuCoin">KuCoin</option>
+            </optgroup>
+            <optgroup label="Ví Điện Tử">
+              <option value="Momo">Momo</option>
+              <option value="ZaloPay">ZaloPay</option>
+              <option value="ViettelMoney">Viettel Money</option>
+              <option value="ShopeePay">ShopeePay</option>
+            </optgroup>
+            <optgroup label="Ngân Hàng">
+              <option value="TPBank">TPBank</option>
+              <option value="VietcomBank">VietcomBank</option>
+              <option value="Techcombank">Techcombank</option>
+              <option value="VPBank">VPBank</option>
+              <option value="MBBank">MB Bank</option>
+              <option value="ACB">ACB</option>
+              <option value="BIDV">BIDV</option>
+              <option value="Agribank">Agribank</option>
+            </optgroup>
+            <optgroup label="Khác">
+              <option value="Cash">Tiền Mặt</option>
+              <option value="Other">Khác</option>
+            </optgroup>
+          </select>
+        </div>
+
         <button
           type="submit"
-          class="w-full py-4 mt-8 bg-orange-600 hover:bg-orange-500 rounded-xl text-white font-bold transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+          :disabled="!formData.quantity || !formData.price || !formData.platform"
+          class="w-full py-4 mt-8 bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
         >
           Xác Nhận Rút
         </button>
@@ -127,7 +173,11 @@ import { getUsdtVndP2pPrice } from "../api/market";
 
 const props = defineProps<{
   selectedAsset: string | null;
-  formData: { quantity: number | null; price: number | null };
+  formData: {
+    quantity: number | null;
+    price: number | null;
+    platform: string | null;
+  };
   totalAmount: number;
   availableBalance: number;
 }>();
@@ -158,7 +208,18 @@ watch(
   },
 );
 
-const handleInput = (field: "quantity" | "price", value: string) => {
+const handleInput = (
+  field: "quantity" | "price" | "platform",
+  value: string,
+) => {
+  if (field === "platform") {
+    emit("update:formData", {
+      ...props.formData,
+      platform: value,
+    });
+    return;
+  }
+
   const normalizedValue = value.replace(",", ".");
 
   if (field === "quantity") displayQuantity.value = normalizedValue;

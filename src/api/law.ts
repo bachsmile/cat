@@ -195,4 +195,166 @@ export const lawApi = {
       };
     }
   },
+
+  // Submissions (Submitted by users)
+  getSubmissions: async () => {
+    try {
+      const response = await api.get("/law/submissions");
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch submissions:", error);
+      return [];
+    }
+  },
+
+  updateSubmissionStatus: async (id: string, data: { status: string; adminNotes?: string }) => {
+    try {
+      const response = await api.patch(`/law/submissions/${id}/status`, data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to update submission status",
+      };
+    }
+  },
+
+  deleteSubmission: async (id: string) => {
+    try {
+      const response = await api.delete(`/law/submissions/${id}`);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to delete submission",
+      };
+    }
+  },
+
+  // Integration with Advanced Law Scheduler
+  generateSchedule: async (data: any) => {
+    try {
+      const response = await api.post("/law/schedule/generate", data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to generate schedule",
+      };
+    }
+  },
+
+  // Law Articles (Library)
+  getArticles: async () => {
+    try {
+      const response = await api.get("/law/articles");
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch articles:", error);
+      return [];
+    }
+  },
+
+  getArticle: async (id: string) => {
+    try {
+      const response = await api.get(`/law/articles/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch article:", error);
+      return null;
+    }
+  },
+
+  createArticle: async (data: any) => {
+    try {
+      const response = await api.post("/law/articles", data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to create article",
+      };
+    }
+  },
+
+  updateArticle: async (id: string, data: any) => {
+    try {
+      const response = await api.patch(`/law/articles/${id}`, data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to update article",
+      };
+    }
+  },
+
+  deleteArticle: async (id: string) => {
+    try {
+      const response = await api.delete(`/law/articles/${id}`);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to delete article",
+      };
+    }
+  },
+
+  // Law Questions (Q&A)
+  getQuestions: async () => {
+    try {
+      const response = await api.get("/law/questions");
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch questions:", error);
+      return [];
+    }
+  },
+
+  getMyQuestions: async () => {
+    try {
+      const response = await api.get("/law/questions/my");
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch my questions:", error);
+      return [];
+    }
+  },
+
+  createQuestion: async (data: any) => {
+    try {
+      const response = await api.post("/law/questions", data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to submit question",
+      };
+    }
+  },
+
+  answerQuestion: async (id: string, data: { answer: string }) => {
+    try {
+      const response = await api.patch(`/law/questions/${id}/answer`, data);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to answer question",
+      };
+    }
+  },
+
+  deleteQuestion: async (id: string) => {
+    try {
+      const response = await api.delete(`/law/questions/${id}`);
+      return { status: response.status, data: response.data };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Failed to delete question",
+      };
+    }
+  },
 };

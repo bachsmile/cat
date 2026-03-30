@@ -11,13 +11,14 @@
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
     "electron:build": "vue-tsc -b && vite build && electron-builder",
     "electron:preview": "electron .",
-  "clean": "rimraf node_modules dist"
+    "clean": "rimraf node_modules dist"
   },
   "dependencies": {
     "axios": "^1.13.6",
     "ethers": "^6.16.0",
+    "glass-studio-ui-pro": "^0.1.18",
+    "gsap": "^3.14.2",
     "html2pdf.js": "^0.14.0",
-    "lucide-vue-next": "^0.577.0",
     "mammoth": "^1.12.0",
     "pdfjs-dist": "^5.5.207",
     "quill": "^2.0.3",
