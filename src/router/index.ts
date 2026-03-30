@@ -10,6 +10,12 @@ const routes = [
   { path: "/", name: "Login", component: Login },
   { path: "/register", name: "Register", component: Register },
   { path: "/welcome-trial", name: "TrialWelcome", component: TrialWelcome },
+  { path: "/welcome-trial/law", name: "LawTrial", component: () => import("../views/law/LawTrial.vue") },
+  { path: "/welcome-trial/finance", name: "FinanceTrial", component: () => import("../views/finance/FinanceTrial.vue") },
+  { path: "/welcome-trial/medical", name: "MedicalTrial", component: () => import("../views/medical/MedicalTrial.vue") },
+  { path: "/welcome-trial/education", name: "EducationTrial", component: () => import("../views/education/EducationTrial.vue") },
+  { path: "/welcome-trial/retail", name: "RetailTrial", component: () => import("../views/retail/RetailTrial.vue") },
+  { path: "/welcome-trial/logistics", name: "LogisticsTrial", component: () => import("../views/logistics/LogisticsTrial.vue") },
   { 
     path: "/dashboard", 
     name: "AdminOverview", 
