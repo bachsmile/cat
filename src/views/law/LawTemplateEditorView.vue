@@ -257,7 +257,7 @@
                       }"
                       class="w-full h-full border-none focus:ring-0 text-gray-900 leading-[28px] resize-none placeholder:text-gray-200 scrollbar-hide py-1 transition-all"
                       @input="onContentInput(pIdx, $event)"
-                      @keydown="handleKeyDown(pIdx, $event)"
+                      @keydown="handleKeyDown($event)"
                       @mousedown="handleEditorMouseDown"
                       @mousemove="handleEditorMouseMove"
                       v-safe-html="page.content"
@@ -328,14 +328,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // Remove unused icons if any
 import { lawApi } from "../../api/law";
-import LawStructureBuilderModal from "./components/LawStructureBuilderModal.vue";
-import LawEditorToolbar from "./components/LawEditorToolbar.vue";
-import LawEditorSidebar from "./components/LawEditorSidebar.vue";
 import LawAlignModal from "./components/LawAlignModal.vue";
+import LawEditorSidebar from "./components/LawEditorSidebar.vue";
+import LawEditorToolbar from "./components/LawEditorToolbar.vue";
+import LawStructureBuilderModal from "./components/LawStructureBuilderModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -396,12 +396,7 @@ const getTextSegmentWidth = (text: string, font: string) => {
 
 const generateFromBuilder = async () => {
   let overallNoteIndex = 0;
-  const A4_HEIGHT_PX = 1123;
-  const maxHeight =
-    A4_HEIGHT_PX -
-    pageSetup.value.marginTop -
-    pageSetup.value.marginBottom -
-    40;
+  // const A4_HEIGHT_PX = 1123;
   const A4_WIDTH_PX = 794;
   const SAFE_BUFFER = 20;
   const availableWidth =
@@ -429,10 +424,9 @@ const generateFromBuilder = async () => {
   // Get existing height of active page
   const ghost = document.createElement("div");
   ghost.style.width = `${availableWidth}px`;
-  ghost.innerHTML = pagedData.value[currentPageIdx].content;
+  ghost.innerHTML = pagedData.value[currentPageIdx]?.content || "";
   tempDiv.innerHTML = "";
   tempDiv.appendChild(ghost);
-  let currentAccumulatedHeight = ghost.offsetHeight;
   let listCounter = 0;
 
   for (const rowObj of builderData.value.content) {
@@ -695,8 +689,8 @@ const wordCount = computed(() => {
   );
 });
 
-const getAvailableHeight = () =>
-  1123 - pageSetup.value.marginTop - pageSetup.value.marginBottom;
+// const getAvailableHeight = () =>
+//   1123 - pageSetup.value.marginTop - pageSetup.value.marginBottom;
 
 const onContentInput = (idx: number, e: any) => {
   const el = e.target as HTMLElement;
@@ -706,12 +700,12 @@ const onContentInput = (idx: number, e: any) => {
   }
 };
 
-const balancePages = async (startIdx: number) => {
-  // Disabled as per user request: "không phân trang nữa trên 1 tờ giấy dài"
-  return;
-};
+// const balancePages = async (startIdx: number) => {
+//   // Disabled as per user request: "không phân trang nữa trên 1 tờ giấy dài"
+//   return;
+// };
 
-const handleKeyDown = (idx: number, e: KeyboardEvent) => {
+const handleKeyDown = (e: KeyboardEvent) => {
   const el = e.target as HTMLElement;
   if (!el) return;
   // Disabled complex pagination jumping since there is only 1 page now
@@ -798,8 +792,8 @@ const stopTableResize = () => {
     // Sync back to pagedData
     const pIdx = activePageIndex.value;
     const editorEl = document.getElementById("editor-p-" + pIdx);
-    if (editorEl) {
-      pagedData.value[pIdx].content = editorEl.innerHTML;
+    if (editorEl && pagedData.value[pIdx]) {
+      // pagedData.value[pIdx].content = editorEl.innerHTML;
     }
   }
 
@@ -926,15 +920,30 @@ const fetchData = async () => {
 const insertPlaceholderAtActivePage = (key: string) => {
   if (!key) return;
   const idx = activePageIndex.value;
-  const el = document.getElementById(
-    "editor-p-" + idx,
-  ) as HTMLTextAreaElement | null;
-  const page = pagedData.value[idx];
-  if (!el || !page) return;
-  const start = el.selectionStart || 0;
-  const end = el.selectionEnd || 0;
-  const text = page.content;
-  page.content = text.substring(0, start) + `{{${key}}}` + text.substring(end);
+  const editorEl = document.getElementById("editor-p-" + idx);
+  if (!editorEl) return;
+
+  // Ensure editor is focused
+  editorEl.focus();
+
+  // Premium insertion using Range API
+  const sel = window.getSelection();
+  if (sel && sel.getRangeAt && sel.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    const textNode = document.createTextNode(`{{${key}}}`);
+    range.insertNode(textNode);
+
+    // Move cursor after the inserted text
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else {
+    // Fallback: Append at the end
+    const page = pagedData.value[idx];
+    if (page) page.content += `{{${key}}}`;
+  }
 };
 
 const insertTable = (dims?: { rows: number; cols: number }) => {
@@ -973,9 +982,9 @@ const insertTable = (dims?: { rows: number; cols: number }) => {
 
 const handleSave = async () => {
   if (!form.value.title) {
-     const t = prompt("Nhập tiêu đề cho mẫu đơn:", "Mẫu đơn mới");
-     if (!t) return;
-     form.value.title = t;
+    const t = prompt("Nhập tiêu đề cho mẫu đơn:", "Mẫu đơn mới");
+    if (!t) return;
+    form.value.title = t;
   }
   const id = route.params.id;
   form.value.documentBody = pagedData.value.map((p) => p.content).join("\n");

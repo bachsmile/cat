@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import CmFilters from "glass-studio-ui-pro";
 import "glass-studio-ui-pro/style.css";
@@ -29,7 +29,7 @@ const isOverlayingOnboarding = ref(false);
 const isForceHidden = ref(false);
 const route = useRoute();
 
-const checkOnboarding = (isInitial: boolean = false) => {
+const checkOnboarding = () => {
   const rawUser = localStorage.getItem("user");
   if (!rawUser) {
     isForceHidden.value = false;
@@ -90,7 +90,7 @@ watch(() => route.path, () => {
 }, { immediate: true });
 
 // Run once immediately in setup context
-checkOnboarding(true);
+checkOnboarding();
 </script>
 
 <style>

@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef, nextTick } from "vue";
+import { ref, onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { Terminal as TerminalIcon } from "lucide-vue-next";
 

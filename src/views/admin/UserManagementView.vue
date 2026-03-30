@@ -623,7 +623,7 @@ const openModal = (u?: User) => {
       status: (u.status as any) || "active",
       modules: (u.modules as string[]) || [],
       subscriptionPlan: (u.subscriptionPlan as string) || "none",
-      subscriptionExpiresAt: u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).toISOString().split('T')[0] : ""
+      subscriptionExpiresAt: u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).toISOString().substring(0, 10) : ""
     };
   } else {
     isEditing.value = false;
