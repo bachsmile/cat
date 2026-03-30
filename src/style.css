@@ -14,3 +14,26 @@ body {
   width: 100%;
   min-height: 100vh;
 }
+
+.custom-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.2);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.custom-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.4);
+}

@@ -15,7 +15,7 @@
         <span class="text-xl font-bold tracking-tight">Finzo</span>
       </div>
 
-      <nav class="flex-1 space-y-2">
+      <nav class="flex-1 space-y-2 overflow-y-auto pr-2 custom-sidebar-scroll">
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <!-- Main Menu Item -->
           <div v-if="item.children" class="flex flex-col">
@@ -181,7 +181,7 @@
         </button>
       </div>
 
-      <nav class="flex-1 space-y-2">
+      <nav class="flex-1 space-y-2 overflow-y-auto pr-2 custom-sidebar-scroll">
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <div v-if="item.children" class="flex flex-col">
             <button
