@@ -357,7 +357,7 @@ const handleCreate = async () => {
 const openRenewModal = (license: License) => {
   selectedLicense.value = license;
   selectedOption.value = '1m';
-  setRenewOption(renewOptions[2]); // Default to 1 month (index 2 in the new array)
+  setRenewOption(renewOptions[2]!); // Default to 1 month (index 2 in the new array)
   showRenewModal.value = true;
 };
 
