@@ -35,4 +35,12 @@ export const licenseApi = {
     const response = await api.post("/license/npm", { licenseKey });
     return response.data;
   },
+
+  /**
+   * Cập nhật thông tin license (gia hạn date, metadata...)
+   */
+  update: async (id: string, data: { expiresAt?: Date; metadata?: string; isActive?: boolean }) => {
+    const response = await api.patch<License>(`/license/${id}`, data);
+    return response.data;
+  },
 };

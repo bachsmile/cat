@@ -177,7 +177,7 @@
               :class="
                 selectedProduct.id === p.id
                   ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-500/20'
-                  : 'bg-[#0a0a0f] border-white/5 hover:border-white/10'
+                  : 'glass-panel border-white/5 hover:border-white/10'
               "
             >
               <!-- Selection Highlight (Vertical bar) -->
@@ -251,7 +251,7 @@
         <div class="xl:col-span-8 space-y-8">
           <div
             v-if="selectedProduct"
-            class="bg-[#0a0a0f] border border-white/5 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden flex flex-col justify-center items-center text-center animate-in zoom-in duration-500"
+            class="glass-panel rounded-[3rem] p-10 shadow-2xl relative overflow-hidden flex flex-col justify-center items-center text-center animate-in zoom-in duration-500"
           >
             <!-- Grid Accent -->
             <div
@@ -405,7 +405,7 @@
           <!-- Multi-tab feature placeholders -->
           <div
             v-else
-            class="flex flex-col items-center justify-center h-[600px] bg-[#0a0a0f] rounded-[3rem] border border-white/5 text-center p-12"
+            class="flex flex-col items-center justify-center h-[600px] glass-panel rounded-[3rem] text-center p-12"
           >
             <div
               class="w-24 h-24 bg-blue-500/5 rounded-full flex items-center justify-center text-blue-600 animate-pulse mb-8"

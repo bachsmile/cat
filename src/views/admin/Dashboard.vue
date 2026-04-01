@@ -1,12 +1,12 @@
 <template>
   <div
-    class="min-h-screen bg-[#050508] text-white flex font-['Inter',_sans-serif]"
+    class="h-screen bg-transparent text-white flex font-['Inter',_sans-serif] overflow-hidden"
   >
     <!-- Sidebar - Desktop -->
     <aside
-      class="hidden lg:flex w-64 bg-[#0a0a0f] border-r border-white/5 flex-col p-6 h-screen sticky top-0"
+      class="hidden lg:flex w-64 glass-panel border-r flex-col h-screen sticky top-0"
     >
-      <div class="flex items-center gap-3 mb-12">
+      <div class="p-6 flex items-center gap-3 mb-6">
         <div
           class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform"
         >
@@ -15,20 +15,21 @@
         <span class="text-xl font-bold tracking-tight">Finzo</span>
       </div>
 
-      <nav class="flex-1 space-y-2 overflow-y-auto pr-2 custom-sidebar-scroll">
+      <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll">
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <!-- Main Menu Item -->
           <div v-if="item.children" class="flex flex-col">
             <button
               @click="toggleSubmenu(item.name)"
-              class="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200 group relative text-gray-500 hover:text-white hover:bg-white/5"
+              class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-gray-500 hover:text-white hover:bg-white/5"
             >
               <div class="flex items-center gap-3">
                 <component
                   :is="item.icon"
                   class="w-5 h-5 group-hover:scale-110 transition-transform relative z-10"
+                  :style="{ color: isAnyChildActive(item) ? getModuleColor((item as any).module) : '' }"
                 />
-                <span class="font-medium relative z-10">{{ item.name }}</span>
+                <span class="font-bold text-sm relative z-10 tracking-tight" :class="{ 'text-white/90': isAnyChildActive(item) }">{{ item.name }}</span>
               </div>
               <ChevronDownIcon
                 class="w-4 h-4 transition-transform duration-300"
@@ -53,21 +54,24 @@
                       :key="leaf.name"
                       href="#"
                       @click.prevent="handleMenuClick(leaf.name)"
-                      class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
+                      class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-200 group relative text-[13px]"
                       :class="
                         activeTab === leaf.name
-                          ? 'text-purple-400 bg-purple-500/5'
-                          : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
+                          ? 'glass-active'
+                          : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]'
                       "
+                      :style="activeTab === leaf.name ? { '--active-color': getModuleColor(leaf.module) } : {}"
                     >
                       <div
                         v-if="activeTab === leaf.name"
-                        class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                        class="w-1 h-4 rounded-full absolute left-0 shadow-lg"
+                        :style="{ backgroundColor: getModuleColor(leaf.module) }"
                       ></div>
                       <component
                         v-if="leaf.icon"
                         :is="leaf.icon"
-                        class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                        class="w-3.5 h-3.5 transition-opacity"
+                        :class="activeTab === leaf.name ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'"
                       />
                       <span :class="{ 'font-bold': activeTab === leaf.name }">{{
                         leaf.name
@@ -81,21 +85,24 @@
                   v-else
                   href="#"
                   @click.prevent="handleMenuClick(sub.name)"
-                  class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative text-[13px]"
+                  class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-200 group relative text-[13px]"
                   :class="
                     activeTab === sub.name
-                      ? 'text-purple-400 bg-purple-500/5'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/3'
+                      ? 'glass-active'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]'
                   "
+                  :style="activeTab === sub.name ? { '--active-color': getModuleColor(sub.module) } : {}"
                 >
                   <div
                     v-if="activeTab === sub.name"
-                    class="w-1.5 h-1.5 rounded-full bg-purple-500 absolute left-1.5 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                    class="w-1 h-4 rounded-full absolute left-0 shadow-lg"
+                    :style="{ backgroundColor: getModuleColor(sub.module) }"
                   ></div>
                   <component
                     v-if="sub.icon"
                     :is="sub.icon"
-                    class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                    class="w-3.5 h-3.5 transition-opacity"
+                    :class="activeTab === sub.name ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'"
                   />
                   <span :class="{ 'font-bold': activeTab === sub.name }">{{
                     sub.name
@@ -110,44 +117,47 @@
             v-else
             href="#"
             @click.prevent="handleMenuClick(item.name)"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden"
             :class="
               activeTab === item.name
-                ? 'bg-purple-600/10 text-purple-400 border border-purple-500/20'
-                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                ? 'glass-active'
+                : 'text-gray-500 hover:text-white hover:bg-white/[0.05]'
             "
+            :style="activeTab === item.name ? { '--active-color': getModuleColor((item as any).module) } : {}"
           >
             <component
               :is="item.icon"
               class="w-5 h-5 group-hover:scale-110 transition-transform relative z-10"
+              :style="{ color: activeTab === item.name ? getModuleColor((item as any).module) : '' }"
             />
-            <span class="font-medium relative z-10">{{ item.name }}</span>
+            <span class="font-bold text-sm relative z-10 tracking-tight">{{ item.name }}</span>
             <div
               v-if="activeTab === item.name"
-              class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full"
+              :style="{ backgroundColor: getModuleColor(item.module) }"
             ></div>
           </a>
         </div>
       </nav>
 
-      <div class="mt-auto pt-6 border-t border-white/5 space-y-2">
+      <div class="mt-auto px-6 py-6 border-t border-white/5 space-y-1">
         <button
           @click="router.push('/law')" 
-          class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-teal-400 transition-colors w-full group"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:text-teal-400 hover:bg-teal-400/5 transition-all w-full group"
         >
           <UserIcon
             class="w-5 h-5 group-hover:scale-110 transition-transform"
           />
-          <span class="font-medium">Chế độ người dùng</span>
+          <span class="font-semibold text-sm">Chế độ người dùng</span>
         </button>
         <button
           @click="logout"
-          class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 transition-colors w-full group"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-400/5 transition-all w-full group"
         >
           <LogOutIcon
             class="w-5 h-5 group-hover:translate-x-1 transition-transform"
           />
-          <span class="font-medium">Logout</span>
+          <span class="font-semibold text-sm">Logout</span>
         </button>
       </div>
     </aside>
@@ -161,7 +171,7 @@
 
     <!-- Sidebar - Mobile Drawer -->
     <aside
-      class="fixed top-0 left-0 bottom-0 w-72 bg-[#0a0a0f] z-50 transform transition-transform duration-300 lg:hidden flex flex-col p-6 border-r border-white/5"
+      class="fixed top-0 left-0 bottom-0 w-72 glass-panel z-50 transform transition-transform duration-300 lg:hidden flex flex-col p-6 border-r"
       :class="isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="flex items-center justify-between mb-12">
@@ -181,16 +191,16 @@
         </button>
       </div>
 
-      <nav class="flex-1 space-y-2 overflow-y-auto pr-2 custom-sidebar-scroll">
+      <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll">
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <div v-if="item.children" class="flex flex-col">
             <button
               @click="toggleSubmenu(item.name)"
-              class="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200 text-gray-500"
+              class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-500"
             >
               <div class="flex items-center gap-3">
-                <component :is="item.icon" class="w-5 h-5" />
-                <span class="font-medium">{{ item.name }}</span>
+                <component :is="item.icon" class="w-5 h-5" :style="{ color: isAnyChildActive(item) ? getModuleColor((item as any).module) : '' }" />
+                <span class="font-bold text-sm" :class="{ 'text-white/90': isAnyChildActive(item) }">{{ item.name }}</span>
               </div>
               <ChevronDownIcon
                 class="w-4 h-4 transition-transform duration-300"
@@ -199,7 +209,7 @@
             </button>
             <div
               v-show="expandedMenus.includes(item.name)"
-              class="ml-4 pl-4 border-l border-white/5 space-y-1"
+              class="ml-4 pl-4 border-l border-white/5 space-y-1.5"
             >
               <a
                 v-for="sub in item.children"
@@ -209,13 +219,19 @@
                   handleMenuClick(sub.name);
                   isMobileMenuOpen = false;
                 "
-                class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-xs"
+                class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-200 text-[13px] relative"
                 :class="
                   activeTab === sub.name
-                    ? 'text-purple-400 bg-purple-500/5'
+                    ? 'glass-active'
                     : 'text-gray-500'
                 "
+                :style="activeTab === sub.name ? { '--active-color': getModuleColor((sub as any).module) } : {}"
               >
+                <div
+                  v-if="activeTab === sub.name"
+                  class="w-1 h-3.5 rounded-full absolute left-0"
+                  :style="{ backgroundColor: getModuleColor((sub as any).module) }"
+                ></div>
                 <span>{{ sub.name }}</span>
               </a>
             </div>
@@ -227,15 +243,16 @@
               handleMenuClick(item.name);
               isMobileMenuOpen = false;
             "
-            class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative"
             :class="
               activeTab === item.name
-                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                ? 'glass-active'
                 : 'text-gray-500 hover:text-white hover:bg-white/5'
             "
+            :style="activeTab === item.name ? { '--active-color': getModuleColor((item as any).module) } : {}"
           >
-            <component :is="item.icon" class="w-5 h-5" />
-            <span class="font-medium">{{ item.name }}</span>
+            <component :is="item.icon" class="w-5 h-5" :style="{ color: activeTab === item.name ? getModuleColor((item as any).module) : '' }" />
+            <span class="font-bold text-sm tracking-tight">{{ item.name }}</span>
           </a>
         </div>
       </nav>
@@ -326,7 +343,7 @@
     <main class="flex-1 overflow-y-auto p-4 md:p-10">
       <!-- Top Bar -->
       <header
-        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12"
+        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12 sticky top-0 z-[40] glass-panel -mx-4 md:-mx-10 px-4 md:px-10 py-6 shadow-xl"
       >
         <div class="flex items-center justify-between w-full md:w-auto">
           <div class="flex items-center gap-4 lg:hidden">
@@ -457,7 +474,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Main Activity Chart -->
           <div
-            class="lg:col-span-2 bg-[#0a0a0f] p-6 md:p-8 rounded-3xl border border-white/5 shadow-xl group overflow-hidden"
+            class="lg:col-span-2 glass-panel p-6 md:p-8 rounded-3xl border shadow-xl group overflow-hidden"
           >
             <div
               class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
@@ -521,7 +538,7 @@
 
           <!-- Recent Logs -->
           <div
-            class="bg-[#0a0a0f] p-6 md:p-8 rounded-3xl border border-white/5 relative overflow-hidden"
+            class="glass-panel p-6 md:p-8 rounded-3xl border relative overflow-hidden"
           >
             <h3 class="text-lg md:text-xl font-bold mb-8">System Activity</h3>
             <div class="space-y-6 md:space-y-8 relative">
@@ -675,13 +692,6 @@
       </div>
     </main>
 
-    <!-- Right Accent Blobs -->
-    <div
-      class="fixed top-0 right-0 w-[40vw] h-[40vw] bg-purple-600/5 blur-[150px] rounded-full -mr-[10vw] -mt-[10vw] -z-10 pointer-events-none"
-    ></div>
-    <div
-      class="fixed bottom-0 left-64 w-[30vw] h-[30vw] bg-blue-600/5 blur-[120px] rounded-full -ml-[10vw] -mb-[10vw] -z-10 pointer-events-none"
-    ></div>
   </div>
 </template>
 
@@ -770,6 +780,26 @@ const toggleSubmenu = (name: string) => {
   } else {
     expandedMenus.value.push(name);
   }
+};
+
+const getModuleColor = (modId?: string) => {
+  if (!modId) return "#a855f7"; // default purple
+  const domain = DOMAINS.find(d => d.id === modId);
+  return domain?.hexColor || "#a855f7";
+};
+
+const isAnyChildActive = (item: any) => {
+  if (activeTab.value === item.name) return true;
+  if (item.children) {
+    return item.children.some((sub: any) => {
+      if (activeTab.value === sub.name) return true;
+      if (sub.children) {
+        return sub.children.some((leaf: any) => activeTab.value === leaf.name);
+      }
+      return false;
+    });
+  }
+  return false;
 };
 
 onMounted(() => {
@@ -1162,19 +1192,28 @@ const activities = [
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
-::-webkit-scrollbar {
-  width: 6px;
+.glass-active {
+  background: color-mix(in srgb, var(--active-color) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--active-color) 20%, transparent);
+  color: var(--active-color);
+  box-shadow: 0 4px 15px -1px color-mix(in srgb, var(--active-color) 15%, transparent);
+  backdrop-filter: blur(4px);
 }
-::-webkit-scrollbar-track {
+
+.custom-sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-sidebar-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.05);
+.custom-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 10px;
+  transition: all 0.3s ease;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.1);
+.custom-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
 }
 </style>

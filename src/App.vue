@@ -1,5 +1,12 @@
 <template>
   <div id="app-root">
+    <!-- 🌠 Global Aurora Background -->
+    <div class="aurora-bg">
+      <div class="aurora-blob blob-1"></div>
+      <div class="aurora-blob blob-2"></div>
+      <div class="aurora-blob blob-3"></div>
+    </div>
+
     <GlobalPageTransition ref="pageTransitionRef" />
     <SystemOnboarding ref="onboardingRef" @on-show="handleOnboardingVisible" @on-hide="handleOnboardingHidden" />
     
@@ -96,7 +103,6 @@ checkOnboarding();
 <style>
 #app-root {
   overflow-x: hidden;
-  background: #050508;
   min-height: 100vh;
 }
 </style>

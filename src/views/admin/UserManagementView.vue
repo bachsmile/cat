@@ -87,9 +87,9 @@
       </div>
 
       <!-- Users Table -->
-      <div
-        class="bg-[#0a0a0f] rounded-3xl border border-white/5 overflow-hidden shadow-xl"
-      >
+        <div
+          class="glass-panel rounded-3xl border overflow-hidden shadow-xl"
+        >
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
