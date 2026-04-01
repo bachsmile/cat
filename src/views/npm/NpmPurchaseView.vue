@@ -110,23 +110,15 @@
       </div>
 
       <!-- Footer Action -->
-      <div class="glass-panel p-8 rounded-[2rem] border border-white/10 bg-white/[0.02]">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h4 class="font-bold text-xl mb-1 text-purple-400">{{ $t('commonConfirm') }}</h4>
-            <p class="text-sm text-gray-500">{{ $t('npmCopied') }}</p>
-          </div>
-          <button 
-            @click="processPayment"
-            :disabled="processing"
-            class="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50 flex items-center justify-center gap-3"
-          >
-            <Loader2Icon v-if="processing" class="w-5 h-5 animate-spin" />
-            <CreditCardIcon v-else class="w-5 h-5" />
-            {{ processing ? $t('commonLoading') : $t('npmPurchase') }}
-          </button>
-        </div>
-      </div>
+      <button
+        @click="processPayment"
+        :disabled="processing"
+        class="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50 flex items-center justify-center gap-3"
+      >
+        <Loader2Icon v-if="processing" class="w-5 h-5 animate-spin" />
+        <CreditCardIcon v-else class="w-5 h-5" />
+        {{ processing ? $t("commonLoading") : $t("npmPurchase") }}
+      </button>
     </main>
   </div>
 </template>
