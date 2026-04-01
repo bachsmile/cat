@@ -43,4 +43,12 @@ export const licenseApi = {
     const response = await api.patch<License>(`/license/${id}`, data);
     return response.data;
   },
+
+  /**
+   * Xoá license
+   */
+  delete: async (id: string) => {
+    const response = await api.delete(`/license/${id}`);
+    return response.data;
+  },
 };

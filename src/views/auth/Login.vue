@@ -14,6 +14,23 @@
       ></div>
     </div>
 
+    <!-- Language Switcher -->
+    <div class="absolute top-8 right-8 z-20 flex gap-2">
+      <button
+        v-for="lang in ['en', 'vi'] as const"
+        :key="lang"
+        @click="changeLanguage(lang)"
+        class="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center font-bold text-xs transition-all uppercase"
+        :class="
+          currentLocale === lang
+            ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20'
+            : 'bg-white/5 text-gray-500 hover:bg-white/10'
+        "
+      >
+        {{ lang }}
+      </button>
+    </div>
+
     <!-- Login Card -->
     <div
       class="relative z-10 w-full max-w-md p-8 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl transition-all duration-500 hover:shadow-purple-500/20"
@@ -27,16 +44,16 @@
         <h1
           class="text-4xl font-bold bg-gradient-to-r from-white to-gray-400 bg-[length:200%_auto] bg-clip-text text-transparent"
         >
-          Welcome Back
+          {{ $t("commonWelcome") }}
         </h1>
-        <p class="text-gray-400 mt-2">Sign in to continue your journey</p>
+        <p class="text-gray-400 mt-2">{{ $t("authLoginToAccount") }}</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div class="space-y-2">
           <label
             class="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1"
-            >Email / Username</label
+            >{{ $t("authEmail") }}</label
           >
           <div class="relative group">
             <UserIcon
@@ -55,7 +72,7 @@
         <div class="space-y-2">
           <label
             class="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1"
-            >Password</label
+            >{{ $t("authPassword") }}</label
           >
           <div class="relative group">
             <LockIcon
@@ -85,13 +102,13 @@
             />
             <span
               class="text-gray-400 group-hover:text-gray-300 transition-colors"
-              >Remember me</span
+              >{{ $t("authRememberMe") }}</span
             >
           </label>
           <a
             href="#"
             class="text-purple-400 hover:text-purple-300 transition-colors font-medium"
-            >Forgot Password?</a
+            >{{ $t("authForgotPassword") }}</a
           >
         </div>
 
@@ -101,7 +118,7 @@
             :disabled="loading"
             class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-900/40 transform transition-all active:scale-[0.98] disabled:opacity-50"
           >
-            {{ loading ? "Signing In..." : "Sign In" }}
+            {{ loading ? $t("authLoggingIn") : $t("authLogin") }}
           </button>
 
           <button
@@ -111,17 +128,17 @@
             class="bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-xl border border-white/10 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <ZapIcon class="w-4 h-4 text-yellow-400" />
-            Trial
+            {{ $t("authTrial") }}
           </button>
         </div>
 
         <div class="text-center mt-6">
           <p class="text-gray-400 text-sm">
-            Don't have an account?
+            {{ $t("authDontHaveAccount") }}
             <router-link
               to="/register"
               class="text-purple-400 hover:text-purple-300 font-bold ml-1 transition-colors"
-              >Create Account</router-link
+              >{{ $t("authRegister") }}</router-link
             >
           </p>
         </div>
@@ -140,8 +157,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { setLanguage } from "../../i18n";
 import {
   User as UserIcon,
   Lock as LockIcon,
@@ -151,8 +170,14 @@ import {
 import { authApi } from "../../api/auth";
 
 const router = useRouter();
-const email = ref("admin@gmail.com");
-const password = ref("123123");
+const { locale } = useI18n();
+
+const currentLocale = computed(() => locale.value);
+const changeLanguage = (lang: "en" | "vi") => {
+  setLanguage(lang);
+};
+const email = ref("");
+const password = ref("");
 const error = ref("");
 const loading = ref(false);
 
@@ -168,7 +193,12 @@ const handleLogin = async () => {
 
   if (result.status === 200 || result.status === 201) {
     saveAuth(result.data);
-    
+
+    // Set user language preference if exists
+    if (result.data.user.language) {
+      setLanguage(result.data.user.language);
+    }
+
     const userRole = result.data.user.role;
     if (["admin", "moderator", "manager", "lawyer"].includes(userRole)) {
       router.push("/dashboard");
@@ -182,7 +212,7 @@ const handleLogin = async () => {
 };
 
 const handleTrial = async () => {
-  router.push('/welcome-trial');
+  router.push("/welcome-trial");
 };
 
 const saveAuth = (data: any) => {

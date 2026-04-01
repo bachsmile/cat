@@ -21,6 +21,7 @@ export interface UserInfo {
   role: Role;
   username?: string;
   modules?: string[];
+  language?: 'en' | 'vi';
 }
 
 export interface LoginResponse {

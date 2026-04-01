@@ -14,6 +14,19 @@
       ></div>
     </div>
 
+    <!-- Language Switcher -->
+    <div class="absolute top-8 right-8 z-20 flex gap-2">
+      <button 
+        v-for="lang in (['en', 'vi'] as const)" 
+        :key="lang"
+        @click="changeLanguage(lang)"
+        class="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center font-bold text-xs transition-all uppercase"
+        :class="currentLocale === lang ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-white/5 text-gray-500 hover:bg-white/10'"
+      >
+        {{ lang }}
+      </button>
+    </div>
+
     <!-- Register Card -->
     <div
       class="relative z-10 w-full max-w-lg p-8 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl transition-all duration-500 hover:shadow-indigo-500/20"
@@ -27,9 +40,9 @@
         <h1
           class="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
         >
-          Create Account
+          {{ $t('authRegisterToAccount') }}
         </h1>
-        <p class="text-gray-400 mt-1">Join the Finzo ecosystem today</p>
+        <p class="text-gray-400 mt-1">{{ $t('authJoinNova') }}</p>
       </div>
 
       <form @submit.prevent="handleRegister" class="space-y-5">
@@ -37,7 +50,7 @@
           <div class="space-y-2">
             <label
               class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1"
-              >Display Name</label
+              >{{ $t('authDisplayName') }}</label
             >
             <div class="relative group">
               <IdCardIcon
@@ -54,7 +67,7 @@
           <div class="space-y-2">
             <label
               class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1"
-              >Email Address</label
+              >{{ $t('authEmail') }}</label
             >
             <div class="relative group">
               <MailIcon
@@ -74,7 +87,7 @@
         <div class="space-y-2">
           <label
             class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1"
-            >Password</label
+            >{{ $t('authPassword') }}</label
           >
           <div class="relative group">
             <LockIcon
@@ -93,7 +106,7 @@
         <div class="space-y-2">
           <label
             class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1"
-            >Confirm Password</label
+            >{{ $t('authPasswordConfirm') }}</label
           >
           <div class="relative group">
             <ShieldCheckIcon
@@ -127,16 +140,16 @@
           :disabled="loading"
           class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-900/40 transform transition-all active:scale-[0.98] disabled:opacity-50 mt-4"
         >
-          {{ loading ? "Creating Account..." : "Get Started" }}
+          {{ loading ? $t('authCreatingAccount') : $t('authRegister') }}
         </button>
 
         <div class="text-center mt-6">
           <p class="text-gray-500 text-sm">
-            Already have an account?
+            {{ $t('authAlreadyHaveAccount') }}
             <router-link
               to="/"
               class="text-indigo-400 hover:text-indigo-300 font-bold ml-1 transition-colors"
-              >Sign In</router-link
+              >{{ $t('authLogin') }}</router-link
             >
           </p>
         </div>
@@ -155,8 +168,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { setLanguage } from "../../i18n";
 import {
   UserPlus as UserPlusIcon,
   Mail as MailIcon,
@@ -167,6 +182,12 @@ import {
 import { authApi } from "../../api/auth";
 
 const router = useRouter();
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
+const changeLanguage = (lang: 'en' | 'vi') => {
+  setLanguage(lang);
+};
+
 const loading = ref(false);
 const error = ref("");
 const success = ref("");

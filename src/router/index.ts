@@ -127,7 +127,7 @@ const routes = [
     path: "/home", 
     name: "CustomerHome", 
     component: CustomerHome,
-    meta: { requiresAuth: true, role: ['user', 'guest'] } 
+    meta: { requiresAuth: true, role: ['user', 'guest', 'admin', 'manager', 'lawyer'] } 
   },
   { 
     path: "/law", 
@@ -140,6 +140,24 @@ const routes = [
     name: "LawTemplateCreate",
     component: () => import("../views/law/LawTemplateEditorView.vue"),
     meta: { requiresAuth: true, role: ["admin", "moderator", "manager", "lawyer"] }
+  },
+  {
+    path: "/npm",
+    name: "CustomerNpm",
+    component: () => import("../views/npm/NpmProjectsView.vue"),
+    meta: { requiresAuth: true, role: ['user', 'guest', 'admin'] }
+  },
+  {
+    path: "/npm/purchase/:id",
+    name: "NpmPurchase",
+    component: () => import("../views/npm/NpmPurchaseView.vue"),
+    meta: { requiresAuth: true, role: ['user', 'guest', 'admin'] }
+  },
+  {
+    path: "/npm/payment-success",
+    name: "PaymentSuccess",
+    component: () => import("../views/npm/PaymentSuccessView.vue"),
+    meta: { requiresAuth: true, role: ['user', 'guest', 'admin'] }
   },
   {
     path: "/law-admin/templates/:id/edit",

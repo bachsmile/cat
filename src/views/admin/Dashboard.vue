@@ -15,7 +15,9 @@
         <span class="text-xl font-bold tracking-tight">Finzo</span>
       </div>
 
-      <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll">
+      <nav
+        class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll"
+      >
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <!-- Main Menu Item -->
           <div v-if="item.children" class="flex flex-col">
@@ -27,9 +29,17 @@
                 <component
                   :is="item.icon"
                   class="w-5 h-5 group-hover:scale-110 transition-transform relative z-10"
-                  :style="{ color: isAnyChildActive(item) ? getModuleColor((item as any).module) : '' }"
+                  :style="{
+                    color: isAnyChildActive(item)
+                      ? getModuleColor((item as any).module)
+                      : '',
+                  }"
                 />
-                <span class="font-bold text-sm relative z-10 tracking-tight" :class="{ 'text-white/90': isAnyChildActive(item) }">{{ item.name }}</span>
+                <span
+                  class="font-bold text-sm relative z-10 tracking-tight"
+                  :class="{ 'text-white/90': isAnyChildActive(item) }"
+                  >{{ item.name }}</span
+                >
               </div>
               <ChevronDownIcon
                 class="w-4 h-4 transition-transform duration-300"
@@ -42,10 +52,16 @@
               v-show="expandedMenus.includes(item.name)"
               class="mt-1 ml-4 pl-4 border-l border-white/5 space-y-4 overflow-hidden py-2"
             >
-              <div v-for="sub in (item.children as any[])" :key="sub.name" class="space-y-2">
+              <div
+                v-for="sub in item.children as any[]"
+                :key="sub.name"
+                class="space-y-2"
+              >
                 <!-- If sub has children (Sub-group) -->
                 <div v-if="sub.children" class="space-y-1">
-                  <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2 pl-4 select-none">
+                  <p
+                    class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2 pl-4 select-none"
+                  >
                     {{ sub.name }}
                   </p>
                   <div class="space-y-1">
@@ -60,18 +76,28 @@
                           ? 'glass-active'
                           : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]'
                       "
-                      :style="activeTab === leaf.name ? { '--active-color': getModuleColor(leaf.module) } : {}"
+                      :style="
+                        activeTab === leaf.name
+                          ? { '--active-color': getModuleColor(leaf.module) }
+                          : {}
+                      "
                     >
                       <div
                         v-if="activeTab === leaf.name"
                         class="w-1 h-4 rounded-full absolute left-0 shadow-lg"
-                        :style="{ backgroundColor: getModuleColor(leaf.module) }"
+                        :style="{
+                          backgroundColor: getModuleColor(leaf.module),
+                        }"
                       ></div>
                       <component
                         v-if="leaf.icon"
                         :is="leaf.icon"
                         class="w-3.5 h-3.5 transition-opacity"
-                        :class="activeTab === leaf.name ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'"
+                        :class="
+                          activeTab === leaf.name
+                            ? 'opacity-100'
+                            : 'opacity-60 group-hover:opacity-100'
+                        "
                       />
                       <span :class="{ 'font-bold': activeTab === leaf.name }">{{
                         leaf.name
@@ -91,7 +117,11 @@
                       ? 'glass-active'
                       : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]'
                   "
-                  :style="activeTab === sub.name ? { '--active-color': getModuleColor(sub.module) } : {}"
+                  :style="
+                    activeTab === sub.name
+                      ? { '--active-color': getModuleColor(sub.module) }
+                      : {}
+                  "
                 >
                   <div
                     v-if="activeTab === sub.name"
@@ -102,7 +132,11 @@
                     v-if="sub.icon"
                     :is="sub.icon"
                     class="w-3.5 h-3.5 transition-opacity"
-                    :class="activeTab === sub.name ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'"
+                    :class="
+                      activeTab === sub.name
+                        ? 'opacity-100'
+                        : 'opacity-60 group-hover:opacity-100'
+                    "
                   />
                   <span :class="{ 'font-bold': activeTab === sub.name }">{{
                     sub.name
@@ -123,14 +157,25 @@
                 ? 'glass-active'
                 : 'text-gray-500 hover:text-white hover:bg-white/[0.05]'
             "
-            :style="activeTab === item.name ? { '--active-color': getModuleColor((item as any).module) } : {}"
+            :style="
+              activeTab === item.name
+                ? { '--active-color': getModuleColor((item as any).module) }
+                : {}
+            "
           >
             <component
               :is="item.icon"
               class="w-5 h-5 group-hover:scale-110 transition-transform relative z-10"
-              :style="{ color: activeTab === item.name ? getModuleColor((item as any).module) : '' }"
+              :style="{
+                color:
+                  activeTab === item.name
+                    ? getModuleColor((item as any).module)
+                    : '',
+              }"
             />
-            <span class="font-bold text-sm relative z-10 tracking-tight">{{ item.name }}</span>
+            <span class="font-bold text-sm relative z-10 tracking-tight">{{
+              item.name
+            }}</span>
             <div
               v-if="activeTab === item.name"
               class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full"
@@ -142,7 +187,7 @@
 
       <div class="mt-auto px-6 py-6 border-t border-white/5 space-y-1">
         <button
-          @click="router.push('/law')" 
+          @click="router.push('/home')"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:text-teal-400 hover:bg-teal-400/5 transition-all w-full group"
         >
           <UserIcon
@@ -191,7 +236,9 @@
         </button>
       </div>
 
-      <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll">
+      <nav
+        class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll"
+      >
         <div v-for="item in menuItems" :key="item.name" class="space-y-1">
           <div v-if="item.children" class="flex flex-col">
             <button
@@ -199,8 +246,20 @@
               class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-500"
             >
               <div class="flex items-center gap-3">
-                <component :is="item.icon" class="w-5 h-5" :style="{ color: isAnyChildActive(item) ? getModuleColor((item as any).module) : '' }" />
-                <span class="font-bold text-sm" :class="{ 'text-white/90': isAnyChildActive(item) }">{{ item.name }}</span>
+                <component
+                  :is="item.icon"
+                  class="w-5 h-5"
+                  :style="{
+                    color: isAnyChildActive(item)
+                      ? getModuleColor((item as any).module)
+                      : '',
+                  }"
+                />
+                <span
+                  class="font-bold text-sm"
+                  :class="{ 'text-white/90': isAnyChildActive(item) }"
+                  >{{ item.name }}</span
+                >
               </div>
               <ChevronDownIcon
                 class="w-4 h-4 transition-transform duration-300"
@@ -221,16 +280,20 @@
                 "
                 class="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-200 text-[13px] relative"
                 :class="
-                  activeTab === sub.name
-                    ? 'glass-active'
-                    : 'text-gray-500'
+                  activeTab === sub.name ? 'glass-active' : 'text-gray-500'
                 "
-                :style="activeTab === sub.name ? { '--active-color': getModuleColor((sub as any).module) } : {}"
+                :style="
+                  activeTab === sub.name
+                    ? { '--active-color': getModuleColor((sub as any).module) }
+                    : {}
+                "
               >
                 <div
                   v-if="activeTab === sub.name"
                   class="w-1 h-3.5 rounded-full absolute left-0"
-                  :style="{ backgroundColor: getModuleColor((sub as any).module) }"
+                  :style="{
+                    backgroundColor: getModuleColor((sub as any).module),
+                  }"
                 ></div>
                 <span>{{ sub.name }}</span>
               </a>
@@ -249,10 +312,25 @@
                 ? 'glass-active'
                 : 'text-gray-500 hover:text-white hover:bg-white/5'
             "
-            :style="activeTab === item.name ? { '--active-color': getModuleColor((item as any).module) } : {}"
+            :style="
+              activeTab === item.name
+                ? { '--active-color': getModuleColor((item as any).module) }
+                : {}
+            "
           >
-            <component :is="item.icon" class="w-5 h-5" :style="{ color: activeTab === item.name ? getModuleColor((item as any).module) : '' }" />
-            <span class="font-bold text-sm tracking-tight">{{ item.name }}</span>
+            <component
+              :is="item.icon"
+              class="w-5 h-5"
+              :style="{
+                color:
+                  activeTab === item.name
+                    ? getModuleColor((item as any).module)
+                    : '',
+              }"
+            />
+            <span class="font-bold text-sm tracking-tight">{{
+              item.name
+            }}</span>
           </a>
         </div>
       </nav>
@@ -323,7 +401,7 @@
 
       <div class="mt-auto pt-6 border-t border-white/5 space-y-2">
         <button
-          @click="router.push('/law')"
+          @click="router.push('/home')"
           class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-teal-400 transition-colors w-full group"
         >
           <UserIcon class="w-5 h-5" />
@@ -615,15 +693,25 @@
 
       <!-- Other Modules Placeholders -->
       <div
-        v-else-if="['finance', 'medical', 'education', 'logistics'].includes(route.meta.module as string)"
+        v-else-if="
+          ['finance', 'medical', 'education', 'logistics'].includes(
+            route.meta.module as string,
+          )
+        "
         class="animate-in fade-in duration-300 h-full"
       >
-        <div class="bg-[#0a0a0f] rounded-3xl border border-white/5 p-20 text-center min-h-[500px] flex flex-col items-center justify-center">
-          <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div
+          class="bg-[#0a0a0f] rounded-3xl border border-white/5 p-20 text-center min-h-[500px] flex flex-col items-center justify-center"
+        >
+          <div
+            class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
             <LayersIcon class="w-10 h-10 text-blue-400" />
           </div>
           <h3 class="text-xl font-bold mb-2">{{ activeTab }}</h3>
-          <p class="text-gray-500">Kênh quản trị đang được cấu hình đồng bộ...</p>
+          <p class="text-gray-500">
+            Kênh quản trị đang được cấu hình đồng bộ...
+          </p>
         </div>
       </div>
 
@@ -691,7 +779,6 @@
         <LawView />
       </div>
     </main>
-
   </div>
 </template>
 
@@ -733,7 +820,7 @@ import {
   User as UserIcon,
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
-  Bot as BotIcon
+  Bot as BotIcon,
 } from "lucide-vue-next";
 
 import { computed, ref, onMounted } from "vue";
@@ -748,8 +835,6 @@ import ModuleManagementView from "./ModuleManagementView.vue";
 import LicenseManagementView from "./LicenseManagementView.vue";
 import AiTestView from "./AiTestView.vue";
 
-
-
 import { useWeb3 } from "../../composables/useWeb3";
 import AssetReportsView from "./AssetReportsView.vue";
 import AssetsContainer from "./AssetsContainer.vue";
@@ -757,14 +842,15 @@ import BlockchainView from "./BlockchainView.vue";
 import ReportsView from "./ReportsView.vue";
 import WalletsVaultView from "./WalletsVaultView.vue";
 
-
 const { account, connect, isConnecting, fzBalance } = useWeb3();
 
 const isMobileMenuOpen = ref(false);
 const router = useRouter();
-const user = ref(JSON.parse(
-  localStorage.getItem("user") || '{"email": "Guest", "role": "guest"}'
-));
+const user = ref(
+  JSON.parse(
+    localStorage.getItem("user") || '{"email": "Guest", "role": "guest"}',
+  ),
+);
 
 const logout = () => {
   localStorage.clear();
@@ -784,7 +870,7 @@ const toggleSubmenu = (name: string) => {
 
 const getModuleColor = (modId?: string) => {
   if (!modId) return "#a855f7"; // default purple
-  const domain = DOMAINS.find(d => d.id === modId);
+  const domain = DOMAINS.find((d) => d.id === modId);
   return domain?.hexColor || "#a855f7";
 };
 
@@ -805,12 +891,17 @@ const isAnyChildActive = (item: any) => {
 onMounted(() => {
   // Auto-expand parent of current active tab
   allModules.forEach((item: any) => {
-    const isMatched = item.children && item.children.some((sub: any) => {
-      if (sub.children) {
-        return sub.children.some((leaf: any) => leaf.path === route.path);
-      }
-      return sub.path === route.path || (route.path === '/law-admin' && sub.path === '/law-admin/chat');
-    });
+    const isMatched =
+      item.children &&
+      item.children.some((sub: any) => {
+        if (sub.children) {
+          return sub.children.some((leaf: any) => leaf.path === route.path);
+        }
+        return (
+          sub.path === route.path ||
+          (route.path === "/law-admin" && sub.path === "/law-admin/chat")
+        );
+      });
 
     if (isMatched) {
       if (!expandedMenus.value.includes(item.name)) {
@@ -838,25 +929,60 @@ const allModules = [
       {
         name: "Dịch vụ Khách hàng",
         children: [
-          { name: "Quản lý Lịch hẹn", icon: CalendarIcon, path: "/law-admin/appointments", module: "law" },
-          { name: "Tư vấn Trực tuyến", icon: ChatIcon, path: "/law-admin/chat", module: "law" },
-        ]
+          {
+            name: "Quản lý Lịch hẹn",
+            icon: CalendarIcon,
+            path: "/law-admin/appointments",
+            module: "law",
+          },
+          {
+            name: "Tư vấn Trực tuyến",
+            icon: ChatIcon,
+            path: "/law-admin/chat",
+            module: "law",
+          },
+        ],
       },
       {
         name: "Nhân sự & Cơ sở",
         children: [
-          { name: "Phòng Luật & Lịch", icon: BriefcaseBusinessIcon, path: "/law-admin/offices", module: "law" },
-          { name: "Đội ngũ Luật sư", icon: UsersIcon, path: "/law-admin/lawyers", module: "law" },
-        ]
+          {
+            name: "Phòng Luật & Lịch",
+            icon: BriefcaseBusinessIcon,
+            path: "/law-admin/offices",
+            module: "law",
+          },
+          {
+            name: "Đội ngũ Luật sư",
+            icon: UsersIcon,
+            path: "/law-admin/lawyers",
+            module: "law",
+          },
+        ],
       },
       {
         name: "Hồ sơ & Kiến thức",
         children: [
-          { name: "Hồ sơ Khách hàng", icon: FileTextIcon, path: "/law-admin/applications", module: "law" },
-          { name: "Hỏi đáp Pháp luật", icon: MessageSquareIcon, path: "/law-admin/questions", module: "law" },
-          { name: "Thư viện Bài viết", icon: BookOpenIcon, path: "/law-admin/posts", module: "law" },
-        ]
-      }
+          {
+            name: "Hồ sơ Khách hàng",
+            icon: FileTextIcon,
+            path: "/law-admin/applications",
+            module: "law",
+          },
+          {
+            name: "Hỏi đáp Pháp luật",
+            icon: MessageSquareIcon,
+            path: "/law-admin/questions",
+            module: "law",
+          },
+          {
+            name: "Thư viện Bài viết",
+            icon: BookOpenIcon,
+            path: "/law-admin/posts",
+            module: "law",
+          },
+        ],
+      },
     ],
   },
   {
@@ -864,9 +990,24 @@ const allModules = [
     icon: LineChartIcon,
     module: "finance",
     children: [
-      { name: "Danh mục đầu tư", icon: WalletIcon, path: "/finance/portfolio", module: "finance" },
-      { name: "Thị trường AI", icon: ZapIcon, path: "/finance/markets", module: "finance" },
-      { name: "Phân tích xu hướng", icon: ActivityIcon, path: "/finance/trends", module: "finance" },
+      {
+        name: "Danh mục đầu tư",
+        icon: WalletIcon,
+        path: "/finance/portfolio",
+        module: "finance",
+      },
+      {
+        name: "Thị trường AI",
+        icon: ZapIcon,
+        path: "/finance/markets",
+        module: "finance",
+      },
+      {
+        name: "Phân tích xu hướng",
+        icon: ActivityIcon,
+        path: "/finance/trends",
+        module: "finance",
+      },
     ],
   },
   {
@@ -874,9 +1015,24 @@ const allModules = [
     icon: StethoscopeIcon,
     module: "medical",
     children: [
-      { name: "Hồ sơ bệnh án", icon: FileTextIcon, path: "/medical/records", module: "medical" },
-      { name: "Lịch khám bệnh", icon: CalendarIcon, path: "/medical/appointments", module: "medical" },
-      { name: "Tư vấn Sức khỏe AI", icon: ActivityIcon, path: "/medical/ai-consult", module: "medical" },
+      {
+        name: "Hồ sơ bệnh án",
+        icon: FileTextIcon,
+        path: "/medical/records",
+        module: "medical",
+      },
+      {
+        name: "Lịch khám bệnh",
+        icon: CalendarIcon,
+        path: "/medical/appointments",
+        module: "medical",
+      },
+      {
+        name: "Tư vấn Sức khỏe AI",
+        icon: ActivityIcon,
+        path: "/medical/ai-consult",
+        module: "medical",
+      },
     ],
   },
   {
@@ -887,20 +1043,55 @@ const allModules = [
       {
         name: "Quản lý Đào tạo",
         children: [
-          { name: "Quản lý Khóa học", icon: BookIcon, path: "/education/courses", module: "education" },
-          { name: "Bài giảng AI", icon: LayersIcon, path: "/education/lectures", module: "education" },
-          { name: "Quản lý Lớp", icon: LayersIcon, path: "/education/classes", module: "education" },
-          { name: "Quản lý Bộ môn", icon: BookOpenIcon, path: "/education/departments", module: "education" },
-        ]
+          {
+            name: "Quản lý Khóa học",
+            icon: BookIcon,
+            path: "/education/courses",
+            module: "education",
+          },
+          {
+            name: "Bài giảng AI",
+            icon: LayersIcon,
+            path: "/education/lectures",
+            module: "education",
+          },
+          {
+            name: "Quản lý Lớp",
+            icon: LayersIcon,
+            path: "/education/classes",
+            module: "education",
+          },
+          {
+            name: "Quản lý Bộ môn",
+            icon: BookOpenIcon,
+            path: "/education/departments",
+            module: "education",
+          },
+        ],
       },
       {
         name: "Nhân sự & Học sinh",
         children: [
-          { name: "Quản lý Giáo viên", icon: Users2Icon, path: "/education/teachers", module: "education" },
-          { name: "Quản lý Học sinh", icon: GraduationCapIcon, path: "/education/students", module: "education" },
-          { name: "Sinh viên & Điểm", icon: ActivityIcon, path: "/education/grades", module: "education" },
-        ]
-      }
+          {
+            name: "Quản lý Giáo viên",
+            icon: Users2Icon,
+            path: "/education/teachers",
+            module: "education",
+          },
+          {
+            name: "Quản lý Học sinh",
+            icon: GraduationCapIcon,
+            path: "/education/students",
+            module: "education",
+          },
+          {
+            name: "Sinh viên & Điểm",
+            icon: ActivityIcon,
+            path: "/education/grades",
+            module: "education",
+          },
+        ],
+      },
     ],
   },
   {
@@ -911,18 +1102,43 @@ const allModules = [
       {
         name: "Quản lý Bán hàng",
         children: [
-          { name: "Lập đơn hàng", icon: ShoppingBagIcon, path: "/retail/orders", module: "retail" },
-          { name: "Khách hàng", icon: UsersIcon, path: "/retail/customers", module: "retail" },
-          { name: "Báo cáo doanh thu", icon: LineChartIcon, path: "/retail/sales", module: "retail" },
-        ]
+          {
+            name: "Lập đơn hàng",
+            icon: ShoppingBagIcon,
+            path: "/retail/orders",
+            module: "retail",
+          },
+          {
+            name: "Khách hàng",
+            icon: UsersIcon,
+            path: "/retail/customers",
+            module: "retail",
+          },
+          {
+            name: "Báo cáo doanh thu",
+            icon: LineChartIcon,
+            path: "/retail/sales",
+            module: "retail",
+          },
+        ],
       },
       {
         name: "Quản lý Sản phẩm",
         children: [
-          { name: "Hàng hóa", icon: BoxIcon, path: "/retail/products", module: "retail" },
-          { name: "Kho & Tồn kho", icon: PackageIcon, path: "/retail/inventory", module: "retail" },
-        ]
-      }
+          {
+            name: "Hàng hóa",
+            icon: BoxIcon,
+            path: "/retail/products",
+            module: "retail",
+          },
+          {
+            name: "Kho & Tồn kho",
+            icon: PackageIcon,
+            path: "/retail/inventory",
+            module: "retail",
+          },
+        ],
+      },
     ],
   },
   {
@@ -933,17 +1149,37 @@ const allModules = [
       {
         name: "Vận hành",
         children: [
-          { name: "Đội xe & Tài xế", icon: UsersIcon, path: "/logistics/fleet", module: "logistics" },
-          { name: "Lộ trình giao hàng", icon: ActivityIcon, path: "/logistics/routes", module: "logistics" },
-        ]
+          {
+            name: "Đội xe & Tài xế",
+            icon: UsersIcon,
+            path: "/logistics/fleet",
+            module: "logistics",
+          },
+          {
+            name: "Lộ trình giao hàng",
+            icon: ActivityIcon,
+            path: "/logistics/routes",
+            module: "logistics",
+          },
+        ],
       },
       {
         name: "Kho bãi",
         children: [
-          { name: "Nhập / Xuất kho", icon: PackageIcon, path: "/logistics/warehouse", module: "logistics" },
-          { name: "Kiểm kê", icon: FileTextIcon, path: "/logistics/audit", module: "logistics" },
-        ]
-      }
+          {
+            name: "Nhập / Xuất kho",
+            icon: PackageIcon,
+            path: "/logistics/warehouse",
+            module: "logistics",
+          },
+          {
+            name: "Kiểm kê",
+            icon: FileTextIcon,
+            path: "/logistics/audit",
+            module: "logistics",
+          },
+        ],
+      },
     ],
   },
 
@@ -952,7 +1188,12 @@ const allModules = [
     icon: SparklesIcon,
     module: "ai_group",
     children: [
-      { name: "AI Playground", icon: BotIcon, path: "/ai-playground", module: "ai" },
+      {
+        name: "AI Playground",
+        icon: BotIcon,
+        path: "/ai-playground",
+        module: "ai",
+      },
     ],
   },
   {
@@ -961,7 +1202,12 @@ const allModules = [
     icon: TerminalIcon,
     module: "system_group",
     children: [
-      { name: "Quản lý Module", icon: ZapIcon, path: "/system/modules", module: "system_modules" },
+      {
+        name: "Quản lý Module",
+        icon: ZapIcon,
+        path: "/system/modules",
+        module: "system_modules",
+      },
     ],
   },
   {
@@ -981,7 +1227,6 @@ const allModules = [
         path: "/licenses",
         module: "licenses",
       },
-
     ],
   },
 
@@ -1032,25 +1277,31 @@ const allModules = [
 ];
 
 const menuItems = computed(() => {
-  const authorizedModules = user.value.modules || (user.value.module ? [user.value.module] : []);
-  
+  const authorizedModules =
+    user.value.modules || (user.value.module ? [user.value.module] : []);
+
   // Real Admin sees everything, Trial Manager sees limited
   const isSuperAdmin = user.value.role === "admin";
-  
+
   if (isSuperAdmin) return allModules;
 
   // Clone and filter
   return allModules
-    .map(item => ({ ...item, children: item.children ? [...item.children] : undefined }))
-    .filter(item => {
+    .map((item) => ({
+      ...item,
+      children: item.children ? [...item.children] : undefined,
+    }))
+    .filter((item) => {
       // Basic modules like overview are always allowed
       if (item.module === "overview") return true;
-      
+
       // If it has children, check if any child is authorized
       if (item.children) {
         const allowedChildren = item.children.filter((child: any) => {
           if (child.children) {
-            const allowedLeafs = child.children.filter((leaf: any) => authorizedModules.includes(leaf.module));
+            const allowedLeafs = child.children.filter((leaf: any) =>
+              authorizedModules.includes(leaf.module),
+            );
             if (allowedLeafs.length > 0) {
               child.children = allowedLeafs;
               return true;
@@ -1059,14 +1310,14 @@ const menuItems = computed(() => {
           }
           return authorizedModules.includes(child.module);
         });
-        
+
         if (allowedChildren.length > 0) {
           item.children = allowedChildren;
           return true;
         }
         return false;
       }
-      
+
       // Individual items
       return authorizedModules.includes(item.module as any);
     });
@@ -1074,13 +1325,17 @@ const menuItems = computed(() => {
 
 const findMenuItem = (nameOrModule: string) => {
   for (const item of allModules) {
-    if (item.name === nameOrModule || (item as any).module === nameOrModule) return item;
+    if (item.name === nameOrModule || (item as any).module === nameOrModule)
+      return item;
     if (item.children) {
       for (const sub of item.children) {
-        if (sub.name === nameOrModule || (sub as any).module === nameOrModule) return sub;
+        if (sub.name === nameOrModule || (sub as any).module === nameOrModule)
+          return sub;
         if ((sub as any).children) {
-           const leaf = (sub as any).children.find((l: any) => l.name === nameOrModule || l.module === nameOrModule);
-           if (leaf) return leaf;
+          const leaf = (sub as any).children.find(
+            (l: any) => l.name === nameOrModule || l.module === nameOrModule,
+          );
+          if (leaf) return leaf;
         }
       }
     }
@@ -1091,7 +1346,7 @@ const findMenuItem = (nameOrModule: string) => {
 const route = useRoute();
 const activeTab = computed(() => {
   const currentPath = route.path;
-  
+
   // First try exact path match for sub-items
   for (const item of allModules) {
     if ((item as any).path === currentPath) return item.name;
@@ -1099,15 +1354,17 @@ const activeTab = computed(() => {
       for (const sub of item.children) {
         if ((sub as any).path === currentPath) return sub.name;
         if ((sub as any).children) {
-           const leaf = (sub as any).children.find((l: any) => l.path === currentPath);
-           if (leaf) return leaf.name;
+          const leaf = (sub as any).children.find(
+            (l: any) => l.path === currentPath,
+          );
+          if (leaf) return leaf.name;
         }
       }
     }
   }
 
   // Special handle for root /law-admin which defaults to chat
-  if (currentPath === '/law-admin') return "Tư vấn Trực tuyến";
+  if (currentPath === "/law-admin") return "Tư vấn Trực tuyến";
 
   const currentModule = route.meta.module as string;
   const item = findMenuItem(currentModule);
@@ -1119,12 +1376,12 @@ const handleMenuClick = async (tabName: string) => {
   if (item && item.path) {
     if ((window as any).$pageTransition) {
       // Find extra info from DOMAINS if it's a primary module
-      const domainInfo = DOMAINS.find(d => d.id === item.module);
-      
+      const domainInfo = DOMAINS.find((d) => d.id === item.module);
+
       await (window as any).$pageTransition.trigger(item.path, {
         icon: item.icon,
         color: domainInfo?.hexColor || "#a855f7", // fallback to purple
-        label: item.name
+        label: item.name,
       });
     } else {
       router.push(item.path);
@@ -1198,7 +1455,8 @@ const activities = [
   background: color-mix(in srgb, var(--active-color) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--active-color) 20%, transparent);
   color: var(--active-color);
-  box-shadow: 0 4px 15px -1px color-mix(in srgb, var(--active-color) 15%, transparent);
+  box-shadow: 0 4px 15px -1px
+    color-mix(in srgb, var(--active-color) 15%, transparent);
   backdrop-filter: blur(4px);
 }
 

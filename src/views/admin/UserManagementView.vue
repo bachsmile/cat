@@ -87,9 +87,7 @@
       </div>
 
       <!-- Users Table -->
-        <div
-          class="glass-panel rounded-3xl border overflow-hidden shadow-xl"
-        >
+      <div class="glass-panel rounded-3xl border overflow-hidden shadow-xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -150,9 +148,7 @@
                       <div
                         class="absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-[#0a0a0f] rounded-full"
                         :class="
-                          u.status === 'active'
-                            ? 'bg-green-500'
-                            : 'bg-gray-600'
+                          u.status === 'active' ? 'bg-green-500' : 'bg-gray-600'
                         "
                       ></div>
                     </div>
@@ -160,7 +156,7 @@
                       <p
                         class="font-bold text-sm text-white group-hover:text-blue-400 transition-colors"
                       >
-                        {{ u.displayName || u.email.split('@')[0] }}
+                        {{ u.displayName || u.email.split("@")[0] }}
                       </p>
                       <p class="text-[10px] text-gray-500 font-mono">
                         {{ u.email }}
@@ -170,14 +166,18 @@
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex flex-wrap gap-1 justify-center">
-                    <span 
-                      v-for="modId in u.modules || []" 
+                    <span
+                      v-for="modId in u.modules || []"
                       :key="modId"
                       class="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md text-[9px] font-bold uppercase"
                     >
                       {{ modId }}
                     </span>
-                    <span v-if="!u.modules?.length" class="text-[9px] text-gray-600">--</span>
+                    <span
+                      v-if="!u.modules?.length"
+                      class="text-[9px] text-gray-600"
+                      >--</span
+                    >
                   </div>
                 </td>
                 <td class="px-6 py-5">
@@ -205,22 +205,35 @@
                   </div>
                 </td>
                 <td class="px-6 py-5 text-center">
-                  <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-xs font-mono font-bold">
+                  <span
+                    class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-xs font-mono font-bold"
+                  >
                     {{ u.loginCount || 0 }} lần
                   </span>
                 </td>
                 <td class="px-6 py-5 text-right">
                   <div class="flex flex-col items-end gap-1">
-                    <span 
+                    <span
                       class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border"
                       :class="getPlanStyles(u.subscriptionPlan)"
                     >
-                      {{ u.subscriptionPlan || 'none' }}
+                      {{ u.subscriptionPlan || "none" }}
                     </span>
-                    <span v-if="u.subscriptionExpiresAt" class="text-[9px] text-gray-500">
-                      Hết hạn: {{ new Date(u.subscriptionExpiresAt).toLocaleDateString("en-CA") }}
+                    <span
+                      v-if="u.subscriptionExpiresAt"
+                      class="text-[9px] text-gray-500"
+                    >
+                      Hết hạn:
+                      {{
+                        new Date(u.subscriptionExpiresAt).toLocaleDateString(
+                          "en-CA",
+                        )
+                      }}
                     </span>
-                    <span v-else class="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">
+                    <span
+                      v-else
+                      class="text-[9px] text-emerald-500 font-bold uppercase tracking-widest"
+                    >
                       Vĩnh viễn
                     </span>
                   </div>
@@ -416,17 +429,25 @@
 
           <!-- Module Permissions -->
           <div class="space-y-4 pt-4 border-t border-white/5">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Phân quyền Lĩnh vực</h4>
+            <h4
+              class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1"
+            >
+              Phân quyền Lĩnh vực
+            </h4>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <label 
-                v-for="mod in availableModules" 
+              <label
+                v-for="mod in availableModules"
                 :key="mod.id"
                 class="flex items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all"
-                :class="{ 'border-blue-500/50 bg-blue-500/10': form.modules.includes(mod.id) }"
+                :class="{
+                  'border-blue-500/50 bg-blue-500/10': form.modules.includes(
+                    mod.id,
+                  ),
+                }"
               >
-                <input 
-                  type="checkbox" 
-                  :value="mod.id" 
+                <input
+                  type="checkbox"
+                  :value="mod.id"
                   v-model="form.modules"
                   class="w-4 h-4 accent-blue-500"
                 />
@@ -436,12 +457,15 @@
           </div>
 
           <!-- Subscription Plan Section (Moved down) -->
-          <div 
+          <div
             v-if="form.modules.length > 0"
             class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5 animate-in slide-in-from-top-2 duration-300"
           >
             <div class="space-y-2">
-              <label class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Gói dịch vụ (Gói lọc theo lĩnh vực)</label>
+              <label
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
+                >Gói dịch vụ (Gói lọc theo lĩnh vực)</label
+              >
               <select
                 v-model="form.subscriptionPlan"
                 required
@@ -451,16 +475,29 @@
                   <option value="trial">Dùng thử (Trial)</option>
                   <option value="basic">Gói Cơ bản</option>
                 </optgroup>
-                
-                <optgroup v-for="modId in form.modules" :key="modId" :label="availableModules.find(m => m.id === modId)?.name || modId">
-                  <option v-for="plan in getModulePlans(modId)" :key="plan.id" :value="plan.id">
+
+                <optgroup
+                  v-for="modId in form.modules"
+                  :key="modId"
+                  :label="
+                    availableModules.find((m) => m.id === modId)?.name || modId
+                  "
+                >
+                  <option
+                    v-for="plan in getModulePlans(modId)"
+                    :key="plan.id"
+                    :value="plan.id"
+                  >
                     {{ plan.name }}
                   </option>
                 </optgroup>
               </select>
             </div>
             <div class="space-y-2">
-              <label class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Thời hạn đến</label>
+              <label
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
+                >Thời hạn đến</label
+              >
               <input
                 v-model="form.subscriptionExpiresAt"
                 type="date"
@@ -468,7 +505,10 @@
               />
             </div>
           </div>
-          <div v-else class="text-center p-4 bg-white/5 border border-white/5 rounded-xl text-[10px] text-gray-500 italic">
+          <div
+            v-else
+            class="text-center p-4 bg-white/5 border border-white/5 rounded-xl text-[10px] text-gray-500 italic"
+          >
             Vui lòng chọn ít nhất một Lĩnh vực để cấu hình Gói dịch vụ
           </div>
 
@@ -542,10 +582,10 @@ const tabs = [
 ];
 
 const availableModules = [
-  { id: 'law', name: 'Pháp lý', icon: 'Scale' },
-  { id: 'finance', name: 'Tài chính', icon: 'LineChart' },
-  { id: 'medical', name: 'Y tế', icon: 'Stethoscope' },
-  { id: 'education', name: 'Giáo dục', icon: 'BookOpen' }
+  { id: "law", name: "Pháp lý", icon: "Scale" },
+  { id: "finance", name: "Tài chính", icon: "LineChart" },
+  { id: "medical", name: "Y tế", icon: "Stethoscope" },
+  { id: "education", name: "Giáo dục", icon: "BookOpen" },
 ];
 
 const roles = ["admin", "manager", "moderator", "user", "guest"];
@@ -578,9 +618,8 @@ const form = ref<UserForm>({
   status: "active",
   modules: [],
   subscriptionPlan: "none",
-  subscriptionExpiresAt: ""
+  subscriptionExpiresAt: "",
 });
-
 
 const fetchUsers = async () => {
   loading.value = true;
@@ -617,13 +656,15 @@ const openModal = (u?: User) => {
     editingId.value = u.id;
     form.value = {
       displayName: (u.displayName as string) || "",
-      email: (u.email as string),
+      email: u.email as string,
       password: "",
-      role: (u.role as string),
+      role: u.role as string,
       status: (u.status as any) || "active",
       modules: (u.modules as string[]) || [],
       subscriptionPlan: (u.subscriptionPlan as string) || "none",
-      subscriptionExpiresAt: u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).toISOString().substring(0, 10) : ""
+      subscriptionExpiresAt: u.subscriptionExpiresAt
+        ? new Date(u.subscriptionExpiresAt).toISOString().substring(0, 10)
+        : "",
     };
   } else {
     isEditing.value = false;
@@ -636,7 +677,7 @@ const openModal = (u?: User) => {
       status: "active",
       modules: [],
       subscriptionPlan: "none",
-      subscriptionExpiresAt: ""
+      subscriptionExpiresAt: "",
     };
   }
   showModal.value = true;
@@ -701,12 +742,17 @@ const getRoleStyles = (role: string) => {
 };
 
 const getPlanStyles = (plan: string | undefined) => {
-  if (!plan || plan === 'none') return "bg-gray-500/10 text-gray-500 border-gray-500/20";
-  
-  if (plan.includes('law')) return "bg-blue-500/10 text-blue-500 border-blue-500/20";
-  if (plan.includes('finance')) return "bg-purple-500/10 text-purple-500 border-purple-500/20";
-  if (plan.includes('medical')) return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
-  if (plan.includes('education')) return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+  if (!plan || plan === "none")
+    return "bg-gray-500/10 text-gray-500 border-gray-500/20";
+
+  if (plan.includes("law"))
+    return "bg-blue-500/10 text-blue-500 border-blue-500/20";
+  if (plan.includes("finance"))
+    return "bg-purple-500/10 text-purple-500 border-purple-500/20";
+  if (plan.includes("medical"))
+    return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+  if (plan.includes("education"))
+    return "bg-amber-500/10 text-amber-500 border-amber-500/20";
 
   switch (plan) {
     case "trial":
@@ -723,25 +769,25 @@ const getPlanStyles = (plan: string | undefined) => {
 };
 
 const getModulePlans = (modId: string) => {
-  const plansMap: Record<string, {id: string, name: string}[]> = {
+  const plansMap: Record<string, { id: string; name: string }[]> = {
     law: [
-      { id: 'law_standard', name: 'Pháp lý Tiêu chuẩn' },
-      { id: 'law_pro', name: 'Pháp lý Chuyên nghiệp' },
-      { id: 'law_firm', name: 'Gói Văn phòng Luật' }
+      { id: "law_standard", name: "Pháp lý Tiêu chuẩn" },
+      { id: "law_pro", name: "Pháp lý Chuyên nghiệp" },
+      { id: "law_firm", name: "Gói Văn phòng Luật" },
     ],
     finance: [
-      { id: 'finance_starter', name: 'Tài chính Khởi nghiệp' },
-      { id: 'finance_professional', name: 'Tài chính Chuyên nghiệp' },
-      { id: 'finance_whale', name: 'Gói Whale Strategy' }
+      { id: "finance_starter", name: "Tài chính Khởi nghiệp" },
+      { id: "finance_professional", name: "Tài chính Chuyên nghiệp" },
+      { id: "finance_whale", name: "Gói Whale Strategy" },
     ],
     medical: [
-      { id: 'medical_clinic', name: 'Gói Phòng mạch' },
-      { id: 'medical_hospital', name: 'Gói Bệnh viện' }
+      { id: "medical_clinic", name: "Gói Phòng mạch" },
+      { id: "medical_hospital", name: "Gói Bệnh viện" },
     ],
     education: [
-      { id: 'edu_standard', name: 'Giáo dục Tiêu chuẩn' },
-      { id: 'edu_campus', name: 'Gói Campus Connect' }
-    ]
+      { id: "edu_standard", name: "Giáo dục Tiêu chuẩn" },
+      { id: "edu_campus", name: "Gói Campus Connect" },
+    ],
   };
   return plansMap[modId] || [];
 };

@@ -14,6 +14,7 @@ export interface User {
   modules?: string[];
   subscriptionPlan?: string;
   subscriptionExpiresAt?: string;
+  language?: 'en' | 'vi';
 }
 
 export const userApi = {
