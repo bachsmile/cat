@@ -421,7 +421,7 @@
     <main class="flex-1 overflow-y-auto p-4 md:p-10">
       <!-- Top Bar -->
       <header
-        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12 sticky top-0 z-[40] glass-panel -mx-4 md:-mx-10 px-4 md:px-10 py-6 shadow-xl"
+        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12 sticky top-0 md:top-4 z-[40] glass-panel px-6 md:px-8 py-5 rounded-[2rem] border border-white/10 shadow-2xl backdrop-blur-3xl"
       >
         <div class="flex items-center justify-between w-full md:w-auto">
           <div class="flex items-center gap-4 lg:hidden">

@@ -30,11 +30,19 @@
         >
           <div class="bg-[#0a0a0f] rounded-[2.25rem] p-8 h-full flex flex-col">
             <!-- Icon -->
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center mb-8 shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+            <div 
+              @click="$router.push(`/npm/docs/${project.id}`)"
+              class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center mb-8 shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform cursor-pointer"
+            >
               <component :is="project.icon" class="w-8 h-8 text-white" />
             </div>
 
-            <h2 class="text-2xl font-bold mb-4 group-hover:text-purple-400 transition-colors">{{ project.name }}</h2>
+            <h2 
+              @click="$router.push(`/npm/docs/${project.id}`)"
+              class="text-2xl font-bold mb-4 group-hover:text-purple-400 transition-colors cursor-pointer"
+            >
+              {{ project.name }}
+            </h2>
             <p class="text-gray-500 mb-8 flex-grow leading-relaxed">
               {{ $t('npmSubtitle') }}
             </p>
@@ -44,12 +52,20 @@
                 <span class="text-[10px] uppercase tracking-widest text-gray-600 font-bold">{{ $t('npmStartingAt') }}</span>
                 <span class="text-xl font-bold text-white">${{ project.startingPrice }} <span class="text-xs text-gray-500 font-normal">{{ $t('npmPerMonth') }}</span></span>
               </div>
-              <button 
-                @click="$router.push(`/npm/purchase/${project.id}`)"
-                class="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-2xl font-bold text-sm transition-all border border-white/10"
-              >
-                {{ $t('npmPurchase') }}
-              </button>
+              <div class="flex items-center gap-3">
+                <button 
+                  @click="$router.push(`/npm/docs/${project.id}`)"
+                  class="px-5 py-3 bg-white/5 hover:bg-white/10 rounded-2xl font-bold text-sm transition-all border border-white/10 text-gray-400 hover:text-white"
+                >
+                  {{ $t('npmDocuments') || 'Documents' }}
+                </button>
+                <button 
+                  @click="$router.push(`/npm/purchase/${project.id}`)"
+                  class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl font-bold text-sm transition-all shadow-lg shadow-purple-500/20"
+                >
+                  {{ $t('npmPurchase') }}
+                </button>
+              </div>
             </div>
           </div>
           
