@@ -51,13 +51,13 @@ const routes = [
     },
   },
   {
-    path: "/assets",
+    path: "/inventory",
     name: "AdminAssets",
     component: Dashboard,
     meta: {
       requiresAuth: true,
       role: ["admin", "moderator", "manager", "lawyer"],
-      module: "assets",
+      module: "inventory",
     },
   },
   {
@@ -298,7 +298,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

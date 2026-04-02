@@ -661,7 +661,7 @@
 
       <!-- Assets Module Content -->
       <div
-        v-else-if="route.meta.module === 'assets'"
+        v-else-if="route.meta.module === 'inventory'"
         class="animate-in fade-in duration-300"
       >
         <AssetsContainer />
@@ -819,6 +819,7 @@ import {
   BriefcaseBusiness as BriefcaseBusinessIcon,
   User as UserIcon,
   ShieldCheck as ShieldCheckIcon,
+  FolderSearch as FolderSearchIcon,
   Sparkles as SparklesIcon,
   Bot as BotIcon,
 } from "lucide-vue-next";
@@ -920,7 +921,12 @@ const allModules = [
     path: "/dashboard",
     module: "overview",
   },
-  { name: "Tài sản", icon: WalletIcon, path: "/assets", module: "assets" },
+  {
+    name: "Kho lưu trữ",
+    icon: FolderSearchIcon,
+    path: "/inventory",
+    module: "inventory",
+  },
 
   {
     name: "PHÁP LÝ",
