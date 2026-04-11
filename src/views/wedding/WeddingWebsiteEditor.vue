@@ -289,7 +289,18 @@ const formattedDate = computed(() => {
 });
 
 const publishWebsite = () => {
-   alert('Website đã được xuất bản thành công tại: ' + weddingUrl.value);
+   const siteId = 'hai-nam-quynh-mai'; // In real app, generate unique slug
+   const payload = {
+      themeId: selectedTheme.value.id,
+      data: weddingData.value
+   };
+   
+   // Save to local storage so the public view can read it
+   localStorage.setItem(`wedding_site_${siteId}`, JSON.stringify(payload));
+   
+   const url = `${window.location.origin}/web/wedding/${siteId}`;
+   window.open(url, '_blank');
+   alert('Website đã được xuất bản thành công! Đang chuyển hướng...');
 };
 
 // --- FIREWORKS LOGIC ---

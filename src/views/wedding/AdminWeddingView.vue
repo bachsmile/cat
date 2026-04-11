@@ -59,45 +59,58 @@
     <!-- Tab Content -->
     <div class="space-y-8">
       <template v-if="activeTab === 'overview'">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <CgCard v-for="stat in stats" :key="stat.label" type="grain-frost" class="p-6 rounded-3xl border border-white/5">
-            <div class="flex justify-between items-start mb-4">
-              <div class="p-3 bg-white/5 rounded-2xl">
-                <component :is="stat.icon" class="w-6 h-6 text-pink-400" />
-              </div>
-              <span class="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg">+{{ stat.trend }}%</span>
-            </div>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-1">{{ stat.label }}</p>
-            <h3 class="text-2xl font-black text-white italic">{{ stat.value }}</h3>
-          </CgCard>
+        <!-- Hero Section with Domain Title -->
+        <div class="mb-10">
+           <h1 class="text-4xl font-black text-white italic tracking-tighter mb-2">QUẢN LÝ WEDDING</h1>
+           <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.4em]">Toàn cảnh hệ thống dịch vụ cưới hỏi</p>
         </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <CgCard type="heavy-frost" class="lg:col-span-8 p-8 rounded-[2.5rem] min-h-[400px]">
-            <h3 class="text-xl font-bold italic mb-8 flex items-center gap-3">
-              <TrendingUpIcon class="w-6 h-6 text-pink-400" />
-              Tăng trưởng doanh thu & Đơn hàng
-            </h3>
-            <div class="h-64 flex items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl">
-              [Biểu đồ tăng trưởng]
-            </div>
-          </CgCard>
 
-          <CgCard type="grain-frost" class="lg:col-span-4 p-8 rounded-[2.5rem]">
-            <h3 class="text-xl font-bold italic mb-8">Đơn hàng mới nhất</h3>
-            <div class="space-y-4">
-              <div v-for="i in 5" :key="i" class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400">
-                  <UserIcon class="w-5 h-5" />
-                </div>
-                <div class="flex-1">
-                  <p class="text-xs font-bold text-white">Khách hàng #{{ 1000 + i }}</p>
-                  <p class="text-[10px] text-gray-500">Gói Diamond • 2,500,000đ</p>
-                </div>
-                <span class="text-[9px] font-black text-orange-400 uppercase">Đang chờ</span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+           <!-- LEFT: Dedicated Vertical Menu (The "Trang Riêng" request) -->
+           <div class="lg:col-span-4 space-y-4">
+              <CgCard v-for="item in MENU_ITEMS" :key="item.id" type="grain-frost" 
+                 class="p-6 rounded-[1.8rem] border border-white/5 hover:border-pink-500/30 cursor-pointer group transition-all duration-500"
+                 @click="navigateTo(item.id)">
+                 <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-5">
+                       <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110" :class="[item.bg]">
+                          <component :is="item.icon" class="w-6 h-6" :class="[item.color]" />
+                       </div>
+                       <div>
+                          <h4 class="text-sm font-black text-white group-hover:text-pink-400 transition-colors uppercase tracking-widest">{{ item.name }}</h4>
+                          <p class="text-[9px] text-gray-500 font-bold tracking-[0.2em] uppercase mt-1">{{ item.sub }}</p>
+                       </div>
+                    </div>
+                    <ChevronRightIcon class="w-5 h-5 text-gray-700 group-hover:text-pink-500 group-hover:translate-x-1 transition-all" />
+                 </div>
+              </CgCard>
+           </div>
+
+           <!-- RIGHT: Statistics & Orders -->
+           <div class="lg:col-span-8 space-y-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CgCard v-for="stat in stats" :key="stat.label" type="grain-frost" class="p-6 rounded-3xl border border-white/5">
+                  <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-white/5 rounded-2xl">
+                      <component :is="stat.icon" class="w-6 h-6 text-pink-400" />
+                    </div>
+                    <span class="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg">+{{ stat.trend }}%</span>
+                  </div>
+                  <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-1">{{ stat.label }}</p>
+                  <h3 class="text-2xl font-black text-white italic">{{ stat.value }}</h3>
+                </CgCard>
               </div>
-            </div>
-          </CgCard>
+
+              <CgCard type="heavy-frost" class="p-8 rounded-[2.5rem] min-h-[300px]">
+                <h3 class="text-xl font-bold italic mb-8 flex items-center gap-3">
+                  <TrendingUpIcon class="w-6 h-6 text-pink-400" />
+                  Khu vực phân tích xu hướng
+                </h3>
+                <div class="h-48 flex items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl italic text-xs">
+                  Dữ liệu tăng trưởng theo thời gian thực...
+                </div>
+              </CgCard>
+           </div>
         </div>
       </template>
 
@@ -186,24 +199,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { 
   Heart as HeartIcon, 
   User as UserIcon, 
+  Globe as GlobeIcon, 
   Package as PackageIcon, 
   TrendingUp as TrendingUpIcon,
   Users as UsersIcon,
   Search as SearchIcon,
   MoreVertical as MoreVerticalIcon,
   Activity as ActivityIcon,
-  CreditCard as CreditCardIcon
+  CreditCard as CreditCardIcon,
+  Mail as MailIcon,
+  LayoutDashboard as DashIcon,
+  ChevronRight as ChevronRightIcon
 } from 'lucide-vue-next';
 import { CgCard } from 'glass-studio-ui-pro';
 import WeddingCardListView from './WeddingCardListView.vue';
 import WeddingWebsiteEditor from './WeddingWebsiteEditor.vue';
 
 const router = useRouter();
+const route = useRoute();
 const activeTab = ref('overview');
 
 const tabs = [
@@ -214,12 +232,36 @@ const tabs = [
   { id: 'revenue', label: 'Doanh thu' },
 ];
 
+const MENU_ITEMS = [
+  { id: 'overview', name: 'TỔNG QUAN WEDDING', sub: 'WED-HOME', icon: DashIcon, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  { id: 'cards', name: 'TẠO THIỆP CƯỚI', sub: 'WED-CARD', icon: MailIcon, color: 'text-pink-400', bg: 'bg-pink-400/10' },
+  { id: 'website', name: 'THIẾT KẾ WEBSITE', sub: 'WED-WEB', icon: GlobeIcon, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+  { id: 'orders', name: 'QUẢN LÝ ĐƠN HÀNG', sub: 'WED-ORD', icon: PackageIcon, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  { id: 'revenue', name: 'THỐNG KÊ DOANH THU', sub: 'WED-REV', icon: TrendingUpIcon, color: 'text-orange-400', bg: 'bg-orange-400/10' },
+];
+
 const stats = [
   { label: 'Tổng đơn hàng', value: '1,284', icon: PackageIcon, trend: 12.5 },
   { label: 'Doanh thu tháng', value: '450.5M', icon: CreditCardIcon, trend: 8.2 },
   { label: 'Khách hàng mới', value: '342', icon: UsersIcon, trend: 15.1 },
   { label: 'Tỉ lệ hài lòng', value: '98.5%', icon: ActivityIcon, trend: 0.5 },
 ];
+
+const syncTab = () => {
+  const tab = route.params.tab as string;
+  if (tab && tabs.find(t => t.id === tab)) {
+    activeTab.value = tab;
+  } else {
+    activeTab.value = 'overview';
+  }
+};
+
+watch(() => route.params.tab, syncTab);
+onMounted(syncTab);
+
+const navigateTo = (tabId: string) => {
+  router.push(`/ad/wedding/${tabId}`);
+};
 </script>
 
 <style scoped>

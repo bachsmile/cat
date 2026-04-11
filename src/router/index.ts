@@ -426,6 +426,11 @@ const routes = [
       role: ["admin", "moderator", "manager", "lawyer"],
     },
   },
+  {
+    path: "/web/wedding/:id",
+    name: "WeddingPublic",
+    component: () => import("../views/wedding/WeddingPublicView.vue"),
+  },
 ];
 
 const router = createRouter({
