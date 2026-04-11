@@ -9,7 +9,7 @@
       <nav class="flex-1 flex flex-col gap-10">
         <CgButton
           variant="ghost"
-          @click="router.push('/super-admin')"
+          @click="router.push('/sp-ad')"
           class="p-4 rounded-2xl transition-all active:scale-95 group mb-6"
         >
           <ChevronLeftIcon
@@ -60,7 +60,7 @@
         <!-- Breadcrumb / Header -->
         <header class="flex items-center justify-between mb-12">
           <div
-            @click="router.push('/super-admin')"
+            @click="router.push('/sp-ad')"
             class="flex items-center gap-4 txt-gray-400 font-black group cursor-pointer hover:txt-brand-900 transition-colors"
           >
             <span class="text-xl uppercase tracking-tighter"

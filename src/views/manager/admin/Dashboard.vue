@@ -10,20 +10,59 @@
       class="absolute bottom-[-10%] right-[10%] w-[50%] h-[40%] bg-gradient-to-t from-orange-500/5 to-transparent blur-[150px] pointer-events-none z-0"
     ></div>
 
-    <!-- 🏰 Luxury Icon Rail (Sidebar) -->
+    <!-- 🔍 Search Overlay (Triggered from Sidebar) -->
+    <Transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div
+        v-if="showSearchModal"
+        class="fixed inset-0 z-[100] flex items-start justify-center pt-32 px-4 bg-black/60 backdrop-blur-md"
+        @click.self="showSearchModal = false"
+      >
+        <div
+          class="w-full max-w-2xl bg-[#0A0A0B] border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
+        >
+          <div class="p-6 flex items-center gap-4 border-b border-white/5">
+            <SearchIcon class="w-5 h-5 text-[#FFD700]" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search assets, lawyers, orders..."
+              class="flex-1 bg-transparent border-none outline-none text-xl text-white placeholder-gray-600"
+              autofocus
+            />
+            <button
+              @click="showSearchModal = false"
+              class="text-gray-500 hover:text-white px-2"
+            >
+              ESC
+            </button>
+          </div>
+          <div class="p-10 text-center text-gray-500">
+            <p v-if="!searchQuery">
+              Type something to explore your digital empire...
+            </p>
+            <p v-else>Searching for "{{ searchQuery }}"...</p>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Castle Sidebar (Rail) -->
     <CxSidebar width="60px">
       <!-- Top Profile Section -->
-      <div class="mt-4 mb-8 flex flex-col items-center gap-6 relative z-20">
-        <div
-          class="w-10 h-10 rounded-xl bg-[#0A0A0B] border border-white/5 flex items-center justify-center cursor-pointer hover:border-[#FFD700]/50 transition-all group/grid shadow-inner overflow-hidden"
+      <div class="flex flex-col items-center relative z-20">
+        <div 
+          @click="router.push('/sp-ad')"
+          class="relative group cursor-pointer"
         >
-          <LayoutGridIcon
-            class="w-4 h-4 text-gray-600 group-hover:text-[#FFD700] transition-colors"
-          />
-        </div>
-        <div class="relative group cursor-pointer">
           <div
-            class="w-10 h-10 rounded-full border-2 border-[#FFD700]/40 p-1 bg-black shadow-[0_0_20px_rgba(255,215,0,0.15)] group-hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] transition-all duration-500"
+            class="w-10 h-10 rounded-full border-2 border-[#FFD700]/60 p-1 bg-black shadow-[0_0_20px_rgba(255,215,0,0.2)] group-hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] transition-all duration-500"
           >
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=MasterAdmin"
@@ -34,63 +73,50 @@
             class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#070709] rounded-full shadow-[0_0_10px_#10b981]"
           ></div>
         </div>
+      </div>
 
-        <!-- 🌊 Luxury Progress Wave -->
-        <div class="flex flex-col items-center gap-1.5 mt-2 opacity-30">
+      <!-- Center Actions (Centric Intelligence) -->
+      <div
+        class="flex-1 flex flex-col items-center justify-center space-y-8 relative z-20"
+      >
+        <!-- System Actions Integrated from Header -->
+        <div
+          @click="showSearchModal = true"
+          class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all group"
+        >
+          <SearchIcon
+            class="w-5 h-5 text-gray-200 group-hover:text-white group-hover:drop-shadow-[0_0_8px_#fff] transition-all"
+          />
+        </div>
+
+        <div
+          class="relative cursor-pointer group flex items-center justify-center w-10 h-10 hover:bg-white/10 rounded-full transition-all"
+        >
+          <BellIcon
+            class="w-5 h-5 text-gray-200 group-hover:text-white transition-all"
+          />
           <div
-            v-for="i in 4"
-            :key="i"
-            class="w-0.5 h-6 rounded-full bg-gradient-to-b from-transparent via-[#FFD700] to-transparent"
+            class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black animate-pulse"
           ></div>
+        </div>
+
+        <div
+          @click="toggleSuperAdminMode"
+          class="w-10 h-10 rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:border-[#FFD700]/50 hover:text-[#FFD700] flex items-center justify-center cursor-pointer transition-all group"
+        >
+          <CrownIcon class="w-5 h-5" />
         </div>
       </div>
 
-      <!-- Main Navigation Rail -->
-      <nav
-        class="flex-1 w-full space-y-6 flex flex-col items-center py-2 relative z-20"
-      >
-        <button
-          v-for="item in currentMenuItems"
-          :key="item.name"
-          @click="selectMenu(item)"
-          class="group relative flex flex-col items-center gap-2"
-        >
-          <div
-            class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-10"
-            :class="[
-              activeTab === item.name || isAnyChildActive(item)
-                ? 'bg-gradient-to-br from-[#FFF2B2] via-[#FFD700] to-[#B8860B] text-black shadow-[0_0_20px_rgba(255,215,0,0.6)] scale-110'
-                : 'bg-white/5 text-gray-500 hover:text-white hover:bg-white/10',
-            ]"
-          >
-            <div
-              v-if="activeTab === item.name || isAnyChildActive(item)"
-              class="absolute inset-[-8px] bg-[#FFD700]/20 blur-[12px] rounded-full -z-10 animate-pulse-slow"
-            ></div>
-            <component :is="item.icon" class="w-4 h-4" />
-          </div>
-          <span
-            class="text-[6px] font-black uppercase tracking-[0.2em] transition-all duration-500 text-center px-1"
-            :class="
-              activeTab === item.name || isAnyChildActive(item)
-                ? 'text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]'
-                : 'text-gray-700 group-hover:text-gray-400'
-            "
-          >
-            {{ item.shortName }}
-          </span>
-        </button>
-      </nav>
+      <!-- Sidebar Footer (Bottom Settings) -->
+      <div class="space-y-8 flex flex-col items-center relative z-20">
+        <div class="w-8 h-px bg-white/10"></div>
 
-      <!-- Sidebar Footer -->
-      <div
-        class="mt-auto mb-8 space-y-8 flex flex-col items-center relative z-20"
-      >
         <SettingsIcon
-          class="w-5 h-5 text-[#FFD700] drop-shadow-[0_0_6px_rgba(255,215,0,0.5)] cursor-pointer"
+          class="w-5 h-5 text-gray-300 hover:text-white transition-all cursor-pointer"
         />
         <LogOutIcon
-          class="w-5 h-5 text-[#FFD700]/60 hover:text-white cursor-pointer"
+          class="w-5 h-5 text-gray-400 hover:text-red-400 transition-all cursor-pointer"
           @click="logout"
         />
       </div>
@@ -100,362 +126,314 @@
     <main
       class="flex-1 ml-[60px] h-full overflow-y-auto custom-scrollbar flex flex-col relative z-10 bg-[#050507]"
     >
-      <!-- Premium Floating Header -->
-      <div class="px-10 pt-10 sticky top-0 z-50">
-        <CxToolbar radius="3rem" class="!m-0 glass-vibrant h-20 px-8">
-          <template #left>
-            <div class="flex items-center gap-8 text-left">
-              <button
-                class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
-              >
-                <SearchIcon class="w-4 h-4 text-gray-400" />
-              </button>
-              <div class="flex flex-col">
-                <h2
-                  class="text-xl font-black text-white uppercase tracking-tighter italic flex items-center gap-3"
-                >
-                  {{ activeTab }}
-                </h2>
-                <!-- <span class="text-[9px] font-bold text-gray-500 uppercase tracking-[0.4em]">Integrated Intelligence Nexus v.10.2</span> -->
-              </div>
-            </div>
-          </template>
-
-          <template #right>
-            <div class="flex items-center gap-8">
-              <div class="flex items-center gap-6">
-                <BellIcon class="w-5 h-5 text-gray-400 cursor-pointer" />
-                <CommandIcon class="w-5 h-5 text-gray-400 cursor-pointer" />
-              </div>
-              <div class="h-10 w-px bg-white/10"></div>
-              <div
-                @click="toggleSuperAdminMode"
-                class="w-10 h-10 rounded-full border flex items-center justify-center cursor-pointer transition-all"
-                :class="
-                  isSuperAdminMode
-                    ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-lg shadow-[#FFD700]/40'
-                    : 'bg-white/5 border-white/10 text-[#FFD700]'
-                "
-              >
-                <CrownIcon class="w-5 h-5" />
-              </div>
-            </div>
-          </template>
-        </CxToolbar>
-      </div>
-
-      <!-- View Space (Comprehensive Grid Restoration) -->
-      <div class="p-6 max-w-[1800px] mx-auto w-full flex-1 pb-24">
+      <!-- View Space -->
+      <div class="p-6 max-w-[1800px] mx-auto w-full flex-1 pb-24 pt-16">
         <template v-if="activeTab === 'Báo cáo tổng quan'">
-          <!-- 🔱 Multi-Column Master Interface (Matches Image) -->
-          <div class="grid grid-cols-12 gap-8 h-full min-h-[1200px]">
-            <!-- 📊 Column 1: Core Metrics & Radar -->
-            <div class="col-span-12 lg:col-span-3 flex flex-col gap-8">
+          <!-- 🔱 Balanced Master Grid Layout [3-6-3] -->
+          <div class="grid grid-cols-12 gap-6">
+            <!-- 📊 Column 1: Core Metrics (Left) -->
+            <div class="col-span-12 xl:col-span-3 flex flex-col gap-6">
               <CxCard
                 accent
-                class="glass-deep !p-10 h-[650px] relative overflow-hidden group"
+                class="glass-deep !p-8 h-[520px] flex flex-col group relative overflow-hidden"
               >
-                <div class="flex justify-between items-center mb-10">
+                <div
+                  class="flex justify-between items-center mb-8 relative z-10"
+                >
                   <h4
-                    class="text-sm font-black text-[#FFD700] uppercase tracking-[0.3em]"
+                    class="text-xs font-black text-[#FFD700] uppercase tracking-[0.3em]"
                   >
-                    Quantum Navigation
+                    Network Intelligence
                   </h4>
-                  <MoreVerticalIcon class="w-4 h-4 text-gray-600" />
+                  <MoreVerticalIcon
+                    class="w-4 h-4 text-gray-600 cursor-pointer"
+                  />
                 </div>
-                <!-- 🪙 Circular Gauge/Compass Widget -->
-                <div class="flex-1 flex items-center justify-center relative">
+
+                <div
+                  class="flex-1 flex items-center justify-center relative z-10"
+                >
                   <div
                     class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.05)_0%,transparent_70%)] opacity-40"
                   ></div>
                   <div
-                    class="w-56 h-56 rounded-full border border-[#FFD700]/20 flex items-center justify-center relative group-hover:scale-110 transition-transform duration-1000"
+                    class="w-44 h-44 rounded-full border border-[#FFD700]/20 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-1000"
                   >
                     <div
                       class="absolute inset-2 rounded-full border border-[#FFD700]/40 border-dashed animate-spin-slow"
                     ></div>
-                    <div
-                      class="absolute inset-10 rounded-full bg-gradient-to-tr from-[#FFD700]/20 to-transparent"
-                    ></div>
                     <div class="z-10 text-center">
-                      <p class="text-4xl font-black text-white">64.9</p>
+                      <p class="text-4xl font-black text-white italic">64.9</p>
                       <p
                         class="text-[9px] text-[#FFD700] font-bold uppercase mt-2"
                       >
                         Stability Index
                       </p>
                     </div>
-                    <!-- Glowing Pointer -->
                     <div
                       class="absolute top-0 left-1/2 -translate-x-1/2 -mt-2 w-4 h-4 bg-[#FFD700] rounded-full blur-[4px] shadow-[0_0_20px_#FFD700]"
                     ></div>
                   </div>
                 </div>
-                <!-- Detailed Metrics List -->
-                <div class="mt-auto space-y-4 text-left">
+
+                <div class="mt-8 space-y-4 relative z-10">
                   <div
-                    v-for="i in 4"
+                    v-for="i in 3"
                     :key="i"
                     class="flex justify-between items-center border-t border-white/5 pt-4"
                   >
-                    <span class="text-[10px] text-gray-500 font-bold uppercase"
+                    <span class="text-[10px] text-gray-500 uppercase font-bold"
                       >Node Cluster {{ i }}</span
                     >
-                    <span class="text-xs font-black text-[#FFD700]">98.2%</span>
+                    <span class="text-xs font-black text-emerald-500"
+                      >OPTIMAL</span
+                    >
                   </div>
                 </div>
               </CxCard>
 
-              <CxCard class="glass-deep !p-8 h-[350px]">
+              <CxCard
+                class="glass-vibrant min-h-[300px] !p-8 border-l-4 border-l-[#FFD700]"
+              >
                 <h4
-                  class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6"
+                  class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6"
                 >
-                  Growth Lattice
+                  Strategic Signals
                 </h4>
-                <div class="flex-1 flex items-center justify-center">
-                  <!-- Tiny Area Trace Chart -->
-                  <div class="w-full h-32 flex items-end gap-1 opacity-60">
-                    <div
-                      v-for="v in [20, 40, 35, 60, 50, 80, 70, 95]"
-                      :key="v"
-                      class="flex-1 bg-[#FFD700]/30 rounded-full"
-                      :style="{ height: v + '%' }"
-                    ></div>
+                <div class="space-y-6">
+                  <div
+                    v-for="i in 2"
+                    :key="i"
+                    class="p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                  >
+                    <p
+                      class="text-[10px] text-[#FFD700] font-black uppercase mb-1"
+                    >
+                      Alert #{{ i }}08
+                    </p>
+                    <p
+                      class="text-xs text-white/80 leading-relaxed font-medium line-clamp-2 italic"
+                    >
+                      Infrastructure nodes re-synced successfully across global
+                      clusters.
+                    </p>
                   </div>
                 </div>
               </CxCard>
             </div>
 
-            <!-- 🔭 Center Column: Detailed Statistics & Bar Charts -->
-            <div class="col-span-12 lg:col-span-5 flex flex-col gap-8">
-              <!-- 🏗️ Master Dual-Column Insights Layout -->
-              <div class="grid grid-cols-12 gap-8 min-h-[550px]">
+            <!-- 📈 Column 2: Analytics & Charts (Center) -->
+            <div class="col-span-12 xl:col-span-6 flex flex-col gap-6">
+              <div class="grid grid-cols-2 gap-6">
                 <CxCard
-                  v-for="s in [
-                    { l: 'Primary Nodes', v: '1025/3' },
-                    { l: 'Active Streams', v: '19.8/3' },
-                  ]"
-                  :key="s.l"
-                  class="col-span-6 glass-deep !p-10 text-left"
+                  class="glass-deep !p-8 h-44 flex flex-col justify-center border-t-2 border-[#FFD700]/40"
                 >
                   <p
-                    class="text-[10px] text-gray-500 font-black uppercase mb-4"
+                    class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2 text-left"
                   >
-                    {{ s.l }}
+                    Total Valuation
                   </p>
                   <h3
-                    class="text-4xl font-black text-white italic tracking-tighter"
+                    class="text-4xl font-black text-white text-left tracking-tighter italic"
                   >
-                    {{ s.v }}
+                    ₫{{ fmtNumber(assetStats.totalHoldings) }}
                   </h3>
+                  <div
+                    class="flex items-center gap-2 mt-6 text-[10px] font-black text-emerald-500"
+                  >
+                    <TrendingUpIcon class="w-4 h-4 animate-pulse" />
+                    <span>+12.4% PERFORMANCE</span>
+                  </div>
+                </CxCard>
+                <CxCard
+                  class="glass-deep !p-8 h-44 flex flex-col justify-center"
+                >
+                  <p
+                    class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2 text-left"
+                  >
+                    Net Returns
+                  </p>
+                  <h3
+                    class="text-4xl font-black text-[#FFD700] text-left tracking-tighter italic"
+                  >
+                    ₫{{ fmtNumber(assetStats.realizedProfit) }}
+                  </h3>
+                  <p
+                    class="text-[9px] text-gray-600 mt-6 text-left font-bold tracking-widest uppercase"
+                  >
+                    Global Revenue Stream
+                  </p>
                 </CxCard>
               </div>
 
-              <!-- Integrated Bar Visualization (Matches Image Center) -->
-              <CxCard class="glass-deep !p-12 flex flex-col h-[400px]">
-                <div class="flex justify-between items-center mb-10">
-                  <div class="flex flex-col text-left">
+              <CxCard
+                class="glass-vibrant h-[520px] !p-8 relative group overflow-hidden"
+              >
+                <div
+                  class="flex justify-between items-center mb-8 relative z-10"
+                >
+                  <div class="text-left">
                     <h4
-                      class="text-xs font-black text-[#FFD700] uppercase tracking-[0.3em]"
+                      class="text-sm font-black text-white uppercase italic tracking-tighter"
                     >
-                      TĂNG TRƯỞNG TÀI SẢN
+                      Market Intelligence Hub
                     </h4>
                     <p
-                      class="text-[9px] font-bold text-gray-600 uppercase mt-1 tracking-widest"
+                      class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.4em] mt-2"
                     >
-                      BIẾN ĐỘNG DÒNG VỐN THEO THỜI GIAN THỰC
+                      Historical & Predictive Flow Analysis
                     </p>
                   </div>
-                  <div class="flex gap-4">
+                  <div class="flex gap-2">
                     <button
-                      class="text-[9px] font-black text-[#FFD700] border border-[#FFD700]/20 px-3 py-1.5 rounded-full bg-[#FFD700]/5 hover:bg-[#FFD700]/20 transition-all"
+                      v-for="p in ['1D', '1W', '1M', 'ALL']"
+                      :key="p"
+                      class="px-4 py-1.5 text-[10px] font-black rounded-full border border-white/5 hover:border-[#FFD700]/50 transition-all text-gray-500 hover:text-white"
                     >
-                      1D
-                    </button>
-                    <button
-                      class="text-[9px] font-black text-gray-600 px-3 py-1.5 rounded-full hover:text-[#FFD700] transition-all"
-                    >
-                      1W
-                    </button>
-                    <button
-                      class="text-[9px] font-black text-gray-600 px-3 py-1.5 rounded-full hover:text-[#FFD700] transition-all"
-                    >
-                      1M
+                      {{ p }}
                     </button>
                   </div>
                 </div>
-                <div class="flex-1 relative min-h-0 mt-4 rounded-xl">
-                  <template v-if="growthStats.length > 0">
-                    <div class="absolute inset-0">
-                      <Line :data="growthChartData" :options="growthChartOptions" />
-                    </div>
-                  </template>
-                  <template v-else>
-                    <div class="h-full flex items-end gap-[1px]">
-                      <div v-for="i in 15" :key="i" class="flex-1 h-full relative group/col">
-                         <div class="absolute bottom-0 w-full bg-white/5 rounded-t-sm animate-pulse" :style="{ height: [40, 70, 55, 90, 60, 45, 80, 50, 65, 30][i % 10] + '%' }"></div>
-                      </div>
-                    </div>
-                  </template>
+                <div class="h-[350px] relative z-10">
+                  <Line :data="chartData" :options="chartOptions" />
                 </div>
               </CxCard>
 
-              <!-- 📊 Integrated Asset Overview Hub (Realized Profit & Flow) -->
-              <div class="mt-12 mb-20">
-                <AssetOverviewHub
-                  :selectedAsset="'ALL'"
-                  :transactions="transactions"
-                  :currentAssetBalance="portfolioSummary?.totalVndValue || 0"
-                  :assetStats="assetStats"
-                  :profitChartData="[]"
-                  :totalCapitalPnl="portfolioSummary?.realizedProfit || 0"
-                  :capitalPackages="capitalPackages"
-                  :formatNumber="fmtNumber"
-                  :formatDateTime="fmtDateTime"
-                />
-              </div>
+              <CxCard
+                class="glass-deep !p-6 flex items-center justify-between border border-white/5 rounded-3xl"
+              >
+                <div class="flex items-center gap-6">
+                  <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFF2B2] to-[#FFD700] flex items-center justify-center text-black"
+                  >
+                    <FilterIcon class="w-5 h-5" />
+                  </div>
+                  <div class="text-left">
+                    <h5 class="text-xs font-black text-white uppercase italic">
+                      Operations Control
+                    </h5>
+                    <p
+                      class="text-[9px] text-gray-500 uppercase font-bold mt-1"
+                    >
+                      Refine analytic scope across the integrated ecosystem
+                    </p>
+                  </div>
+                </div>
+                <div class="flex gap-4">
+                  <button
+                    class="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase text-gray-400 hover:text-white transition-all"
+                  >
+                    Analytics Export
+                  </button>
+                  <button
+                    class="px-6 py-2.5 rounded-xl bg-[#FFD700] text-black text-[9px] font-black uppercase hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all"
+                  >
+                    Deep Inspection
+                  </button>
+                </div>
+              </CxCard>
             </div>
 
-            <!-- 🗺️ Right Column: Maps & Radial Metrix -->
-            <div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
-              <!-- World Map Widget 1 -->
-              <CxCard
-                class="glass-deep !p-0 h-[400px] relative overflow-hidden group"
-              >
-                <div
-                  class="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-1000 grayscale scale-110 group-hover:scale-100 transition-transform"
-                >
-                  <img
-                    src="https://api.dicebear.com/7.x/initials/svg?seed=WorldMap&backgroundColor=TRANSPARENT"
-                    class="w-full h-full object-cover"
-                  />
-                </div>
-                <div class="relative z-10 p-10 flex flex-col h-full text-left">
+            <!-- 📊 Column 3: Global Ops & Feeds (Right) -->
+            <div class="col-span-12 xl:col-span-3 flex flex-col gap-6">
+              <CxCard class="glass-deep flex-1 !p-8 flex flex-col">
+                <div class="flex items-center gap-3 mb-8">
+                  <div class="w-1.5 h-6 bg-[#FFD700] rounded-full"></div>
                   <h4
-                    class="text-xs font-black text-[#FFD700] uppercase tracking-[0.3em] mb-4"
+                    class="text-xs font-black text-white uppercase italic tracking-widest text-left"
                   >
-                    Global Deployment
+                    Real-Time Streams
                   </h4>
-                  <div class="mt-auto flex items-center gap-6">
-                    <div
-                      class="w-12 h-12 rounded-full bg-[#FFD700] text-black flex items-center justify-center font-black"
-                    >
-                      A
-                    </div>
-                    <div class="flex flex-col">
-                      <p class="text-xl font-black text-white italic">
-                        Primary Hubs
-                      </p>
-                      <p
-                        class="text-[9px] text-gray-500 font-bold uppercase mt-1"
-                      >
-                        12 Latency Centers Active
-                      </p>
-                    </div>
-                  </div>
                 </div>
-              </CxCard>
-
-              <!-- Radial Progress Widget (Matches Image Right-Center) -->
-              <CxCard
-                class="glass-deep !p-12 h-[350px] flex items-center justify-between"
-              >
                 <div
-                  class="relative w-48 h-48 flex items-center justify-center"
-                >
-                  <svg class="w-full h-full -rotate-90">
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="currentColor"
-                      stroke-width="20"
-                      fill="transparent"
-                      class="text-white/5"
-                    />
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="currentColor"
-                      stroke-width="20"
-                      fill="transparent"
-                      class="text-[#FFD700]"
-                      stroke-dasharray="502"
-                      stroke-dashoffset="150"
-                    />
-                  </svg>
-                  <div class="absolute text-center">
-                    <h3 class="text-4xl font-black text-white italic">
-                      33.2<sup>%</sup>
-                    </h3>
-                    <p
-                      class="text-[9px] text-[#FFD700] font-bold uppercase mt-1"
-                    >
-                      Core Load
-                    </p>
-                  </div>
-                </div>
-                <div class="flex flex-col gap-6 text-left">
-                  <div v-for="i in 3" :key="i">
-                    <p
-                      class="text-[9px] text-gray-500 font-black uppercase mb-1"
-                    >
-                      METRIC_0{{ i }}
-                    </p>
-                    <div
-                      class="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden"
-                    >
-                      <div
-                        class="h-full bg-[#FFD700]"
-                        :style="{ width: i * 30 + '%' }"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </CxCard>
-
-              <!-- World Map Widget 2 (Detailed) -->
-              <CxCard
-                class="glass-deep !p-0 flex-1 min-h-[300px] relative overflow-hidden group"
-              >
-                <div class="absolute inset-0 bg-[#FFD700]/5"></div>
-                <!-- Particle World Map Representation -->
-                <div
-                  class="absolute inset-10 grid grid-cols-12 gap-1 opacity-20"
+                  class="space-y-6 flex-1 text-left overflow-y-auto pr-2 custom-scrollbar"
                 >
                   <div
-                    v-for="p in 72"
-                    :key="p"
-                    class="w-1.5 h-1.5 rounded-full"
-                    :class="
-                      Math.random() > 0.7 ? 'bg-[#FFD700]' : 'bg-white/10'
-                    "
-                  ></div>
-                </div>
-                <div class="relative z-10 p-10 flex flex-col h-full text-left">
-                  <div class="flex justify-between items-start">
-                    <h4
-                      class="text-xs font-black text-white uppercase tracking-[0.3em]"
+                    v-for="i in 6"
+                    :key="i"
+                    class="flex items-center gap-4 group/item cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover/item:border-[#FFD700]/40 transition-all"
                     >
-                      Network Intelligence
-                    </h4>
-                    <p class="text-2xl font-black text-[#FFD700]">
-                      6<sup>%</sup>
+                      <component
+                        :is="i % 2 === 0 ? WalletIcon : PackageIcon"
+                        class="w-4 h-4 text-gray-500 group-hover/item:text-[#FFD700]"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex justify-between items-center mb-1">
+                        <p class="text-[11px] text-white font-black italic">
+                          {{ i % 2 === 0 ? "Protocol Entry" : "Asset Shift" }}
+                        </p>
+                        <p class="text-[8px] text-gray-600 uppercase font-bold">
+                          12m
+                        </p>
+                      </div>
+                      <div
+                        class="w-full bg-white/5 h-1 rounded-full overflow-hidden mt-1.5 border border-white/5"
+                      >
+                        <div
+                          class="h-full bg-gradient-to-r from-gray-700 via-[#FFD700]/50 to-[#FFD700]"
+                          :style="{ width: 15 * i + '%' }"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CxCard>
+
+              <CxCard class="glass-vibrant h-[380px] !p-8">
+                <h4
+                  class="text-xs font-black text-[#FFD700] uppercase tracking-[0.3em] mb-10 text-left"
+                >
+                  Composition Matrix
+                </h4>
+                <div class="h-44 flex items-center justify-center relative">
+                  <div
+                    class="absolute inset-0 flex flex-col items-center justify-center z-10"
+                  >
+                    <p
+                      class="text-3xl font-black text-white italic tracking-tighter"
+                    >
+                      94<sup>%</sup>
+                    </p>
+                    <p
+                      class="text-[8px] text-gray-600 font-bold uppercase tracking-widest mt-1"
+                    >
+                      Global Health
                     </p>
                   </div>
-                  <p
-                    class="text-[10px] text-gray-600 font-bold uppercase mt-auto tracking-[0.2em]"
+                  <div
+                    class="w-40 h-40 rounded-full border-[6px] border-white/5 relative"
                   >
-                    Efficiency Protocol Activated
-                  </p>
+                    <div
+                      class="absolute inset-[-6px] rounded-full border-[6px] border-[#FFD700] border-t-transparent border-l-transparent rotate-45"
+                    ></div>
+                  </div>
+                </div>
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                  <div
+                    v-for="p in ['Finance', 'Logistics']"
+                    :key="p"
+                    class="flex flex-col items-start"
+                  >
+                    <span
+                      class="text-[8px] text-gray-500 font-black uppercase mb-1"
+                      >{{ p }} Unit</span
+                    >
+                    <span class="text-xs font-black text-white italic">{{
+                      p === "Finance" ? "72%" : "28%"
+                    }}</span>
+                  </div>
                 </div>
               </CxCard>
             </div>
           </div>
         </template>
-
-        <component v-else :is="getActiveComponent()" />
+        <template v-else>
+          <component :is="getActiveComponent()" />
+        </template>
       </div>
 
       <!-- 🌈 Floating Module Master Rail (Bottom Center) -->
@@ -493,62 +471,80 @@
       </div>
     </main>
 
-    <!-- 📂 Submenu Drawer -->
     <transition name="slide-right">
       <div
         v-if="showSubMenu"
-        class="fixed right-0 top-0 bottom-0 w-[450px] bg-[#0A0A0B]/98 backdrop-blur-3xl border-l border-[#FFD700]/10 z-[300] p-16 shadow-[0_0_100px_rgba(0,0,0,1)]"
+        class="fixed right-0 top-0 bottom-0 w-[400px] bg-[#0A0A0B]/98 backdrop-blur-3xl border-l border-[#FFD700]/10 z-[300] p-10 shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col"
       >
-        <div class="mb-16">
+        <div class="mb-8 relative pr-10">
           <span
-            class="text-[10px] font-black text-[#FFD700] opacity-60 uppercase tracking-[0.6em]"
+            class="text-[9px] font-black text-[#FFD700] opacity-50 uppercase tracking-[0.5em]"
             >System Segment</span
           >
           <h4
-            class="text-4xl font-extrabold text-white uppercase tracking-tighter mt-4 text-left"
+            class="text-2xl font-black text-white uppercase tracking-tighter mt-2 text-left"
           >
             {{ selectedMenuParent?.name }}
           </h4>
-        </div>
-        <div class="space-y-6">
           <button
-            v-for="sub in selectedMenuChildren"
-            :key="sub.name"
-            @click="handleSubMenuClick(sub)"
-            class="w-full text-left px-10 py-8 rounded-[32px] transition-all border border-white/5 flex items-center justify-between group overflow-hidden relative"
-            :class="
-              activeTab === sub.name
-                ? 'bg-[#FFD700]/5 border-[#FFD700]/30 text-[#FFD700]'
-                : 'text-gray-500 hover:text-white hover:bg-white/10'
-            "
+            @click="showSubMenu = false"
+            class="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-gray-400 hover:text-white transition-colors"
           >
-            <div class="flex items-center gap-6">
-              <div
-                v-if="sub.icon"
-                class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[#FFD700]/30 group-hover:bg-[#FFD700]/10 transition-all"
-              >
-                <component :is="sub.icon" class="w-6 h-6" />
-              </div>
-              <div class="flex flex-col">
-                <span class="text-sm font-black uppercase tracking-[0.2em]">{{
-                  sub.name
-                }}</span>
-                <span class="text-[9px] font-bold text-gray-700 uppercase mt-2"
-                  >PROTOCOL_ID: {{ sub.id || "GEN-X" }}</span
-                >
-              </div>
-            </div>
-            <ChevronRightIcon
-              class="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity"
-            />
+            <XIcon class="w-5 h-5" />
           </button>
         </div>
-        <button
-          @click="showSubMenu = false"
-          class="absolute top-10 right-10 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 text-gray-400"
+
+        <div
+          class="flex-1 overflow-y-auto custom-scrollbar -mr-4 pr-4 space-y-3"
         >
-          <XIcon class="w-6 h-6" />
-        </button>
+          <template v-for="sub in selectedMenuChildren" :key="sub.name">
+            <!-- 🔖 Category Header -->
+            <div
+              v-if="sub.isHeader"
+              class="pt-6 pb-2 flex items-center justify-between"
+            >
+              <span
+                class="text-[8px] font-black text-[#FFD700] opacity-30 uppercase tracking-[0.4em]"
+                >{{ sub.name }}</span
+              >
+              <div class="h-px flex-1 bg-white/5 ml-4"></div>
+            </div>
+
+            <!-- 🖱️ Nav Item -->
+            <button
+              v-else
+              @click="handleSubMenuClick(sub)"
+              class="w-full text-left px-6 py-4 rounded-2xl transition-all border border-white/5 flex items-center justify-between group overflow-hidden relative"
+              :class="
+                activeTab === sub.name
+                  ? 'bg-[#FFD700]/5 border-[#FFD700]/20 text-[#FFD700]'
+                  : 'text-gray-500 hover:text-white hover:bg-white/5'
+              "
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  v-if="sub.icon"
+                  class="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-[#FFD700]/20 group-hover:bg-[#FFD700]/5 transition-all"
+                >
+                  <component :is="sub.icon" class="w-4 h-4" />
+                </div>
+                <div class="flex flex-col">
+                  <span
+                    class="text-[11px] font-black uppercase tracking-[0.15em]"
+                    >{{ sub.name }}</span
+                  >
+                  <span
+                    class="text-[8px] font-bold text-gray-700 uppercase mt-1 tracking-wider"
+                    >{{ sub.id || "LAW-X" }}</span
+                  >
+                </div>
+              </div>
+              <ChevronRightIcon
+                class="w-4 h-4 opacity-30 group-hover:opacity-100 transition-opacity"
+              />
+            </button>
+          </template>
+        </div>
       </div>
     </transition>
   </div>
@@ -559,12 +555,16 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   Users as UsersIcon,
+  Store as StoreIcon,
+  Truck as TruckIcon,
+  Stethoscope as StethoscopeIcon,
+  GraduationCap as GraduationCapIcon,
+  Layers as LayersIcon,
+  FolderOpen as FolderOpenIcon,
   LayoutGrid as LayoutGridIcon,
   ChevronRight as ChevronRightIcon,
   LogOut as LogOutIcon,
   X as XIcon,
-  Database as DBNodesIcon,
-  Briefcase as FinanceIcon,
   Settings as SettingsIcon,
   ShieldAlert as LegalIcon,
   Crown as CrownIcon,
@@ -572,8 +572,6 @@ import {
   Cpu as CpuIcon,
   Search as SearchIcon,
   Bell as BellIcon,
-  Command as CommandIcon,
-  Shield as ShieldIcon,
   MoreVertical as MoreVerticalIcon,
   Heart as WeddingIcon,
   Mail as MailIcon,
@@ -584,15 +582,23 @@ import {
   Boxes as BoxesIcon,
   ShieldCheck as ShieldCheckIcon,
   Activity as ActivityIcon,
+  Zap as ZapIcon,
   Lock as LockIcon,
   Wallet as WalletIcon,
   BarChart3 as BarChart3Icon,
+  Calendar as CalendarIcon,
+  MessageCircle as MessageCircleIcon,
+  FileText as FileTextIcon,
+  MessageSquare as MessageSquareIcon,
+  BookOpen as BookOpenIcon,
+  Filter as FilterIcon,
+  Briefcase as FinanceIcon,
+  Briefcase as BriefcaseIcon,
 } from "lucide-vue-next";
 
 // Components
 import CxCard from "@/components/common/cx/CxCard.vue";
 import CxSidebar from "@/components/common/cx/CxSidebar.vue";
-import CxToolbar from "@/components/common/cx/CxToolbar.vue";
 
 // Views
 import UserManagementView from "./UserManagementView.vue";
@@ -603,9 +609,8 @@ import WalletsVaultView from "./WalletsVaultView.vue";
 import AssetsView from "./AssetsView.vue";
 import AssetReportsView from "./AssetReportsView.vue";
 import AdminLawView from "@/views/law/AdminLawView.vue";
-import AssetOverviewHub from "@/components/AssetOverviewHub.vue";
 
-import { Line } from 'vue-chartjs'
+import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -615,8 +620,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
-} from 'chart.js'
+  Filler,
+} from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -626,8 +631,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
-)
+  Filler,
+);
 
 // Super Admin
 import SuperAdminDashboard from "@/views/manager/super-admin/SuperAdminDashboard.vue";
@@ -637,8 +642,6 @@ import {
   getGrowthStats,
   getPortfolioSummary,
   getSavingsSummary,
-  getWalletTransactions,
-  getWalletLots,
 } from "@/api/wallet";
 
 const router = useRouter();
@@ -646,7 +649,8 @@ const route = useRoute();
 
 const activeTab = ref("Báo cáo tổng quan");
 const showSubMenu = ref(false);
-const isSuperAdminMode = ref(false);
+const showSearchModal = ref(false);
+const searchQuery = ref("");
 const selectedMenuParent = ref<any>(null);
 const selectedMenuChildren = ref<any[] | null>(null);
 
@@ -656,76 +660,35 @@ const savingsSummary = ref<any>(null);
 const transactions = ref<any[]>([]);
 const capitalPackages = ref<any[]>([]);
 
-const growthChartData = computed(() => {
+const chartData = computed(() => {
   return {
-    labels: growthStats.value.map(s => s.dateStr || s.date || ''),
+    labels: growthStats.value.map((s: any) => s.dateStr || s.date || ""),
     datasets: [
       {
-        label: 'Tăng trưởng tài sản',
-        data: growthStats.value.map(s => s.value),
+        label: "Performance",
+        data: growthStats.value.map((s: any) => s.value),
         fill: true,
-        borderColor: '#FFD700',
-        backgroundColor: (context: any) => {
-           const chart = context.chart;
-           const {ctx, chartArea} = chart;
-           if (!chartArea) {
-              return 'rgba(255, 215, 0, 0.2)';
-           }
-           const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-           gradient.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
-           gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
-           return gradient;
-        },
+        borderColor: "#FFD700",
+        backgroundColor: "rgba(255, 215, 0, 0.1)",
         borderWidth: 2,
+        tension: 0.4,
         pointRadius: 0,
-        pointHoverRadius: 6,
-        pointBackgroundColor: '#FFD700',
-        pointBorderColor: '#000',
-        pointBorderWidth: 2,
-        tension: 0.4
-      }
-    ]
-  }
-})
-
-const growthChartOptions = computed(() => {
-  const dataVals = growthStats.value.map(s => s.value);
-  const minVal = dataVals.length ? Math.min(...dataVals) : 0;
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        display: false,
-        min: minVal * 0.9,
       },
-      x: {
-        display: false
-      }
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        titleColor: '#888',
-        bodyColor: '#FFD700',
-        borderColor: 'rgba(255,215,0,0.3)',
-        borderWidth: 1,
-        padding: 10,
-        displayColors: false,
-        callbacks: {
-          label: function(context: any) {
-            return '₫' + (context.raw / 1000000).toFixed(1) + 'M';
-          }
-        }
-      }
-    },
-    interaction: {
-      mode: 'index' as const,
-      intersect: false,
-    },
-  }
+    ],
+  };
 });
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: { display: false },
+    x: { display: false },
+  },
+  plugins: {
+    legend: { display: false },
+  },
+};
 
 const fetchGrowthStats = async () => {
   try {
@@ -745,16 +708,6 @@ const fetchGrowthStats = async () => {
 };
 
 const fmtNumber = (val: number) => new Intl.NumberFormat("vi-VN").format(val);
-const fmtDateTime = (ts: string | number) => {
-  if (!ts) return "N/A";
-  return new Date(ts).toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
 
 const assetStats = computed(() => {
   const total = portfolioSummary.value?.totalVndValue || 0;
@@ -770,7 +723,7 @@ const adminItems = [
     name: "Báo cáo tổng quan",
     shortName: "Home",
     icon: LayoutGridIcon,
-    path: "/dashboard",
+    path: "/ad",
   },
   {
     name: "Wedding",
@@ -813,26 +766,210 @@ const adminItems = [
       { name: "Quản lý License", path: "/licenses", icon: ShieldCheckIcon },
     ],
   },
-  {
-    name: "Cơ sở hạ tầng",
-    shortName: "Infra",
-    icon: DBNodesIcon,
-    children: [
-      { name: "Blockchain Hub", path: "/blockchain", icon: ActivityIcon },
-      { name: "Tài khoản Vault", path: "/vault", icon: LockIcon },
-    ],
-  },
+
   {
     name: "Tài chính",
     shortName: "Vault",
     icon: FinanceIcon,
     children: [
+      { name: "QUẢN TRỊ TÀI SẢN", isHeader: true },
       {
         name: "Quản lý tài sản (Assets)",
         path: "/inventory",
         icon: WalletIcon,
+        id: "FIN-AST",
       },
-      { name: "Báo cáo tài chính", path: "/reports", icon: BarChart3Icon },
+      {
+        name: "Danh mục đầu tư",
+        path: "/inventory",
+        icon: FinanceIcon,
+        id: "FIN-INV",
+      },
+      {
+        name: "Báo cáo tài chính",
+        path: "/reports",
+        icon: BarChart3Icon,
+        id: "FIN-REP",
+      },
+
+      { name: "HẠ TẦNG KỸ THUẬT", isHeader: true },
+      {
+        name: "Blockchain Hub",
+        path: "/blockchain",
+        icon: ActivityIcon,
+        id: "FIN-BLK",
+      },
+      {
+        name: "Tài khoản Vault",
+        path: "/vault",
+        icon: LockIcon,
+        id: "FIN-VLT",
+      },
+
+      { name: "PHÂN TÍCH CHIẾN LƯỢC", isHeader: true },
+      {
+        name: "Thị trường AI",
+        path: "/finance/ai-market",
+        icon: ZapIcon,
+        id: "FIN-AIM",
+      },
+      {
+        name: "Phân tích xu hướng",
+        path: "/finance/trends",
+        icon: ActivityIcon,
+        id: "FIN-TRD",
+      },
+    ],
+  },
+  {
+    name: "Y tế",
+    shortName: "Med",
+    icon: StethoscopeIcon,
+    children: [
+      {
+        name: "Hồ sơ bệnh án",
+        path: "/medical/records",
+        icon: FileTextIcon,
+        id: "MED-REC",
+      },
+      {
+        name: "Lịch khám bệnh",
+        path: "/medical/appointments",
+        icon: CalendarIcon,
+        id: "MED-APP",
+      },
+      {
+        name: "Tư vấn Sức khỏe AI",
+        path: "/medical/ai-consult",
+        icon: ActivityIcon,
+        id: "MED-AIC",
+      },
+    ],
+  },
+  {
+    name: "Giáo dục",
+    shortName: "Edu",
+    icon: GraduationCapIcon,
+    children: [
+      { name: "QUẢN LÝ ĐÀO TẠO", isHeader: true },
+      {
+        name: "Quản lý Khóa học",
+        path: "/edu/courses",
+        icon: BookOpenIcon,
+        id: "EDU-CRS",
+      },
+      {
+        name: "Bài giảng AI",
+        path: "/edu/ai-lectures",
+        icon: LayersIcon,
+        id: "EDU-AIL",
+      },
+      {
+        name: "Quản lý Lớp",
+        path: "/edu/classes",
+        icon: LayersIcon,
+        id: "EDU-CLS",
+      },
+      {
+        name: "Quản lý Bộ môn",
+        path: "/edu/departments",
+        icon: FolderOpenIcon,
+        id: "EDU-DEP",
+      },
+
+      { name: "NHÂN SỰ & HỌC SINH", isHeader: true },
+      {
+        name: "Quản lý Giáo viên",
+        path: "/edu/teachers",
+        icon: UsersIcon,
+        id: "EDU-TCH",
+      },
+      {
+        name: "Quản lý Học sinh",
+        path: "/edu/students",
+        icon: GraduationCapIcon,
+        id: "EDU-STD",
+      },
+      {
+        name: "Sinh viên & Điểm",
+        path: "/edu/grades",
+        icon: ActivityIcon,
+        id: "EDU-GRD",
+      },
+    ],
+  },
+  {
+    name: "Kinh doanh Store",
+    shortName: "Store",
+    icon: StoreIcon,
+    children: [
+      { name: "QUẢN LÝ BÁN HÀNG", isHeader: true },
+      {
+        name: "Lập đơn hàng",
+        path: "/retail/pos",
+        icon: PackageIcon,
+        id: "RET-POS",
+      },
+      {
+        name: "Khách hàng",
+        path: "/retail/customers",
+        icon: UsersIcon,
+        id: "RET-CUS",
+      },
+      {
+        name: "Báo cáo doanh thu",
+        path: "/retail/revenue",
+        icon: TrendingUpIcon,
+        id: "RET-REV",
+      },
+
+      { name: "QUẢN LÝ SẢN PHẨM", isHeader: true },
+      {
+        name: "Hàng hóa",
+        path: "/retail/products",
+        icon: PackageIcon,
+        id: "RET-PRD",
+      },
+      {
+        name: "Kho & Tồn kho",
+        path: "/retail/inventory",
+        icon: BoxesIcon,
+        id: "RET-INV",
+      },
+    ],
+  },
+  {
+    name: "Logistics",
+    shortName: "Log",
+    icon: TruckIcon,
+    children: [
+      { name: "VẬN HÀNH", isHeader: true },
+      {
+        name: "Đội xe & Tài xế",
+        path: "/logistics/fleet",
+        icon: UsersIcon,
+        id: "LOG-FLT",
+      },
+      {
+        name: "Lộ trình giao hàng",
+        path: "/logistics/routes",
+        icon: ActivityIcon,
+        id: "LOG-RTE",
+      },
+
+      { name: "KHO BÃI", isHeader: true },
+      {
+        name: "Nhập / Xuất kho",
+        path: "/logistics/warehouse",
+        icon: PackageIcon,
+        id: "LOG-WHS",
+      },
+      {
+        name: "Kiểm kê",
+        path: "/logistics/audit",
+        icon: FileTextIcon,
+        id: "LOG-AUD",
+      },
     ],
   },
   {
@@ -840,51 +977,66 @@ const adminItems = [
     shortName: "Law",
     icon: LegalIcon,
     children: [
-      { name: "Quản lý pháp lý", path: "/law-admin", icon: LegalIcon },
+      { name: "DỊCH VỤ KHÁCH HÀNG", isHeader: true },
+      {
+        name: "Quản lý Lịch hẹn",
+        path: "/law-admin/appointments",
+        icon: CalendarIcon,
+        id: "LAW-APP",
+      },
+      {
+        name: "Tư vấn Trực tuyến",
+        path: "/law-admin/chat",
+        icon: MessageCircleIcon,
+        id: "LAW-CON",
+      },
+
+      { name: "NHÂN SỰ & CƠ SỞ", isHeader: true },
+      {
+        name: "Phòng Luật & Lịch",
+        path: "/law-admin/offices",
+        icon: BriefcaseIcon,
+        id: "LAW-OFF",
+      },
+      {
+        name: "Đội ngũ Luật sư",
+        path: "/law-admin/lawyers",
+        icon: UsersIcon,
+        id: "LAW-STA",
+      },
+
+      { name: "HỒ SƠ & KIẾN THỨC", isHeader: true },
+      {
+        name: "Hồ sơ Khách hàng",
+        path: "/law-admin/applications",
+        icon: FileTextIcon,
+        id: "LAW-CLI",
+      },
+      {
+        name: "Hỏi đáp Pháp luật",
+        path: "/law-admin/questions",
+        icon: MessageSquareIcon,
+        id: "LAW-QNA",
+      },
+      {
+        name: "Thư viện Bài viết",
+        path: "/law-admin/posts",
+        icon: BookOpenIcon,
+        id: "LAW-LIB",
+      },
     ],
   },
 ];
 
-const superAdminItems = [
-  { name: "Super Dashboard", shortName: "Master", icon: CrownIcon },
-  { name: "Organizations", shortName: "Orgs", icon: OrgIcon },
-  { name: "Global Modules", shortName: "Modules", icon: CpuIcon },
-];
-
-const currentMenuItems = computed(() =>
-  isSuperAdminMode.value ? superAdminItems : adminItems,
-);
+const currentMenuItems = adminItems;
 
 const moduleDockItems = computed(() => {
-  const financeInfraHybrid = {
-    name: "Wealth & Infra",
-    children: [
-      {
-        name: "Quản lý tài sản (Assets)",
-        id: "ASST-MGT",
-        path: "/inventory",
-        icon: WalletIcon,
-      },
-      {
-        name: "Báo cáo tài chính",
-        id: "FIN-REP",
-        path: "/reports",
-        icon: BarChart3Icon,
-      },
-      {
-        name: "Blockchain Hub",
-        id: "BLK-CHAIN",
-        path: "/blockchain",
-        icon: ActivityIcon,
-      },
-    ],
-  };
   return [
     {
-      name: "Capital",
-      icon: FinanceIcon,
-      color: "linear-gradient(135deg, #A855F7, #6B21A8)",
-      target: financeInfraHybrid,
+      name: "Overview",
+      icon: LayoutGridIcon,
+      color: "linear-gradient(135deg, #FFD700, #B8860B)",
+      target: adminItems[0] || {},
     },
     {
       name: "Wedding",
@@ -893,43 +1045,52 @@ const moduleDockItems = computed(() => {
       target: adminItems[1] || {},
     },
     {
-      name: "Human",
-      icon: UsersIcon,
-      color: "linear-gradient(135deg, #0EA5E9, #0369A1)",
+      name: "System",
+      icon: CpuIcon,
+      color: "linear-gradient(135deg, #334155, #0F172A)",
       target: adminItems[2] || {},
     },
     {
-      name: "Shield",
-      icon: ShieldIcon,
-      color: "linear-gradient(135deg, #F97316, #C2410C)",
+      name: "Finance",
+      icon: WalletIcon,
+      color: "linear-gradient(135deg, #A855F7, #6B21A8)",
       target: adminItems[3] || {},
     },
     {
-      name: "Registry",
-      icon: SettingsIcon,
-      color: "linear-gradient(135deg, #EF4444, #B91C1C)",
+      name: "Medical",
+      icon: StethoscopeIcon,
+      color: "linear-gradient(135deg, #EF4444, #991B1B)",
       target: adminItems[4] || {},
     },
     {
-      name: "Domain",
-      icon: OrgIcon,
-      color: "linear-gradient(135deg, #10B981, #047857)",
+      name: "Education",
+      icon: GraduationCapIcon,
+      color: "linear-gradient(135deg, #6366F1, #3730A3)",
       target: adminItems[5] || {},
     },
     {
-      name: "System",
-      icon: CpuIcon,
-      color: "linear-gradient(135deg, #374151, #111827)",
-      target: { name: "Settings", path: "/dashboard" },
+      name: "Retail",
+      icon: StoreIcon,
+      color: "linear-gradient(135deg, #F59E0B, #B45309)",
+      target: adminItems[6] || {},
+    },
+    {
+      name: "Logistics",
+      icon: TruckIcon,
+      color: "linear-gradient(135deg, #10B981, #065F46)",
+      target: adminItems[7] || {},
+    },
+    {
+      name: "Legal",
+      icon: LegalIcon,
+      color: "linear-gradient(135deg, #06B6D4, #0891B2)",
+      target: adminItems[8] || {},
     },
   ];
 });
 
 const toggleSuperAdminMode = () => {
-  isSuperAdminMode.value = !isSuperAdminMode.value;
-  if (currentMenuItems.value && currentMenuItems.value.length > 0) {
-    activeTab.value = currentMenuItems.value[0].name;
-  }
+  router.push("/sp-ad");
 };
 
 const selectMenu = (item: any) => {
@@ -955,9 +1116,6 @@ const handleSubMenuClick = (sub: any) => {
   showSubMenu.value = false;
 };
 
-const isAnyChildActive = (item: any) =>
-  item.children?.some((child: any) => activeTab.value === child.name);
-
 const logout = () => {
   localStorage.removeItem("user");
   router.push("/");
@@ -966,7 +1124,7 @@ const logout = () => {
 // Synchronize activeTab with Route
 const syncTabWithRoute = () => {
   const currentPath = route.path;
-  const items = isSuperAdminMode.value ? superAdminItems : adminItems;
+  const items = adminItems;
 
   for (const item of items as any[]) {
     if (item.path === currentPath) {
@@ -1007,7 +1165,19 @@ const getActiveComponent = () => {
   if (activeTab.value === "Tài khoản Vault") return WalletsVaultView;
   if (activeTab.value === "Quản lý tài sản (Assets)") return AssetsView;
   if (activeTab.value === "Báo cáo tài chình") return AssetReportsView;
-  if (activeTab.value === "Quản lý pháp lý") return AdminLawView;
+
+  const lawActiveTabs = [
+    "Quản lý pháp lý",
+    "Phòng Luật & Lịch",
+    "Quản lý Lịch hẹn",
+    "Tư vấn Trực tuyến",
+    "Đội ngũ Luật sư",
+    "Hồ sơ Khách hàng",
+    "Hỏi đáp Pháp luật",
+    "Thư viện Bài viết",
+  ];
+  if (lawActiveTabs.includes(activeTab.value)) return AdminLawView;
+
   if (activeTab.value === "Super Dashboard") return SuperAdminDashboard;
   if (activeTab.value === "Organizations") return SuperAdminOrganizationView;
   if (activeTab.value === "Global Modules") return SuperAdminModuleView;

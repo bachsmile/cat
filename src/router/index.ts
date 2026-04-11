@@ -42,7 +42,7 @@ const routes = [
     component: () => import("../views/logistics/LogisticsTrial.vue"),
   },
   {
-    path: "/dashboard",
+    path: "/ad",
     name: "AdminOverview",
     component: Dashboard,
     meta: {
@@ -249,14 +249,14 @@ const routes = [
   },
 
   {
-    path: "/super-admin",
+    path: "/sp-ad",
     name: "SuperAdminHub",
     component: () =>
       import("../views/manager/super-admin/SuperAdminMainView.vue"),
     meta: { requiresAuth: true, role: ["super_admin"] },
   },
   {
-    path: "/super-admin/:module",
+    path: "/sp-ad/:module",
     name: "SuperAdminModule",
     component: () =>
       import("../views/manager/super-admin/SuperAdminModuleView.vue"),
@@ -268,7 +268,7 @@ const routes = [
     redirect: () => {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const role = user.role?.toLowerCase();
-      return role === "super_admin" ? "/super-admin" : "/dashboard";
+      return role === "super_admin" ? "/sp-ad" : "/ad";
     },
   },
   {

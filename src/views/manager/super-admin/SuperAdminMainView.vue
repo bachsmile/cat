@@ -357,7 +357,7 @@ const onDockNavigate = (id: string) => {
 
 const enterModule = (moduleId: string) => {
   activeTab.value = "modules"; // Or specialized logic
-  router.push(`/super-admin/${moduleId}`);
+  router.push(`/sp-ad/${moduleId}`);
 };
 
 onMounted(() => {
