@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-screen bg-[#050508] text-white font-['Inter',_sans-serif] p-4 lg:p-6 overflow-hidden"
+    class="h-screen bg-[#050508] text-white  p-4 lg:p-6 overflow-hidden"
     :class="{ 'dragging-mode': isDragging }"
   >
     <div

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#050508] text-white font-['Inter',_sans-serif]">
+  <div class="min-h-screen bg-[#050508] text-white ">
     <!-- Simple Navbar for Customers -->
     <nav class="border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

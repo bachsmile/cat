@@ -2,7 +2,7 @@
   <Transition name="fade">
     <div
       v-if="isVisible"
-      class="fixed inset-0 z-[9999] bg-[#050508] overflow-hidden flex flex-col items-center justify-center font-['Inter',_sans-serif]"
+      class="fixed inset-0 z-[9999] bg-[#050508] overflow-hidden flex flex-col items-center justify-center "
     >
       <!-- Background Ambient -->
       <div class="absolute inset-0 z-0 pointer-events-none">

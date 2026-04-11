@@ -1,77 +1,84 @@
 <template>
   <div
-    class="bg-[#0a0a0f] p-6 rounded-3xl border transition-all cursor-pointer group relative overflow-hidden"
-    :class="
-      isActive
-        ? 'border-purple-500 bg-purple-500/10'
-        : 'border-white/5 hover:border-white/20'
-    "
+    class="relative group cursor-pointer transition-all duration-700 rounded-[32px] overflow-hidden"
     @click="$emit('click', asset.symbol)"
   >
-    <div class="flex items-center gap-4 mb-4">
-      <div
-        class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 overflow-hidden"
-        :class="asset.bgClass + ' ' + asset.textClass"
-      >
-        <img v-if="asset.image" :src="asset.image" class="w-full h-full object-cover" style="-webkit-mask-image: radial-gradient(circle, black 65%, transparent 70%); mask-image: radial-gradient(circle, black 65%, transparent 70%);" />
-        <span v-else>{{ asset.icon }}</span>
-      </div>
-      <div>
-        <h4 class="font-bold text-lg leading-tight flex items-center gap-2">
-          {{ asset.name }}
-          <span
-            v-if="isUnlocked && (asset.savingsBalance || 0) > 0"
-            class="px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-black uppercase tracking-widest rounded"
-          >
-            Khoá
-          </span>
-        </h4>
-        <p class="text-sm text-gray-500 font-medium tracking-wide mt-0.5">
-          {{ asset.symbol }}
-        </p>
-      </div>
-      <div
-        v-if="isUnlocked"
-        class="ml-auto bg-green-500/10 text-green-500 p-1.5 rounded-full"
-      >
-        <ShieldCheckIcon class="w-4 h-4" />
-      </div>
-      <div
-        v-else-if="!hasPassword"
-        class="ml-auto bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter"
-      >
-        Chưa thiết lập
-      </div>
-      <div
-        v-else
-        class="ml-auto bg-white/5 text-gray-400 p-1.5 rounded-full group-hover:text-white transition-colors"
-      >
-        <LockIcon class="w-4 h-4" />
-      </div>
-    </div>
-    <div class="mt-6">
-      <p class="text-3xl font-bold tracking-tight">
-        <span v-if="isUnlocked">
-          {{ isVisible ? formatNumber((asset.balance || 0) + (asset.savingsBalance || 0)) : "********" }}
-        </span>
-        <span v-else class="text-gray-600 tracking-[0.3em]">••••••</span>
-        <span class="text-sm text-gray-500 font-normal ml-1">
-          {{ asset.symbol }}</span
+    <!-- 🪞 Luxury 3D Card Base -->
+    <div 
+      class="h-full p-8 bg-[#0C0C0F] border transition-all duration-500 relative z-10 rounded-[32px]"
+      :class="[
+        isActive 
+          ? 'border-[#FFD700]/50 shadow-[0_20px_50px_rgba(255,215,0,0.15)] -translate-y-2' 
+          : 'border-white/5 hover:border-[#FFD700]/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)]'
+      ]"
+    >
+      <!-- ✨ Active Shimmer -->
+      <div v-if="isActive" class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent animate-shimmer"></div>
+
+      <div class="flex items-center gap-5 mb-8">
+        <!-- 🪙 Vibrant Token Orb -->
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-black shrink-0 relative shadow-[0_0_20px_rgba(0,0,0,0.5)] overflow-hidden"
+          :class="isActive ? 'bg-gold-vibrant' : 'bg-white/5 border border-white/10'"
         >
-      </p>
-      <div
-        v-if="isUnlocked && livePrice"
-        class="mt-2 text-xs text-gray-400 font-medium tracking-wide"
-      >
-        ≈
-        {{ isVisible ? formatNumber(((asset.balance || 0) + (asset.savingsBalance || 0)) * livePrice) : "********" }} ₫
+          <img v-if="asset.image" :src="asset.image" class="w-full h-full object-cover" />
+          <span v-else :class="isActive ? 'text-black' : 'text-gold-vibrant'">{{ asset.icon }}</span>
+          
+          <div v-if="isActive" class="absolute inset-0 bg-white/20 blur-md opacity-50"></div>
+        </div>
+
+        <div class="flex-1">
+          <h4 class="font-black text-xl leading-tight text-white uppercase tracking-tighter flex items-center gap-3">
+            {{ asset.name }}
+            <span
+              v-if="isUnlocked && (asset.savingsBalance || 0) > 0"
+              class="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-black uppercase tracking-widest rounded-md"
+            >
+              LOCKED
+            </span>
+          </h4>
+          <p class="text-[10px] text-gray-600 font-black uppercase tracking-[0.2em] mt-1">
+            NETWORK: {{ asset.symbol }}_PRO
+          </p>
+        </div>
+
+        <!-- 🛡️ Status Badges -->
+        <div class="shrink-0">
+          <div v-if="isUnlocked" class="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <ShieldCheckIcon class="w-4 h-4" />
+          </div>
+          <div v-else-if="hasPassword" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-600 group-hover:text-[#FFD700] transition-colors">
+            <LockIcon class="w-4 h-4" />
+          </div>
+        </div>
       </div>
+
+      <div class="mt-auto pt-6 flex flex-col gap-2">
+        <p class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Available Liquidity</p>
+        <div class="flex items-baseline gap-2">
+           <h2 class="text-4xl font-black tracking-tighter" :class="isActive ? 'text-gold-vibrant' : 'text-white'">
+             <span v-if="isUnlocked">
+               {{ isVisible ? formatNumber((asset.balance || 0) + (asset.savingsBalance || 0)) : "••••••••" }}
+             </span>
+             <span v-else class="text-gray-700 tracking-[0.1em]">ENCRYPTED</span>
+           </h2>
+           <span class="text-sm font-bold text-gray-600 uppercase">{{ asset.symbol }}</span>
+        </div>
+        
+        <div v-if="isUnlocked && livePrice" class="mt-2 flex items-center gap-3">
+          <div class="h-px flex-1 bg-white/5"></div>
+          <p class="text-[11px] font-bold text-gray-500 tracking-wider">
+            ≈ {{ isVisible ? formatNumber(((asset.balance || 0) + (asset.savingsBalance || 0)) * livePrice) : "********" }} ₫
+          </p>
+        </div>
+      </div>
+
+      <!-- ⚡ Active Bottom Accent -->
+      <div v-if="isActive" class="absolute bottom-0 left-0 right-0 h-1 bg-gold-vibrant blur-[2px] opacity-80"></div>
     </div>
 
-    <div
-      class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r"
-      :class="asset.gradClass"
-    ></div>
+    <!-- 🔮 Deep 3D Shadow Backdrop -->
+    <div v-if="isActive" class="absolute -inset-2 bg-[#FFD700]/5 blur-3xl -z-10 rounded-[40px]"></div>
   </div>
 </template>
 

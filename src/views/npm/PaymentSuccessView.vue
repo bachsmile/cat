@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen text-white flex items-center justify-center p-4">
+  <div
+    class="min-h-screen bg-[#050508] text-white flex items-center justify-center p-4"
+  >
     <div class="max-w-xl w-full">
       <!-- Success Icon Animation -->
       <div class="flex justify-center mb-8">
@@ -30,7 +32,7 @@
       >
         <div
           v-if="licenseKey"
-          class="glass-panel p-8 rounded-[2.5rem] border border-white/10 mb-8 text-center relative overflow-hidden animate-in zoom-in duration-500"
+          class="glass-panel p-8 rounded-[2.5rem] border border-white/10 bg-white/[0.02] mb-8 text-center relative overflow-hidden animate-in zoom-in duration-500"
         >
           <div class="absolute top-0 right-0 p-4 opacity-10">
             <KeyIcon class="w-20 h-20 text-purple-500" />
@@ -61,7 +63,7 @@
           <button
             @click="claimCode"
             :disabled="claiming"
-            class="px-12 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-3xl font-extrabold text-lg transition-all flex items-center justify-center gap-4 mx-auto group active:scale-95 disabled:opacity-50"
+            class="px-12 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-3xl font-extrabold text-lg transition-all shadow-[0_0_50px_rgba(147,51,234,0.4)] hover:shadow-[0_0_60px_rgba(147,51,234,0.6)] flex items-center justify-center gap-4 mx-auto group active:scale-95 disabled:opacity-50"
           >
             <Loader2Icon v-if="claiming" class="w-6 h-6 animate-spin" />
             <GiftIcon
@@ -121,7 +123,7 @@ app.<span class="text-yellow-400">use</span>(GlassUI, {
       <!-- Back Button -->
       <div class="mt-12 text-center">
         <button
-          @click="router.push('/home')"
+          @click="$router.push('/home')"
           class="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold transition-all"
         >
           {{ $t("commonBack") }}
@@ -145,7 +147,7 @@ app.<span class="text-yellow-400">use</span>(GlassUI, {
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
   CheckCircle as CheckCircleIcon,
@@ -159,7 +161,6 @@ import { licenseApi } from "../../api/license";
 
 const { t } = useI18n();
 const route = useRoute();
-const router = useRouter();
 const licenseKey = ref("");
 const claiming = ref(false);
 

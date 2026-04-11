@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen w-full bg-[#050508] text-white overflow-y-auto overflow-x-hidden font-['Inter',_sans-serif] scroll-smooth relative"
+    class="min-h-screen w-full bg-[#050508] text-white overflow-y-auto overflow-x-hidden  scroll-smooth relative"
     @scroll="handleScroll"
     ref="scrollContainer"
   >
@@ -34,23 +34,23 @@
     <!-- Pricing Plans Section Title -->
     <div class="max-w-7xl mx-auto px-6 text-center mb-16 animate-fade-up">
       <h2 class="text-4xl font-black text-white mb-4">Lựa Chọn Chiến Lược Của Bạn</h2>
-      <p class="text-gray-500 font-medium">Chọn một gói để bắt đầu dùng thử 7 ngày ngay lập tức.</p>
+      <p class="text-gray-500 font-medium">Chọn gói của bạn để sở hữu giải pháp tối ưu nhất ngay lập tức.</p>
     </div>
 
     <!-- Pricing Plans -->
     <div
       class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 mb-32"
     >
-      <!-- Basic -->
+      <!-- 1 Month -->
       <div
         ref="pricingCard0"
-        @click="openRegisterModalWithPlan('Basic')"
-        class="pricing-card cursor-pointer group/card bg-white/5 rounded-[2.5rem] p-10 border border-white/10 hover:border-purple-500/50 transition-all hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:-translate-y-2 opacity-0"
+        @click="openRegisterModalWithPlan('1_month')"
+        class="pricing-card cursor-pointer group/card bg-white/5 rounded-[2.5rem] p-10 border border-white/10 hover:border-blue-500/50 transition-all hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:-translate-y-2 opacity-0"
       >
-        <h3 class="text-2xl font-bold text-white mb-2">Cơ Bản</h3>
+        <h3 class="text-2xl font-bold text-white mb-2">Gói 1 Tháng</h3>
         <p class="text-gray-500 mb-8 font-medium">Dành cho cá nhân & startups</p>
         <div class="text-5xl font-black mb-8 text-white">
-          $19<span class="text-xl text-gray-500 font-medium tracking-normal align-middle">/tháng</span>
+          $20<span class="text-xl text-gray-500 font-medium tracking-normal align-middle">/tháng</span>
         </div>
         <ul class="space-y-5 mb-10 text-gray-400">
           <li class="flex items-start gap-4">
@@ -69,74 +69,79 @@
             <svg class="w-6 h-6 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">Hỗ trợ qua Email tiêu chuẩn</span>
+            <span class="leading-tight">Hỗ trợ nhanh qua Email</span>
           </li>
         </ul>
       </div>
-      <!-- Advanced -->
+      <!-- 1 Year -->
       <div
         ref="pricingCard1"
-        @click="openRegisterModalWithPlan('Advanced')"
-        class="pricing-card cursor-pointer group/card bg-gradient-to-b from-purple-900/60 to-indigo-900/40 rounded-[2.5rem] p-10 border border-purple-500/50 shadow-[0_30px_60px_rgba(168,85,247,0.2)] relative grow-card hover:-translate-y-2 transition-all opacity-0"
+        @click="openRegisterModalWithPlan('1_year')"
+        class="pricing-card cursor-pointer group/card bg-gradient-to-b from-blue-900/60 to-indigo-900/40 rounded-[2.5rem] p-10 border border-blue-500/50 shadow-[0_30px_60px_rgba(59,130,246,0.2)] relative grow-card hover:-translate-y-2 transition-all opacity-0"
       >
-        <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm font-bold px-6 py-2 rounded-full shadow-lg shadow-purple-500/40 tracking-wider">
-          POPULAR CHOICE
+        <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-black px-6 py-2 rounded-full shadow-lg shadow-orange-500/40 tracking-wider uppercase">
+          TIẾT KIỆM $20 - KẾ HOẠCH TỐT NHẤT
         </div>
-        <h3 class="text-2xl font-bold text-white mb-2">Advanced</h3>
-        <p class="text-purple-300 mb-8 font-medium">For growing agencies</p>
-        <div class="text-5xl font-black mb-8 text-white">
-          $49<span class="text-xl text-purple-300 font-medium tracking-normal align-middle">/mo</span>
+        <h3 class="text-2xl font-bold text-white mb-2">Gói 1 Năm</h3>
+        <p class="text-blue-300 mb-8 font-medium">Lựa chọn tiết kiệm cho doanh nghiệp</p>
+        <div class="text-5xl font-black mb-8 text-white relative">
+          <span class="text-xl text-gray-500 line-through absolute -top-6 left-0">$120</span>
+          $100<span class="text-xl text-blue-300 font-medium tracking-normal align-middle">/năm</span>
         </div>
         <ul class="space-y-5 mb-10 text-gray-200">
           <li class="flex items-start gap-4">
-            <svg class="w-6 h-6 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">All Basic Features Included</span>
+            <span class="leading-tight">Bao gồm toàn bộ tính năng Cơ bản</span>
           </li>
           <li class="flex items-start gap-4">
-            <svg class="w-6 h-6 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">Custom Domain & Branding</span>
+            <span class="leading-tight">Tên miền riêng & Thương hiệu</span>
           </li>
           <li class="flex items-start gap-4">
-            <svg class="w-6 h-6 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">Priority 24/7 Phone Support</span>
+            <span class="leading-tight">Hỗ trợ kỹ thuật 24/7 đặc biệt</span>
           </li>
         </ul>
       </div>
-      <!-- Premium -->
+      <!-- Permanent -->
       <div
         ref="pricingCard2"
-        @click="openRegisterModalWithPlan('Premium')"
-        class="pricing-card cursor-pointer group/card bg-white/5 rounded-[2.5rem] p-10 border border-white/10 hover:border-purple-500/50 transition-all hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:-translate-y-2 opacity-0"
+        @click="openRegisterModalWithPlan('permanent')"
+        class="pricing-card cursor-pointer group/card bg-white/5 rounded-[2.5rem] p-10 border border-white/10 hover:border-orange-500/50 transition-all hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:-translate-y-2 opacity-0 relative"
       >
-        <h3 class="text-2xl font-bold text-white mb-2">Premium</h3>
-        <p class="text-gray-500 mb-8 font-medium">For large enterprises</p>
-        <div class="text-5xl font-black mb-8 text-white">
-          $99<span class="text-xl text-gray-500 font-medium tracking-normal align-middle">/mo</span>
+        <div class="absolute -top-3 right-8 bg-orange-600 text-white text-[9px] font-black px-3 py-1 rounded-lg">
+          SALE 20%
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Gói Vĩnh Viễn</h3>
+        <p class="text-gray-500 mb-8 font-medium">Đầu tư một lần, dùng trọn đời</p>
+        <div class="text-5xl font-black mb-8 text-white relative">
+          <span class="text-xl text-gray-500 line-through absolute -top-6 left-0">$500</span>
+          $400<span class="text-xl text-gray-500 font-medium tracking-normal align-middle"> trọn đời</span>
         </div>
         <ul class="space-y-5 mb-10 text-gray-400">
           <li class="flex items-start gap-4">
             <svg class="w-6 h-6 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">All Advanced Features Included</span>
+            <span class="leading-tight">Toàn bộ tính năng Cao nhất</span>
           </li>
           <li class="flex items-start gap-4">
             <svg class="w-6 h-6 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">Dedicated Account Manager</span>
+            <span class="leading-tight">Quản lý chuyên biệt (Dedicated)</span>
           </li>
           <li class="flex items-start gap-4">
             <svg class="w-6 h-6 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span class="leading-tight">On-premise Deployment Options</span>
+            <span class="leading-tight">Tùy chọn triển khai On-premise</span>
           </li>
         </ul>
       </div>
@@ -216,6 +221,38 @@
             <h3 class="text-3xl font-black mb-2 text-white">Tạo Tài Khoản</h3>
             <p class="text-sm text-gray-400 mb-8 font-medium">Vui lòng nhập thông tin quản trị viên để bắt đầu.</p>
             <form @submit.prevent="goToPayment" class="space-y-5">
+              <div class="flex gap-4 mb-6">
+                <button 
+                  type="button"
+                  @click="customerType = 'individual'"
+                  class="flex-1 py-3 px-4 rounded-2xl border transition-all flex flex-col items-center gap-2"
+                  :class="customerType === 'individual' ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'"
+                >
+                  <span class="text-sm font-bold">Cá nhân</span>
+                </button>
+                <button 
+                  type="button"
+                  @click="customerType = 'business'"
+                  class="flex-1 py-3 px-4 rounded-2xl border transition-all flex flex-col items-center gap-2"
+                  :class="customerType === 'business' ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'"
+                >
+                  <span class="text-sm font-bold">Doanh nghiệp</span>
+                </button>
+              </div>
+
+              <div>
+                <label class="text-xs text-gray-400 uppercase tracking-widest font-bold ml-1 mb-2 block">
+                  {{ customerType === 'business' ? 'Tên Doanh Nghiệp' : 'Họ và Tên Người Đứng Tên' }}
+                </label>
+                <input 
+                  type="text" 
+                  v-model="orgName" 
+                  required 
+                  :placeholder="customerType === 'business' ? 'Công ty TNHH Giải pháp số' : 'Trần Xuân Bách'" 
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/20 text-white transition-all"
+                />
+              </div>
+
               <div>
                 <label class="text-xs text-gray-400 uppercase tracking-widest font-bold ml-1 mb-2 block">Địa chỉ Email</label>
                 <input type="email" v-model="regEmail" required placeholder="admin@example.com" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/20 text-white transition-all"/>
@@ -231,7 +268,11 @@
           <!-- Step 2: Payment -->
           <div v-if="regStep === 'payment'" class="text-center">
             <h3 class="text-3xl font-black mb-2 text-white">Thanh Toán Gói</h3>
-            <p class="text-sm text-gray-400 mb-8 font-medium">Quét mã QR dưới đây để kích hoạt gói <span class="text-blue-400 font-bold">{{ selectedPlan || 'Trial' }}</span></p>
+            <p class="text-sm text-gray-400 mb-8 font-medium">
+              Quét mã QR dưới đây để kích hoạt gói <span class="text-blue-400 font-bold uppercase">{{ selectedPlan?.replace('_', ' ') || 'Sở hữu ngay' }}</span>
+              với giá ưu đãi <span class="text-white font-black">{{ selectedPlan === '1_month' ? '$20' : selectedPlan === '1_year' ? '$100' : '$400' }}</span>
+              <span v-if="selectedPlan !== '1_month'" class="text-gray-500 line-through ml-2 text-xs">{{ selectedPlan === '1_year' ? '$120' : '$500' }}</span>
+            </p>
             <div class="bg-white p-6 rounded-3xl mx-auto mb-8 w-64 h-64 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.1)]">
               <div class="flex flex-col items-center">
                 <div class="text-[10px] font-bold text-black mb-2 uppercase tracking-tighter">TPBank | VIETQR</div>
@@ -348,6 +389,8 @@ const selectedPlan = ref<string | null>(null);
 const regStep = ref<"account" | "payment" | "success">("account");
 const regEmail = ref("");
 const regPassword = ref("");
+const customerType = ref<"individual" | "business">("individual");
+const orgName = ref("");
 const loading = ref(false);
 const showRegisterPrompt = ref(false);
 
@@ -382,14 +425,21 @@ const completePayment = async () => {
   expiryDate.setDate(expiryDate.getDate() + 14);
   try {
     // 1. Just register for now
+    let defaultExpiry = new Date();
+    if (selectedPlan.value === '1_month') defaultExpiry.setDate(defaultExpiry.getDate() + 30);
+    else if (selectedPlan.value === '1_year') defaultExpiry.setFullYear(defaultExpiry.getFullYear() + 1);
+    else if (selectedPlan.value === 'permanent') defaultExpiry = null as any;
+
     const regRes = await authApi.register({
       email: regEmail.value,
       password: regPassword.value,
-      role: "manager",
-      displayName: "Quản lý " + (selectedDomain.value?.name || "Lĩnh vực"),
+      role: "admin",
+      displayName: orgName.value || ("Quản lý " + (selectedDomain.value?.name || "Lĩnh vực")),
       modules: [selectedDomain.value?.id || "overview"],
-      subscriptionPlan: "trial",
-      subscriptionExpiresAt: expiryDate
+      subscriptionPlan: selectedPlan.value || "1_month",
+      subscriptionExpiresAt: defaultExpiry,
+      customerType: customerType.value,
+      organizationName: orgName.value
     });
 
     if (regRes.status === 200 || regRes.status === 201) {
@@ -426,8 +476,11 @@ const enterSystem = async () => {
       // Fallback for dev mode
       const devUser = { 
         email: regEmail.value, 
-        role: "manager",
-        modules: [selectedDomain.value?.id || ""] 
+        role: "admin",
+        displayName: orgName.value,
+        modules: [selectedDomain.value?.id || ""],
+        customerType: customerType.value,
+        organizationName: orgName.value
       };
       localStorage.setItem("token", "dev_token_" + Date.now());
       localStorage.setItem("user", JSON.stringify(devUser));

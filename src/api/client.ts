@@ -114,12 +114,17 @@ api.interceptors.response.use(
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      // Wallet-specific errors
-      const isWalletError =
-        error.response.data?.message?.toLowerCase().includes("wallet") ||
-        error.config.headers["X-Wallet-Token"];
+      // Wallet-specific errors from backend WalletGuard
+      const msg = error.response.data?.message;
+      const isWalletErrorStr = typeof msg === "string" && (
+        msg.toLowerCase().includes("mã bảo mật") || 
+        msg.toLowerCase().includes("wallet") ||
+        msg.toLowerCase().includes("chưa cấu hình mật mã ví")
+      );
+      
+      const isWalletEndpoint = error.config?.url?.includes("/wallet/");
 
-      if (isWalletError) {
+      if (isWalletErrorStr && isWalletEndpoint) {
         const activeAsset = localStorage.getItem("active_wallet_asset");
         if (activeAsset) {
           localStorage.removeItem(`wallet_token_${activeAsset}`);

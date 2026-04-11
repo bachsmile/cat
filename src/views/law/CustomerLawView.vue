@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#050508] text-white font-['Inter',_sans-serif] overflow-x-hidden relative">
+  <div class="min-h-screen bg-[#050508] text-white  overflow-x-hidden relative">
     <!-- Background Decor -->
     <div class="fixed inset-0 z-0 pointer-events-none">
       <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full animate-pulse"></div>

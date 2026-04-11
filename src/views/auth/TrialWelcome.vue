@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-screen w-full bg-[#050508] text-white overflow-y-auto overflow-x-hidden font-['Inter',_sans-serif] scroll-smooth relative"
+    class="h-screen w-full bg-[#050508] text-white overflow-y-auto overflow-x-hidden  scroll-smooth relative"
     ref="scrollContainer"
   >
     <!-- Intro Phase (Premium Animated Sequence) -->

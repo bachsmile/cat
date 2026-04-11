@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#050508] text-white flex flex-col font-['Inter',_sans-serif]">
+  <div class="min-h-screen bg-[#050508] text-white flex flex-col ">
     <!-- Navbar -->
     <nav class="border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md sticky top-0 z-[60]">
       <div class="max-w-full mx-auto px-6 h-16 flex items-center justify-between">
@@ -77,8 +77,8 @@
       </main>
     </div>
 
-    <!-- Global Liquid Filters -->
-    <CmFilters />
+    <!-- Global Filters -->
+    <CgFilters />
   </div>
 </template>
 
@@ -91,7 +91,7 @@ import {
   Github as GithubIcon,
   Package as BoxIcon,
 } from 'lucide-vue-next';
-import { CmFilters } from 'glass-studio-ui-pro';
+import { CgFilters } from 'glass-studio-ui-pro';
 
 const route = useRoute();
 const projectId = computed(() => route.params.id as string);

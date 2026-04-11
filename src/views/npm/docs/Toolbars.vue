@@ -34,7 +34,7 @@
               Physical Result
             </div>
 
-            <CmToolbar
+            <CgToolbar
               :type="toolbarType"
               :shadow="toolbarShadow"
               :width="toolbarWidth"
@@ -52,24 +52,24 @@
 
               <template #right>
                 <div class="flex items-center gap-2">
-                  <CmButton
+                  <CgButton
                     variant="ghost"
                     class="px-3 py-1 text-[10px] uppercase font-bold"
-                    >File</CmButton
+                    >File</CgButton
                   >
-                  <CmButton
+                  <CgButton
                     variant="ghost"
                     class="px-3 py-1 text-[10px] uppercase font-bold"
-                    >Edit</CmButton
+                    >Edit</CgButton
                   >
-                  <CmButton
+                  <CgButton
                     variant="primary"
                     class="px-4 py-1.5 ml-2 text-[10px] font-black uppercase tracking-widest rounded-lg"
-                    >Save</CmButton
+                    >Save</CgButton
                   >
                 </div>
               </template>
-            </CmToolbar>
+            </CgToolbar>
           </div>
         </div>
 
@@ -110,7 +110,7 @@
                   "
                   @click="toolbarType = opt as any"
                 >
-                  {{ opt.replace("-", " ") }}
+                  {{ opt.replace('-', ' ') }}
                 </button>
               </div>
             </div>
@@ -179,14 +179,14 @@
         <div class="p-8">
           <pre
             class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"
-          ><code>{{ `<CmToolbar 
+          ><code>{{ `<CgToolbar 
   type="${toolbarType}" 
   shadow="${toolbarShadow}"
   width="${toolbarWidth}"
   position="relative"
 >
   <!-- Toolbar Content -->
-</CmToolbar>` }}</code></pre>
+</CgToolbar>` }}</code></pre>
         </div>
       </div>
     </div>
@@ -196,7 +196,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Sparkles } from "lucide-vue-next";
-import { CmButton, CmToolbar } from "glass-studio-ui-pro";
+import { CgButton, CgToolbar } from "glass-studio-ui-pro";
 import thumbnailBg from "@/assets/images/hinh-nen-1920-1080-thumbnail.jpg";
 
 const toolbarWidth = ref<"full" | "floating" | "fit">("floating");

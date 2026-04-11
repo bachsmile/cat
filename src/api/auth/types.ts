@@ -43,6 +43,8 @@ export interface RegisterRequest {
   modules?: string[];
   subscriptionPlan?: string;
   subscriptionExpiresAt?: Date;
+  customerType?: "individual" | "business";
+  organizationName?: string;
 }
 
 export interface RegisterResponse {

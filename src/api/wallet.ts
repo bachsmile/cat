@@ -25,8 +25,15 @@ export const getWalletStatus = async (assetSymbol: string) => {
 };
 
 // Transaction APIs
-export const getWalletTransactions = async (assetSymbol: string) => {
-  const response = await client.get(`/wallet/transactions/${assetSymbol}`);
+export const getWalletTransactions = async (assetSymbol: string, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.get(`/wallet/transactions/${assetSymbol}`, config);
+  return response.data;
+};
+
+export const getWalletLots = async (assetSymbol: string, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.get(`/wallet/lots/${assetSymbol}`, config);
   return response.data;
 };
 
@@ -39,6 +46,7 @@ export const createWalletTransaction = async (data: {
   avgBuyPriceAtTime?: number;
   profitAmount?: number;
   source?: string;
+  contractCode?: string;
 }, walletToken?: string) => {
   const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
   const response = await client.post("/wallet/transactions", data, config);
@@ -74,7 +82,7 @@ export const deleteWalletTransaction = async (
 };
 
 export const getWalletStats = async (assetSymbol: string) => {
-  const response = await client.get(`/wallet/stats/${assetSymbol}`);
+  const response = await client.get(`/stats/${assetSymbol}`);
   return response.data;
 };
 
@@ -83,13 +91,19 @@ export const getPortfolioSummary = async () => {
   return response.data;
 };
 
+export const getGrowthStats = async () => {
+  const response = await client.get("/wallet/growth-stats");
+  return response.data;
+};
+
 export const getSavings = async () => {
   const response = await client.get("/wallet/savings");
   return response.data;
 };
 
-export const createSavings = async (data: any) => {
-  const response = await client.post("/wallet/savings", data);
+export const createSavings = async (data: any, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.post("/wallet/savings", data, config);
   return response.data;
 };
 
@@ -109,13 +123,15 @@ export const getStorage = async () => {
   return response.data;
 };
 
-export const createStorage = async (data: any) => {
-  const response = await client.post("/wallet/storage", data);
+export const createStorage = async (data: any, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.post("/wallet/storage", data, config);
   return response.data;
 };
 
-export const withdrawFromStorage = async (id: string) => {
-  const response = await client.post(`/wallet/storage/${id}/withdraw`);
+export const withdrawFromStorage = async (id: string, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.post(`/wallet/storage/${id}/withdraw`, {}, config);
   return response.data;
 };
 
@@ -126,6 +142,31 @@ export const adjustStorage = async (id: string, data: any) => {
 
 export const getStorageHistory = async (id: string) => {
   const response = await client.get(`/wallet/storage/${id}/history`);
+  return response.data;
+};
+
+// --- LOANS ---
+export const getLoans = async (assetSymbol: string, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.get(`/wallet/loans/${assetSymbol}`, config);
+  return response.data;
+};
+
+export const createLoan = async (data: {
+  assetSymbol: string;
+  borrower: string;
+  amount: number;
+  hasInterest: boolean;
+  interestRate: number;
+}, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.post('/wallet/loans', data, config);
+  return response.data;
+};
+
+export const collectLoan = async (id: string, amount: number, walletToken?: string) => {
+  const config = walletToken ? { headers: { "X-Wallet-Token": walletToken } } : {};
+  const response = await client.post(`/wallet/loans/${id}/collect`, { amount }, config);
   return response.data;
 };
 

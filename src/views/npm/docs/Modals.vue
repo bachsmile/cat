@@ -24,7 +24,7 @@
 
             <!-- Mini Modal Preview -->
             <div class="relative">
-              <CmCard
+              <CgCard
                 :type="modalType"
                 :shadow="modalShadow"
                 class="flex flex-col p-6 pointer-events-none rounded-3xl"
@@ -38,29 +38,26 @@
                     >Preview Modal</span
                   >
                 </div>
-                <div class="flex-1 flex flex-col gap-2">
-                  <div class="w-full h-2 bg-white/10 rounded"></div>
-                  <div class="w-3/4 h-2 bg-white/10 rounded"></div>
+                <div class="p-8 h-full flex flex-col justify-between">
+                  <div class="flex items-center gap-3 opacity-30">
+                    <div class="w-8 h-8 rounded-lg bg-white/20"></div>
+                    <div class="w-24 h-2 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div class="space-y-2 opacity-10">
+                    <div class="w-full h-1 bg-white/20 rounded-full"></div>
+                    <div class="w-2/3 h-1 bg-white/20 rounded-full"></div>
+                  </div>
                 </div>
-                <div class="flex justify-end mt-4">
-                  <div
-                    class="w-12 h-6 bg-purple-500 rounded-lg opacity-50"
-                  ></div>
-                </div>
-              </CmCard>
+              </CgCard>
             </div>
 
-            <CmButton
+            <CgButton
               variant="primary"
-              class="px-16 py-8 mt-8"
+              class="px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-purple-500/20 active:scale-95 transition-all"
               @click="showDemoModal = true"
             >
-              <span
-                class="flex items-center gap-3 text-sm font-bold uppercase tracking-widest"
-              >
-                Launch Live Modal
-              </span>
-            </CmButton>
+              Launch Physical Result
+            </CgButton>
           </div>
         </div>
 
@@ -80,7 +77,7 @@
               <h4
                 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3"
               >
-                Backdrop Material
+                Material Surface
               </h4>
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <button
@@ -97,11 +94,11 @@
                   :class="
                     modalType === opt
                       ? 'bg-purple-600/20 border-purple-500 text-purple-400'
-                      : 'bg-white/5 border-white/10 text-gray-500 hover:text-white hover:bg-white/10'
+                      : 'bg-white/5 border-white/10 text-gray-500'
                   "
                   @click="modalType = opt as any"
                 >
-                  {{ opt.replace("-", " ") }}
+                  {{ opt.replace('-', ' ') }}
                 </button>
               </div>
             </div>
@@ -111,7 +108,7 @@
               <h4
                 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3"
               >
-                Surface Reflection
+                Physics Reflection
               </h4>
               <div class="grid grid-cols-3 gap-3">
                 <button
@@ -120,8 +117,8 @@
                   class="px-4 py-3 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-wider"
                   :class="
                     modalShadow === s
-                      ? 'bg-indigo-600/20 border-indigo-500 text-indigo-400'
-                      : 'bg-white/5 border-white/10 text-gray-500 hover:text-white hover:bg-white/10'
+                      ? 'bg-purple-600/20 border-purple-500 text-purple-400'
+                      : 'bg-white/5 border-white/10 text-gray-500'
                   "
                   @click="modalShadow = s as any"
                 >
@@ -133,7 +130,7 @@
         </div>
       </div>
 
-      <!-- Bottom Section: separated Code Snippet -->
+      <!-- Bottom Section: Implementation Snippet -->
       <div
         class="glass-panel overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02]"
       >
@@ -146,24 +143,23 @@
         <div class="p-8">
           <pre
             class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"
-          ><code>{{ `<CmModal 
-  v-model="isOpen"
-  type="${modalType}"
+          ><code>{{ `<CgModal 
+  v-model="show"
+  type="${modalType}" 
   shadow="${modalShadow}"
-  title="Modal Title"
 >
-  Modal Content
-</CmModal>` }}</code></pre>
+  <!-- Modal Content -->
+</CgModal>` }}</code></pre>
         </div>
       </div>
     </div>
 
-    <!-- Live Demo Modal -->
-    <CmModal
+    <!-- The Actual Modal Component -->
+    <CgModal
       v-model="showDemoModal"
       :type="modalType"
       :shadow="modalShadow"
-      title="Interactive Glass Modal"
+      class="max-w-md w-full"
     >
       <div class="flex flex-col gap-6 p-8">
         <div class="flex flex-col gap-2">
@@ -192,22 +188,22 @@
         </div>
 
         <div class="flex justify-end mt-4">
-          <CmButton
+          <CgButton
             variant="primary"
             class="px-10 py-3 rounded-xl font-bold uppercase tracking-widest text-xs"
             @click="showDemoModal = false"
           >
             Confirm Configuration
-          </CmButton>
+          </CgButton>
         </div>
       </div>
-    </CmModal>
+    </CgModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { CmCard, CmButton, CmModal } from "glass-studio-ui-pro";
+import { CgCard, CgButton, CgModal } from "glass-studio-ui-pro";
 import thumbnailBg from "@/assets/images/hinh-nen-1920-1080-thumbnail.jpg";
 
 const showDemoModal = ref(false);

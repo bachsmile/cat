@@ -9,7 +9,8 @@
         <div
           class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"
         >
-          <LockIcon class="w-8 h-8 text-gray-400" />
+          <LockIcon v-if="!isSetup" class="w-8 h-8 text-gray-400" />
+          <ShieldPlusIcon v-else class="w-8 h-8 text-gold-vibrant" />
         </div>
         <h4 class="text-xl font-bold">
           {{ isSetup ? "Thiết lập" : "Xác thực" }} bảo mật ví {{ pendingAsset }}
@@ -66,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { Lock as LockIcon } from "lucide-vue-next";
+import { Lock as LockIcon, ShieldPlus as ShieldPlusIcon } from "lucide-vue-next";
 
 defineProps<{
   pendingAsset: string | null;

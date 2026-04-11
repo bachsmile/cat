@@ -15,7 +15,7 @@
           class="flex-1 relative min-h-[480px] bg-cover bg-center rounded-3xl overflow-hidden shadow-inner border border-white/10"
           :style="{ backgroundImage: `url(${thumbnailBg})` }"
         >
-             <CmButton
+             <CgButton
               :type="buttonType"
               :shadow="buttonShadow"
               :variant="buttonVariant"
@@ -36,7 +36,7 @@
                 }}
                 Button
               </span>
-            </CmButton>
+            </CgButton>
 
             <!-- Instructions -->
             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] text-white pointer-events-none">
@@ -64,7 +64,7 @@
                     :class="buttonType === opt ? 'bg-purple-600/20 border-purple-500 text-purple-400' : 'bg-white/5 border-white/10 text-gray-500'"
                     @click="buttonType = opt as any"
                   >
-                    {{ opt.replace("-", " ") }}
+                    {{ opt.replace('-', ' ') }}
                   </button>
                 </div>
               </div>
@@ -119,14 +119,14 @@
            <span class="text-purple-400">Vue 3 Template</span>
         </div>
         <div class="p-8">
-           <pre class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"><code>{{ `<CmButton
+           <pre class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"><code>{{ `<CgButton
   variant="${buttonVariant}"
   type="${buttonType}"
   shadow="${buttonShadow || 'none'}"
   :glow="${buttonGlow}"
 >
   Button Label
-</CmButton>` }}</code></pre>
+</CgButton>` }}</code></pre>
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Sparkles } from 'lucide-vue-next';
-import { CmButton } from 'glass-studio-ui-pro';
+import { CgButton } from 'glass-studio-ui-pro';
 import thumbnailBg from '@/assets/images/hinh-nen-1920-1080-thumbnail.jpg';
 
 const previewArea = ref<HTMLElement | null>(null);

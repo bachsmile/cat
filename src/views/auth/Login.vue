@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white overflow-hidden relative font-['Inter',_sans-serif]"
+    class="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white overflow-hidden relative "
   >
     <!-- Background Decor -->
     <div class="absolute inset-0 z-0">
@@ -199,8 +199,12 @@ const handleLogin = async () => {
       setLanguage(result.data.user.language);
     }
 
-    const userRole = result.data.user.role;
-    if (["admin", "moderator", "manager", "lawyer"].includes(userRole)) {
+    const userRole = result.data.user.role || "";
+    if (
+      ["super_admin", "admin", "moderator", "manager", "lawyer"].includes(
+        userRole.toLowerCase(),
+      )
+    ) {
       router.push("/dashboard");
     } else {
       router.push("/home");

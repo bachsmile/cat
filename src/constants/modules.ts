@@ -3,7 +3,7 @@ import {
   MessageSquare, FolderSearch, ClipboardList, Calendar, Database, 
   BarChart3, Heart, Brain, GraduationCap, Laptop, Landmark, Receipt, 
   Activity, Pill, FileText, ShoppingBag, Truck, Package,
-  MapPin, Box, TrendingUp, CreditCard
+  MapPin, Box, TrendingUp, CreditCard, Gift, Camera
 } from "lucide-vue-next";
 
 export const DOMAINS = [
@@ -25,6 +25,26 @@ export const DOMAINS = [
       { title: "Tự động hóa Văn bản", desc: "Tạo các hợp đồng, đơn từ phức tạp trong vài giây với công cụ soạn thảo thông minh.", icon: Zap },
       { title: "Cổng Khách hàng Bảo mật", desc: "Nâng tầm dịch vụ với cổng thông tin dành riêng cho khách hàng VIP, bảo mật tuyệt đối.", icon: Shield },
       { title: "Tra cứu & Index Án lệ", desc: "Công cụ tìm kiếm mạnh mẽ trên toàn bộ cơ sở dữ liệu và kho án lệ quốc gia tích hợp.", icon: Globe }
+    ]
+  },
+  {
+    id: "wedding",
+    name: "Wedding",
+    desc: "Giải pháp quản lý ngày trọng đại hoàn hảo: Từ kế hoạch, ngân sách đến khoảnh khắc kỷ niệm.",
+    icon: Heart,
+    color: "text-rose-400",
+    themeColor: "rose",
+    hexColor: "#fb7185",
+    shadow: "shadow-rose-500/20",
+    features: [
+      { title: "Quản lý Album Cưới", desc: "Lưu giữ và chia sẻ những khoảnh khắc tuyệt đẹp với kho lưu trữ ảnh chất lượng cao.", icon: Camera },
+      { title: "Kế hoạch Sự kiện", desc: "Lịch trình chi tiết cho ngày cưới, từ lễ ăn hỏi đến tiệc mừng chuyên nghiệp.", icon: Calendar },
+      { title: "Quản lý Khách mời", desc: "Danh sách khách mời thông minh, theo dõi phản hồi tham dự và sắp xếp chỗ ngồi.", icon: Users },
+      { title: "Ngân sách & Chi tiêu", desc: "Kiểm soát chi phí chặt chẽ, quản lý nhà cung cấp và thanh toán hóa đơn.", icon: Receipt },
+      { title: "Thiết kế Thiệp mời", desc: "Công cụ tạo thiệp điện tử (e-invitation) độc đáo và gửi nhanh qua mạng xã hội.", icon: Zap },
+      { title: "Quản lý Quà tặng", desc: "Ghi nhận quà mừng, lời chúc và gửi lời cảm ơn tự động đến khách mời.", icon: Gift },
+      { title: "Bảo mật Thông tin", desc: "Đảm bảo tính riêng tư cho mọi dữ liệu hình ảnh và thông tin của cặp đôi.", icon: Shield },
+      { title: "Đếm ngược Ngày cưới", desc: "Widget đếm ngược thời gian thực tạo động lực và không khí háo hức.", icon: Activity }
     ]
   },
   {

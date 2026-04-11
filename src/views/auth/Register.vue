@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white overflow-hidden relative font-['Inter',_sans-serif]"
+    class="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white overflow-hidden relative "
   >
     <!-- Background Decor -->
     <div class="absolute inset-0 z-0">

@@ -15,6 +15,10 @@ export interface User {
   subscriptionPlan?: string;
   subscriptionExpiresAt?: string;
   language?: 'en' | 'vi';
+  customerType?: 'individual' | 'business';
+  organizationName?: string;
+  managedById?: string; // ID của Admin quản lý tài khoản này
+  userQuota?: number; // Giới hạn số lượng user dưới quyền
 }
 
 export const userApi = {

@@ -1,10 +1,27 @@
 <template>
   <div
-    class="p-4 md:p-8 lg:p-12 max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500"
+    class="p-4 md:p-8 lg:p-12 max-w-[1700px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-visible"
   >
+    <!-- SVG Gooey Filter for Liquid Effects -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+      <defs>
+        <filter id="law-liquid-gooey">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+    </svg>
     <!-- Global Admin Header & Mode Switcher -->
-    <div
-      class="flex items-center justify-between mb-8 bg-[#0a0a0f]/50 backdrop-blur-xl p-8 rounded-[3.5rem] border border-white/5 shadow-2xl"
+    <CgCard
+      type="heavy-frost"
+      :shadow="true"
+      class="flex flex-col lg:flex-row items-center justify-between p-8 rounded-[3.5rem] border border-white/5 gap-8"
     >
       <div class="flex items-center gap-6">
         <div
@@ -14,7 +31,7 @@
         </div>
         <div>
           <h2
-            class="text-3xl font-black italic tracking-tighter text-white tracking-widest"
+            class="text-3xl font-black italic tracking-tighter text-white tracking-widest bg-gradient-to-r from-teal-400 to-indigo-400 bg-clip-text text-transparent"
           >
             BẢNG ĐIỀU KHIỂN <span class="text-teal-400">HỆ THỐNG</span>
           </h2>
@@ -29,7 +46,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <button
           @click="router.push('/law')"
           class="group flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-teal-600 border border-white/10 hover:border-teal-500 rounded-[2rem] transition-all duration-500 shadow-2xl hover:shadow-teal-500/20 active:scale-95"
@@ -52,16 +69,63 @@
           </div>
         </button>
       </div>
+    </CgCard>
+
+    <div
+      class="flex items-center gap-4 p-2 bg-white/5 rounded-[2rem] border border-white/5 w-fit overflow-visible max-w-full"
+    >
+      <div
+        v-for="tab in (isAdminOrManager ? adminTabs : lawyerTabs)"
+        :key="tab.id"
+        class="relative flex flex-col items-center cursor-pointer group"
+        @click="activeSubTab = tab.id"
+      >
+        <!-- Liquid Gooey Aura for Active Tab -->
+        <div
+          v-if="activeSubTab === tab.id"
+          class="absolute inset-0 z-0 pointer-events-none"
+          style="filter: url(#law-liquid-gooey);"
+        >
+          <div
+            class="absolute inset-0 bg-teal-500 rounded-2xl animate-liquid-morph scale-110 opacity-40 shadow-inner shadow-white/40"
+          ></div>
+          <!-- Orbiting Satellites -->
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="absolute w-3 h-3 bg-teal-500 rounded-full animate-liquid-orbit opacity-60"
+            :style="{
+              left: '50%',
+              top: '50%',
+              animationDelay: `${i * 0.4}s`,
+              '--orbit-dist': `${12 + i * 3}px`
+            }"
+          ></div>
+        </div>
+
+        <button
+          class="relative z-10 px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-nowrap"
+          :class="
+            activeSubTab === tab.id
+              ? 'bg-teal-600 text-white shadow-xl shadow-teal-500/30'
+              : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+          "
+        >
+          {{ tab.label }}
+        </button>
+      </div>
     </div>
 
     <!-- Live Chat Management -->
     <div
       v-if="activeSubTab === 'chat'"
-      class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[750px]"
+      class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[800px]"
     >
       <!-- Left: Customer Queue -->
-      <div
-        class="lg:col-span-4 bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] flex flex-col overflow-hidden shadow-xl"
+      <CgCard
+        type="grain-frost"
+        :shadow="true"
+        class="lg:col-span-4 rounded-[2.5rem] flex flex-col overflow-hidden border border-white/5"
       >
         <div
           class="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between"
@@ -72,60 +136,62 @@
             Khách hàng trực tuyến
           </h3>
           <span
-            class="px-2 py-0.5 bg-teal-500/10 text-teal-400 rounded-full text-[10px] font-bold"
-            >{{ activeCustomers.length }} Đang chờ</span
+            class="px-3 py-1 bg-teal-500/10 text-teal-400 rounded-full text-[10px] font-bold border border-teal-500/20"
           >
+            {{ activeCustomers.length }} Đang chờ
+          </span>
         </div>
-        <div class="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-2">
+        <div class="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-3">
           <div
             v-for="customer in activeCustomers"
             :key="customer.id"
             @click="selectedCustomerId = customer.id"
-            class="p-4 rounded-2xl transition-all cursor-pointer border group"
+            class="p-5 rounded-[1.5rem] transition-all cursor-pointer border group"
             :class="
               selectedCustomerId === customer.id
-                ? 'bg-teal-600 border-teal-500 shadow-lg shadow-teal-500/10'
-                : 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.05]'
+                ? 'bg-teal-600 border-teal-500 shadow-xl shadow-teal-500/20'
+                : 'bg-white/[0.03] border-white/5 hover:border-white/10 hover:bg-white/[0.06]'
             "
           >
             <div class="flex items-center gap-4">
-              <div class="relative">
+              <div class="relative scale-110">
                 <img
                   :src="customer.avatar"
-                  class="w-12 h-12 rounded-xl object-cover border border-white/10"
+                  class="w-12 h-12 rounded-xl object-cover border border-white/10 shadow-lg"
                 />
                 <div
-                  class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[#0a0a0f] rounded-full"
+                  class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-[#1a1a24] rounded-full"
                 ></div>
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-start">
                   <h4
-                    class="font-bold text-sm truncate"
+                    class="font-black text-xs truncate uppercase tracking-widest"
                     :class="
                       selectedCustomerId === customer.id
                         ? 'text-white'
-                        : 'text-gray-200 group-hover:text-white'
+                        : 'text-gray-300 group-hover:text-white'
                     "
                   >
                     {{ customer.name }}
                   </h4>
                   <span
-                    class="text-[9px] font-bold"
+                    class="text-[9px] font-black uppercase"
                     :class="
                       selectedCustomerId === customer.id
-                        ? 'text-teal-200'
+                        ? 'text-teal-200 opacity-70'
                         : 'text-gray-500'
                     "
-                    >{{ customer.lastTime }}</span
                   >
+                    {{ customer.lastTime }}
+                  </span>
                 </div>
                 <p
-                  class="text-[11px] truncate mt-1"
+                  class="text-[11px] truncate mt-1.5 opacity-60 font-medium"
                   :class="
                     selectedCustomerId === customer.id
-                      ? 'text-teal-100/70'
-                      : 'text-gray-500'
+                      ? 'text-teal-500'
+                      : 'text-gray-400'
                   "
                 >
                   {{ customer.lastMsg }}
@@ -133,16 +199,18 @@
               </div>
               <div
                 v-if="customer.unread"
-                class="w-2 h-2 bg-teal-400 rounded-full animate-pulse"
+                class="w-2.5 h-2.5 bg-teal-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(45,212,191,0.5)]"
               ></div>
             </div>
           </div>
         </div>
-      </div>
+      </CgCard>
 
       <!-- Right: Chat Window -->
-      <div
-        class="lg:col-span-8 bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl relative"
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="lg:col-span-8 rounded-[2.5rem] overflow-hidden flex flex-col border border-white/5 relative"
       >
         <template v-if="selectedCustomer">
           <!-- Chat Header -->
@@ -258,13 +326,15 @@
             </p>
           </div>
         </div>
-      </div>
+      </CgCard>
     </div>
 
     <!-- Appointment Management -->
-    <div v-else-if="activeSubTab === 'appointments'" class="space-y-6">
-      <div
-        class="bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] p-8 shadow-xl"
+    <div v-else-if="activeSubTab === 'appointments'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
       >
         <div class="flex items-center justify-between mb-8">
           <h3
@@ -427,13 +497,15 @@
             </tbody>
           </table>
         </div>
-      </div>
+      </CgCard>
     </div>
 
     <!-- Lawyer Management (CRUD) -->
-    <div v-else-if="activeSubTab === 'lawyers'" class="space-y-6">
-      <div
-        class="bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] p-8 shadow-xl"
+    <div v-else-if="activeSubTab === 'lawyers'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
       >
         <div class="flex items-center justify-between mb-8">
           <h3
@@ -527,9 +599,7 @@
                 >
                   <span
                     class="text-4xl font-black text-yellow-500 drop-shadow-lg"
-                    >{{
-                      lawyer.rating ? Math.floor(lawyer.rating * 19) : 85
-                    }}</span
+                    >{{ lawyer.ovr || 0 }}</span
                   >
                   <span class="text-[11px] font-bold text-yellow-700 uppercase"
                     >OVR</span
@@ -595,7 +665,7 @@
                         >Exp</span
                       >
                       <span class="text-yellow-500 font-black text-sm">{{
-                        Math.floor(Math.random() * 20) + 80
+                        lawyer.exp || 0
                       }}</span>
                     </div>
                     <div class="flex justify-between items-center">
@@ -604,7 +674,7 @@
                         >Win</span
                       >
                       <span class="text-yellow-500 font-black text-sm">{{
-                        Math.floor(Math.random() * 50) + 50
+                        lawyer.win || 0
                       }}</span>
                     </div>
                     <div class="flex justify-between items-center">
@@ -613,7 +683,7 @@
                         >Trs</span
                       >
                       <span class="text-yellow-500 font-black text-sm">{{
-                        Math.floor(lawyer.rating * 18)
+                        lawyer.trs || 0
                       }}</span>
                     </div>
                     <div class="flex justify-between items-center">
@@ -622,7 +692,7 @@
                         >Phy</span
                       >
                       <span class="text-yellow-500 font-black text-sm">{{
-                        Math.floor(Math.random() * 30) + 70
+                        lawyer.phy || 0
                       }}</span>
                     </div>
                   </div>
@@ -679,7 +749,7 @@
                         :value="null"
                         disabled
                         selected
-                        class="text-gray-500"
+                        class="bg-[#0a0a0f] text-gray-500"
                       >
                         Trạng thái Tự do (Chưa có phòng)
                       </option>
@@ -687,7 +757,7 @@
                         v-for="office in officeList"
                         :key="office.id"
                         :value="office.id"
-                        class="text-black"
+                        class="bg-[#0a0a0f] text-white"
                       >
                         {{ office.name }}
                       </option>
@@ -737,381 +807,379 @@
             </div>
           </div>
         </div>
-      </div>
+      </CgCard>
     </div>
 
     <!-- Law Office Management -->
-    <div v-else-if="activeSubTab === 'offices'" class="space-y-6">
-      <div class="flex items-center justify-between mb-2">
-        <h3
-          class="text-2xl font-black italic tracking-tighter flex items-center gap-3"
-        >
-          <BuildingIcon class="w-8 h-8 text-teal-400" />
-          Quản lý <span class="text-gray-500">Phòng Luật & Lịch Công Tác</span>
-        </h3>
-        <button
-          class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
-        >
-          Thành lập Phòng mới
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div
-          v-for="office in officeList"
-          :key="office.id"
-          class="bg-[#0a0a0f] border border-white/5 rounded-3xl p-6 flex flex-col hover:bg-white/[0.02] transition-all group shadow-xl"
-        >
-          <!-- Office Header -->
-          <div class="flex justify-between items-start mb-6">
-            <div>
-              <span
-                class="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400 bg-teal-500/10 px-2 py-1 rounded-md"
-                >{{ office.type }}</span
-              >
-              <h4 class="text-lg font-bold leading-tight mt-3">
-                {{ office.name }}
-              </h4>
-              <p class="text-[11px] text-gray-500 max-w-xs mt-1">
-                Quản lý
-                {{
-                  lawyerList.filter((l) => l.officeId === office.id).length
-                }}
-                nhân sự & {{ office.receptionRooms?.length || 0 }} phòng trực
-              </p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button
-                @click="handleViewSchedule(office.id)"
-                class="px-4 py-2 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 shadow-lg shadow-teal-500/10"
-              >
-                <ClockIcon class="w-3.5 h-3.5" /> Bảng lịch
-              </button>
-              <button
-                @click="
-                  currentSchedulingOfficeId = office.id;
-                  scheduleModal?.open(
-                    lawyerList.filter((l) => l.officeId === office.id),
-                    office.receptionRooms || [],
-                  );
-                "
-                class="px-4 py-2 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2"
-              >
-                <CalendarIcon class="w-3.5 h-3.5" /> Xếp lịch
-              </button>
-            </div>
-          </div>
-
-          <!-- Inside Lawyers & Rooms -->
-          <div class="flex-1 space-y-4">
-            <!-- Team Tab -->
-            <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
-              <div
-                class="flex items-center justify-between mb-3 border-b border-white/5 pb-2"
-              >
-                <h5
-                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]"
-                >
-                  Nhân sự Thuộc Phòng
-                </h5>
-                <button
-                  @click="handleAddStaffToOffice()"
-                  class="text-[9px] font-bold text-teal-400 hover:text-white uppercase tracking-widest"
-                >
-                  + Gán thêm
-                </button>
-              </div>
-              <div class="space-y-2">
-                <div
-                  v-for="member in lawyerList.filter(
-                    (l) => l.officeId === office.id,
-                  )"
-                  :key="member.id"
-                  class="flex items-center justify-between p-2 rounded-xl bg-black/20 hover:bg-black/40 transition-colors border border-transparent hover:border-white/5"
-                >
-                  <div class="flex items-center gap-2.5">
-                    <img
-                      :src="
-                        member.user?.avatar ||
-                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user?.displayName || member.id}`
-                      "
-                      class="w-7 h-7 rounded-lg"
-                    />
-                    <div>
-                      <p
-                        class="text-[11px] font-bold text-gray-200 truncate max-w-[120px]"
-                      >
-                        {{ member.user?.displayName || "Ẩn danh" }}
-                      </p>
-                      <p
-                        class="text-[9px] text-gray-600 truncate max-w-[120px]"
-                      >
-                        {{ member.specialty || "General" }}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
-                    title="Đang làm việc"
-                  ></span>
-                </div>
-
-                <div
-                  v-if="
-                    lawyerList.filter((l) => l.officeId === office.id)
-                      .length === 0
-                  "
-                  class="text-center py-3 text-gray-600 text-[10px] italic font-medium bg-black/20 rounded-xl"
-                >
-                  Chưa phân bổ nhân sự nào
-                </div>
-              </div>
-            </div>
-
-            <!-- Rooms Tab -->
-            <div
-              class="bg-indigo-500/5 rounded-2xl p-4 border border-indigo-500/10"
-            >
-              <div
-                class="flex items-center justify-between mb-3 border-b border-indigo-500/10 pb-2"
-              >
-                <h5
-                  class="text-[10px] font-black text-indigo-400/70 uppercase tracking-[0.2em]"
-                >
-                  Cấu hình Phòng Trực
-                </h5>
-                <button
-                  @click="handleAddRoom(office)"
-                  class="text-[9px] font-bold text-indigo-400 hover:text-white uppercase tracking-widest"
-                >
-                  + Lập phòng
-                </button>
-              </div>
-              <div class="space-y-2">
-                <div
-                  v-for="room in office.receptionRooms"
-                  :key="room.id"
-                  class="flex items-center justify-between p-2 rounded-xl bg-black/20 border border-indigo-500/10 hover:border-indigo-500/30"
-                >
-                  <div class="flex flex-col">
-                    <span class="text-[11px] font-bold text-indigo-200">{{
-                      room.name
-                    }}</span>
-                    <span
-                      class="text-[8px] text-indigo-500/80 uppercase tracking-widest"
-                      >{{ room.type || "Tiếp khách" }}</span
-                    >
-                  </div>
-                  <button
-                    @click="handleRemoveRoom(office, room.id)"
-                    class="text-gray-500 hover:text-red-400 p-1.5 hover:bg-red-500/10 rounded-lg transition-colors"
-                  >
-                    <TrashIcon class="w-3 h-3" />
-                  </button>
-                </div>
-                <div
-                  v-if="
-                    !office.receptionRooms || office.receptionRooms.length === 0
-                  "
-                  class="text-center py-3 text-indigo-500/50 text-[10px] font-medium italic bg-black/20 rounded-xl"
-                >
-                  Phòng luật chưa thiết lập phòng trực.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Question Management -->
-    <div
-      v-else-if="activeSubTab === 'questions'"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      <div
-        v-for="q in customerQuestions"
-        :key="q.id"
-        class="bg-[#0a0a0f] border border-white/5 rounded-[2rem] p-8 hover:border-teal-500/30 transition-all group relative overflow-hidden flex flex-col"
+    <div v-else-if="activeSubTab === 'offices'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
       >
-        <div class="absolute top-0 right-0 p-4">
-          <span
-            class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border"
-            :class="
-              q.status === 'Answered'
-                ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                : 'bg-orange-500/10 text-orange-400 border-orange-500/20 animate-pulse'
-            "
+        <div class="flex items-center justify-between mb-8">
+          <h3
+            class="text-2xl font-black italic tracking-tighter flex items-center gap-3"
           >
-            {{ q.status === "Answered" ? "Đã giải quyết" : "Đang chờ" }}
-          </span>
-        </div>
-
-        <div class="flex items-center gap-3 mb-6">
-          <div
-            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-teal-400 font-black text-xs"
-          >
-            #{{ q.id.slice(0, 3) }}
-          </div>
-          <div class="flex-1">
-            <h4
-              class="text-xs font-bold text-gray-500 uppercase tracking-widest"
-            >
-              {{ q.category || "TƯ VẤN" }}
-            </h4>
-            <p class="text-[10px] text-gray-600">
-              {{ new Date(q.createdAt).toLocaleDateString("vi-VN") }}
-            </p>
-          </div>
-          <div class="flex gap-1">
-            <button
-              @click="handleDeleteQuestion(q.id)"
-              class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-red-400/50 hover:text-red-400"
-            >
-              <TrashIcon class="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        <h3
-          class="text-lg font-bold mb-4 group-hover:text-teal-400 transition-colors italic line-clamp-1"
-        >
-          "{{ q.title }}"
-        </h3>
-        <p
-          class="text-sm text-gray-500 leading-relaxed mb-8 line-clamp-3 flex-1"
-        >
-          {{ q.content }}
-        </p>
-
-        <div
-          class="flex items-center justify-between pt-6 border-t border-white/5 mt-auto"
-        >
-          <div class="flex items-center gap-2">
-            <div
-              class="w-8 h-8 rounded-full bg-white/5 border border-white/10 overflow-hidden"
-            >
-              <img
-                :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${q.customer?.email}`"
-              />
-            </div>
-            <span class="text-xs font-bold text-gray-400">{{
-              q.customer?.displayName || q.customer?.email
-            }}</span>
-          </div>
+            <BuildingIcon class="w-8 h-8 text-teal-400" />
+            Quản lý <span class="text-gray-500">Phòng Luật & Lịch Công Tác</span>
+          </h3>
           <button
-            @click="openAnswerModal(q)"
-            class="px-5 py-2 bg-white/5 hover:bg-teal-600 text-xs font-bold rounded-xl transition-all border border-white/5 hover:border-teal-500"
+            class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-teal-500/20"
           >
-            {{ q.status === "Answered" ? "Xem & Chỉnh sửa" : "Phản hồi" }}
+            Thành lập Phòng mới
           </button>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            v-for="office in officeList"
+            :key="office.id"
+            class="bg-[#0a0a0f] border border-white/5 rounded-3xl p-6 flex flex-col hover:bg-white/[0.02] transition-all group shadow-xl"
+          >
+            <!-- Office Header -->
+            <div class="flex justify-between items-start mb-6">
+              <div>
+                <span
+                  class="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400 bg-teal-500/10 px-2 py-1 rounded-md"
+                  >{{ office.type }}</span
+                >
+                <h4 class="text-lg font-bold leading-tight mt-3">
+                  {{ office.name }}
+                </h4>
+                <p class="text-[11px] text-gray-500 max-w-xs mt-1">
+                  Quản lý
+                  {{ lawyerList.filter((l) => l.officeId === office.id).length }}
+                  nhân sự & {{ office.receptionRooms?.length || 0 }} phòng trực
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  @click="handleViewSchedule(office.id)"
+                  class="px-4 py-2 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 shadow-lg shadow-teal-500/10"
+                >
+                  <ClockIcon class="w-3.5 h-3.5" /> Bảng lịch
+                </button>
+                <button
+                  @click="
+                    currentSchedulingOfficeId = office.id;
+                    scheduleModal?.open(
+                      lawyerList.filter((l) => l.officeId === office.id),
+                      office.receptionRooms || [],
+                    );
+                  "
+                  class="px-4 py-2 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                  <CalendarIcon class="w-3.5 h-3.5" /> Xếp lịch
+                </button>
+              </div>
+            </div>
+
+            <!-- Inside Lawyers & Rooms -->
+            <div class="flex-1 space-y-4">
+              <!-- Team Tab -->
+              <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                <div
+                  class="flex items-center justify-between mb-3 border-b border-white/5 pb-2"
+                >
+                  <h5
+                    class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]"
+                  >
+                    Nhân sự Thuộc Phòng
+                  </h5>
+                  <button
+                    @click="handleAddStaffToOffice()"
+                    class="text-[9px] font-bold text-teal-400 hover:text-white uppercase tracking-widest"
+                  >
+                    + Gán thêm
+                  </button>
+                </div>
+                <div class="space-y-2">
+                  <div
+                    v-for="member in lawyerList.filter(
+                      (l) => l.officeId === office.id,
+                    )"
+                    :key="member.id"
+                    class="flex items-center justify-between p-2 rounded-xl bg-black/20 border border-white/5 hover:border-teal-500/30 transition-all group/member"
+                  >
+                    <div class="flex items-center gap-2">
+                      <div class="w-6 h-6 rounded-lg bg-teal-500/20 flex items-center justify-center">
+                        <UserIcon class="w-3 h-3 text-teal-400" />
+                      </div>
+                      <span class="text-[11px] font-bold text-gray-300">{{
+                        member.displayName
+                      }}</span>
+                    </div>
+                    <button
+                      @click="handleRemoveStaffFromOffice(member.id)"
+                      class="text-gray-600 hover:text-red-400 opacity-0 group-hover/member:opacity-100 transition-all"
+                    >
+                      <TrashIcon class="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rooms Tab -->
+              <div
+                class="bg-indigo-500/5 rounded-2xl p-4 border border-indigo-500/10"
+              >
+                <div
+                  class="flex items-center justify-between mb-3 border-b border-indigo-500/10 pb-2"
+                >
+                  <h5
+                    class="text-[10px] font-black text-indigo-400/70 uppercase tracking-[0.2em]"
+                  >
+                    Cấu hình Phòng Trực
+                  </h5>
+                  <button
+                    @click="handleAddRoom(office)"
+                    class="text-[9px] font-bold text-indigo-400 hover:text-white uppercase tracking-widest"
+                  >
+                    + Lập phòng
+                  </button>
+                </div>
+                <div class="space-y-2">
+                  <div
+                    v-for="room in office.receptionRooms"
+                    :key="room.id"
+                    class="flex items-center justify-between p-2 rounded-xl bg-black/20 border border-indigo-500/10 hover:border-indigo-500/30"
+                  >
+                    <div class="flex flex-col">
+                      <span class="text-[11px] font-bold text-indigo-200">{{
+                        room.name
+                      }}</span>
+                      <span
+                        class="text-[8px] text-indigo-500/80 uppercase tracking-widest"
+                        >{{ room.type || "Tiếp khách" }}</span
+                      >
+                    </div>
+                    <button
+                      @click="handleRemoveRoom(office, room.id)"
+                      class="text-gray-500 hover:text-red-400 p-1.5 hover:bg-red-500/10 rounded-lg transition-colors"
+                    >
+                      <TrashIcon class="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div
+                    v-if="
+                      !office.receptionRooms || office.receptionRooms.length === 0
+                    "
+                    class="text-center py-3 text-indigo-500/50 text-[10px] font-medium italic bg-black/20 rounded-xl"
+                  >
+                    Phòng luật chưa thiết lập phòng trực.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CgCard>
+    </div>
+
+    <!-- Questions Management -->
+    <div
+      v-else-if="activeSubTab === 'questions'"
+      class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+    >
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="q in customerQuestions"
+            :key="q.id"
+            class="bg-[#0a0a0f] border border-white/5 rounded-[2rem] p-8 hover:border-teal-500/30 transition-all group relative overflow-hidden flex flex-col"
+          >
+            <div class="absolute top-0 right-0 p-4">
+              <span
+                class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border"
+                :class="
+                  q.status === 'Answered'
+                    ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                    : 'bg-orange-500/10 text-orange-400 border-orange-500/20 animate-pulse'
+                "
+              >
+                {{ q.status === "Answered" ? "Đã giải quyết" : "Đang chờ" }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-teal-400 font-black text-xs"
+              >
+                #{{ q.id.slice(0, 3) }}
+              </div>
+              <div class="flex-1">
+                <h4
+                  class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                >
+                  {{ q.category || "TƯ VẤN" }}
+                </h4>
+                <p class="text-[10px] text-gray-600">
+                  {{ new Date(q.createdAt).toLocaleDateString("vi-VN") }}
+                </p>
+              </div>
+              <div class="flex gap-1">
+                <button
+                  @click="handleDeleteQuestion(q.id)"
+                  class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-red-400/50 hover:text-red-400"
+                >
+                  <TrashIcon class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <h3
+              class="text-lg font-bold mb-4 group-hover:text-teal-400 transition-colors italic line-clamp-1"
+            >
+              "{{ q.title }}"
+            </h3>
+            <p
+              class="text-sm text-gray-500 leading-relaxed mb-8 line-clamp-3 flex-1"
+            >
+              {{ q.content }}
+            </p>
+
+            <div
+              class="flex items-center justify-between pt-6 border-t border-white/5 mt-auto"
+            >
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-full bg-white/5 border border-white/10 overflow-hidden"
+                >
+                  <img
+                    :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${q.customer?.email}`"
+                  />
+                </div>
+                <span class="text-xs font-bold text-gray-400">{{
+                  q.customer?.displayName || q.customer?.email
+                }}</span>
+              </div>
+              <button
+                @click="openAnswerModal(q)"
+                class="px-5 py-2 bg-white/5 hover:bg-teal-600 text-xs font-bold rounded-xl transition-all border border-white/5 hover:border-teal-500"
+              >
+                {{ q.status === "Answered" ? "Xem & Chỉnh sửa" : "Phản hồi" }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </CgCard>
     </div>
 
     <!-- Post/Article Management -->
-    <div v-else-if="activeSubTab === 'posts'" class="space-y-6">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-2xl font-black italic tracking-tighter">
-          Quản lý <span class="text-gray-500">Thư viện Pháp luật</span>
-        </h3>
-        <button
-          @click="openArticleModal()"
-          class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
-        >
-          Viết bài mới
-        </button>
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div
-          v-for="post in lawPosts"
-          :key="post.id"
-          class="bg-[#0a0a0f] border border-white/5 rounded-3xl p-6 flex gap-6 hover:bg-white/[0.02] transition-all group"
-        >
-          <div
-            class="w-32 h-32 rounded-2xl bg-white/5 overflow-hidden flex-shrink-0"
+    <div v-else-if="activeSubTab === 'posts'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
+      >
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="text-2xl font-black italic tracking-tighter">
+            Quản lý <span class="text-gray-500">Thư viện Pháp luật</span>
+          </h3>
+          <button
+            @click="openArticleModal()"
+            class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-teal-500/20 active:scale-95"
           >
-            <img
-              :src="post.cover"
-              class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-            />
-          </div>
-          <div class="flex-1 flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-start mb-2">
-                <span
-                  class="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400"
-                  >{{ post.category }}</span
-                >
-                <div class="flex gap-1">
-                  <button
-                    @click="openArticleModal(post)"
-                    class="text-gray-500 hover:text-white transition-colors"
-                  >
-                    <EditIcon class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="handleDeleteArticle(post.id)"
-                    class="text-gray-500 hover:text-red-400 transition-colors"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <h4
-                class="text-lg font-bold leading-tight mb-2 group-hover:text-white transition-colors"
-              >
-                {{ post.title }}
-              </h4>
-              <p class="text-[11px] text-gray-500 italic">{{ post.excerpt }}</p>
-            </div>
+            Viết bài mới
+          </button>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            v-for="post in lawPosts"
+            :key="post.id"
+            class="bg-white/[0.02] border border-white/5 rounded-3xl p-6 flex gap-6 hover:bg-white/[0.05] transition-all group overflow-hidden"
+          >
             <div
-              class="flex items-center gap-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest"
+              class="w-32 h-32 rounded-2xl bg-white/5 overflow-hidden flex-shrink-0"
             >
-              <span>{{ post.views }} lượt xem</span>
-              <span>{{
-                new Date(post.createdAt).toLocaleDateString("vi-VN")
-              }}</span>
+              <img
+                :src="post.cover"
+                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+              />
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <span
+                    class="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400 bg-teal-500/10 px-2 py-1 rounded"
+                    >{{ post.category }}</span
+                  >
+                  <div class="flex gap-2">
+                    <button
+                      @click="openArticleModal(post)"
+                      class="p-2 hover:bg-teal-500/20 text-gray-500 hover:text-teal-400 rounded-lg transition-all"
+                    >
+                      <EditIcon class="w-4 h-4" />
+                    </button>
+                    <button
+                      @click="handleDeleteArticle(post.id)"
+                      class="p-2 hover:bg-red-500/20 text-gray-500 hover:text-red-400 rounded-lg transition-all"
+                    >
+                      <TrashIcon class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <h4
+                  class="text-lg font-black leading-tight mb-2 group-hover:text-white transition-colors"
+                >
+                  {{ post.title }}
+                </h4>
+                <p class="text-[11px] text-gray-500 italic line-clamp-2">
+                  {{ post.excerpt }}
+                </p>
+              </div>
+              <div
+                class="flex items-center gap-4 text-[9px] font-black text-gray-600 uppercase tracking-widest mt-4"
+              >
+                <div class="flex items-center gap-1">
+                  <StarIcon class="w-3 h-3 text-teal-500" />
+                  <span>{{ post.views }} lượt xem</span>
+                </div>
+                <span>{{
+                  new Date(post.createdAt).toLocaleDateString("vi-VN")
+                }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </CgCard>
     </div>
 
     <!-- Application & Template Management -->
-    <div v-else-if="activeSubTab === 'applications'" class="space-y-6">
-      <!-- Internal Sub-navigation -->
-      <div class="flex items-center gap-6 border-b border-white/5 pb-4">
-        <button
-          @click="submissionTab = 'list'"
-          class="text-sm font-black uppercase tracking-widest transition-all"
-          :class="
-            submissionTab === 'list'
-              ? 'text-teal-400 border-b-2 border-teal-400 pb-4'
-              : 'text-gray-500 hover:text-white pb-4'
-          "
-        >
-          Hồ sơ của khách
-        </button>
-        <button
-          @click="submissionTab = 'templates'"
-          class="text-sm font-black uppercase tracking-widest transition-all"
-          :class="
-            submissionTab === 'templates'
-              ? 'text-teal-400 border-b-2 border-teal-400 pb-4'
-              : 'text-gray-500 hover:text-white pb-4'
-          "
-        >
-          Mẫu hồ sơ & Đơn mẫu
-        </button>
-      </div>
-
-      <div
-        v-if="submissionTab === 'list'"
-        class="animate-in fade-in slide-in-from-left-4 duration-300"
+    <div v-else-if="activeSubTab === 'applications'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CgCard
+        type="heavy-frost"
+        :shadow="true"
+        class="rounded-[2.5rem] p-8 border border-white/5"
       >
+        <!-- Internal Sub-navigation -->
+        <div class="flex items-center gap-8 border-b border-white/5 mb-8">
+          <button
+            @click="submissionTab = 'list'"
+            class="text-xs font-black uppercase tracking-widest transition-all pb-4 relative group"
+            :class="submissionTab === 'list' ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'"
+          >
+            Hồ sơ của khách
+            <div v-if="submissionTab === 'list'" class="absolute bottom-0 left-0 w-full h-0.5 bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.5)]"></div>
+          </button>
+          <button
+            @click="submissionTab = 'templates'"
+            class="text-xs font-black uppercase tracking-widest transition-all pb-4 relative group"
+            :class="submissionTab === 'templates' ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'"
+          >
+            Mẫu hồ sơ & Đơn mẫu
+            <div v-if="submissionTab === 'templates'" class="absolute bottom-0 left-0 w-full h-0.5 bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.5)]"></div>
+          </button>
+        </div>
+
         <div
-          class="bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] p-8 shadow-xl"
+          v-if="submissionTab === 'list'"
+          class="animate-in fade-in slide-in-from-left-4 duration-300"
         >
           <div class="flex items-center justify-between mb-8">
             <h3
@@ -1127,7 +1195,7 @@
                   class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                   :class="
                     appFilter === 'all'
-                      ? 'bg-teal-600 text-white'
+                      ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20'
                       : 'text-gray-500 hover:text-white'
                   "
                 >
@@ -1138,7 +1206,7 @@
                   class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                   :class="
                     appFilter === 'pending'
-                      ? 'bg-orange-600 text-white'
+                      ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20'
                       : 'text-gray-500 hover:text-white'
                   "
                 >
@@ -1147,7 +1215,7 @@
               </div>
               <button
                 @click="fetchSubmissions"
-                class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-gray-400 hover:text-white transition-all"
+                class="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-gray-400 hover:text-white transition-all active:scale-95"
                 :class="{ 'animate-spin': isFetchingSubmissions }"
               >
                 <RefreshCwIcon class="w-4 h-4" />
@@ -1159,9 +1227,9 @@
             v-if="submissionList.length === 0"
             class="py-20 text-center grayscale opacity-40"
           >
-            <FileTextIcon class="w-16 h-16 mx-auto mb-4 text-gray-500" />
+            <FileTextIcon class="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <p
-              class="text-gray-400 font-bold uppercase tracking-widest text-xs"
+              class="text-gray-500 font-black uppercase tracking-widest text-[10px]"
             >
               Không tìm thấy đơn nào
             </p>
@@ -1171,7 +1239,7 @@
             <table class="w-full text-left border-separate border-spacing-y-3">
               <thead>
                 <tr
-                  class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500"
+                  class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600"
                 >
                   <th class="pb-2 px-6">Mã Đơn / Ngày nộp</th>
                   <th class="pb-2 px-6">Khách hàng</th>
@@ -1183,7 +1251,7 @@
                 <tr
                   v-for="sub in filteredSubmissions"
                   :key="sub.id"
-                  class="group bg-white/[0.02] hover:bg-white/[0.04] transition-all"
+                  class="group bg-white/[0.02] hover:bg-white/[0.05] transition-all"
                 >
                   <td class="py-5 px-6 rounded-l-2xl">
                     <p
@@ -1199,7 +1267,7 @@
                     <div class="flex items-center gap-3">
                       <img
                         :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${sub.customer?.email}`"
-                        class="w-8 h-8 rounded-full border border-white/10"
+                        class="w-8 h-8 rounded-xl border border-white/10"
                       />
                       <div>
                         <p class="text-xs font-bold text-gray-300">
@@ -1218,13 +1286,13 @@
                     <span
                       class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-[0.1em]"
                       :class="{
-                        'bg-orange-500/10 text-orange-400':
+                        'bg-orange-500/10 text-orange-400 border border-orange-500/20':
                           sub.status === 'pending',
-                        'bg-teal-500/10 text-teal-400':
+                        'bg-teal-500/10 text-teal-400 border border-teal-500/20':
                           sub.status === 'reviewed',
-                        'bg-green-500/10 text-green-400':
+                        'bg-green-500/10 text-green-400 border border-green-500/20':
                           sub.status === 'processed',
-                        'bg-red-500/10 text-red-400': sub.status === 'rejected',
+                        'bg-red-500/10 text-red-400 border border-red-500/20': sub.status === 'rejected',
                       }"
                       >{{
                         sub.status === "pending" ? "Đang chờ" : sub.status
@@ -1254,13 +1322,9 @@
             </table>
           </div>
         </div>
-      </div>
 
-      <!-- Template Management Section -->
-      <div v-else class="animate-in fade-in slide-in-from-right-4 duration-300">
-        <div
-          class="bg-[#0a0a0f] border border-white/5 rounded-[2.5rem] p-8 shadow-xl"
-        >
+        <!-- Template Management Section -->
+        <div v-else class="animate-in fade-in slide-in-from-right-4 duration-300">
           <div class="flex items-center justify-between mb-8">
             <h3
               class="text-xl font-bold italic tracking-tight flex items-center gap-3"
@@ -1270,7 +1334,7 @@
             </h3>
             <button
               @click="router.push('/law-admin/templates/create')"
-              class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
+              class="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-teal-500/20 active:scale-95"
             >
               Thêm mẫu mới
             </button>
@@ -1282,7 +1346,7 @@
           >
             <FileTextIcon class="w-16 h-16 mx-auto mb-4 text-gray-500" />
             <p
-              class="text-gray-400 font-bold uppercase tracking-widest text-xs"
+              class="text-gray-400 font-bold uppercase tracking-widest text-[10px]"
             >
               Chưa có mẫu đơn nào
             </p>
@@ -1295,7 +1359,7 @@
             <div
               v-for="tpl in templateList"
               :key="tpl.id"
-              class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-teal-500/30 transition-all group"
+              class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-teal-500/30 transition-all group relative overflow-hidden"
             >
               <div class="flex justify-between items-start mb-4">
                 <div
@@ -1306,7 +1370,7 @@
                 <div class="flex gap-2">
                   <button
                     @click="router.push(`/law-admin/templates/${tpl.id}/edit`)"
-                    class="p-2 hover:bg-white/10 rounded-lg text-gray-500 hover:text-white transition-all"
+                    class="p-2 hover:bg-teal-500/10 rounded-lg text-gray-500 hover:text-teal-400 transition-all"
                   >
                     <EditIcon class="w-4 h-4" />
                   </button>
@@ -1319,24 +1383,23 @@
                 </div>
               </div>
               <h4
-                class="text-lg font-bold text-white mb-2 group-hover:text-teal-400 transition-colors"
+                class="text-lg font-bold text-white mb-2 group-hover:text-teal-400 transition-colors italic"
               >
                 {{ tpl.title }}
               </h4>
-              <p class="text-xs text-gray-500 line-clamp-2 italic mb-4">
+              <p class="text-[11px] text-gray-500 line-clamp-2 italic mb-4">
                 {{ tpl.content }}
               </p>
               <div
-                class="flex items-center gap-2 text-[10px] text-gray-600 font-bold uppercase"
+                class="flex items-center gap-2 text-[9px] text-gray-600 font-black uppercase tracking-widest"
               >
-                <span
-                  >{{ tpl.config?.fields?.length || 0 }} trường dữ liệu</span
-                >
+                <div class="w-1 h-1 rounded-full bg-teal-500"></div>
+                <span>{{ tpl.config?.fields?.length || 0 }} trường dữ liệu</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </CgCard>
     </div>
 
     <CmConfirm
@@ -1559,12 +1622,30 @@
               v-model="lawyerForm.title"
               class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-teal-500 text-white appearance-none"
             >
-              <option value="">-- Mặc định --</option>
-              <option value="Luật sư cao cấp">Luật sư cao cấp</option>
-              <option value="Cố vấn pháp lý">Cố vấn pháp lý</option>
-              <option value="Trưởng phòng">Trưởng phòng</option>
-              <option value="Thành viên hợp danh">Thành viên hợp danh</option>
-              <option value="Chuyên gia phân tích">Chuyên gia phân tích</option>
+              <option value="" class="bg-[#0a0a0f] text-white">
+                -- Mặc định --
+              </option>
+              <option value="Luật sư cao cấp" class="bg-[#0a0a0f] text-white">
+                Luật sư cao cấp
+              </option>
+              <option value="Cố vấn pháp lý" class="bg-[#0a0a0f] text-white">
+                Cố vấn pháp lý
+              </option>
+              <option value="Trưởng phòng" class="bg-[#0a0a0f] text-white">
+                Trưởng phòng
+              </option>
+              <option
+                value="Thành viên hợp danh"
+                class="bg-[#0a0a0f] text-white"
+              >
+                Thành viên hợp danh
+              </option>
+              <option
+                value="Chuyên gia phân tích"
+                class="bg-[#0a0a0f] text-white"
+              >
+                Chuyên gia phân tích
+              </option>
             </select>
           </div>
 
@@ -1575,10 +1656,69 @@
             >
             <textarea
               v-model="lawyerForm.bio"
-              rows="4"
+              rows="3"
               class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-teal-500 resize-none"
               placeholder="Thông tin giới thiệu về luật sư..."
             ></textarea>
+          </div>
+
+          <!-- Statistical Indices -->
+          <div class="grid grid-cols-5 gap-4">
+            <div class="space-y-1">
+              <label
+                class="text-[8px] font-black text-gray-600 uppercase tracking-widest ml-1"
+                >OVR</label
+              >
+              <input
+                v-model.number="lawyerForm.ovr"
+                type="number"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-yellow-500 font-black focus:outline-none focus:border-yellow-500"
+              />
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-[8px] font-black text-gray-600 uppercase tracking-widest ml-1"
+                >EXP</label
+              >
+              <input
+                v-model.number="lawyerForm.exp"
+                type="number"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-teal-500"
+              />
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-[8px] font-black text-gray-600 uppercase tracking-widest ml-1"
+                >WIN</label
+              >
+              <input
+                v-model.number="lawyerForm.win"
+                type="number"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-teal-500"
+              />
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-[8px] font-black text-gray-600 uppercase tracking-widest ml-1"
+                >TRS</label
+              >
+              <input
+                v-model.number="lawyerForm.trs"
+                type="number"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-teal-500"
+              />
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-[8px] font-black text-gray-600 uppercase tracking-widest ml-1"
+                >PHY</label
+              >
+              <input
+                v-model.number="lawyerForm.phy"
+                type="number"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-teal-500"
+              />
+            </div>
           </div>
 
           <div
@@ -1658,10 +1798,18 @@
                 v-model="articleForm.category"
                 class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-teal-500 text-white appearance-none"
               >
-                <option value="TIN TỨC">TIN TỨC</option>
-                <option value="HƯỚNG DẪN">HƯỚNG DẪN</option>
-                <option value="PHÂN TÍCH">PHÂN TÍCH</option>
-                <option value="THÔNG BÁO">THÔNG BÁO</option>
+                <option value="TIN TỨC" class="bg-[#0a0a0f] text-white">
+                  TIN TỨC
+                </option>
+                <option value="HƯỚNG DẪN" class="bg-[#0a0a0f] text-white">
+                  HƯỚNG DẪN
+                </option>
+                <option value="PHÂN TÍCH" class="bg-[#0a0a0f] text-white">
+                  PHÂN TÍCH
+                </option>
+                <option value="THÔNG BÁO" class="bg-[#0a0a0f] text-white">
+                  THÔNG BÁO
+                </option>
               </select>
             </div>
 
@@ -1808,6 +1956,19 @@
         </div>
       </div>
     </div>
+    <!-- Generic Confirmation Modal -->
+    <CmConfirm
+      :show="showModal"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :icon="modalConfig.icon"
+      :variant="modalConfig.variant"
+      :showCancel="modalConfig.showCancel"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      @confirm="handleModalConfirm"
+      @cancel="closeModal"
+    />
   </div>
 </template>
 
@@ -1834,6 +1995,7 @@ import {
   User as UserIcon,
   ShieldCheck as ShieldCheckIcon,
 } from "lucide-vue-next";
+import { CgCard } from "glass-studio-ui-pro";
 import { lawApi } from "../../api/law";
 import { userApi } from "../../api/user";
 import { io } from "socket.io-client";
@@ -1842,9 +2004,29 @@ import LawScheduleConfigModal from "./components/LawScheduleConfigModal.vue";
 import LawOfficeScheduleBoard from "./components/LawOfficeScheduleBoard.vue";
 import LawyerScheduleCalendarModal from "./components/LawyerScheduleCalendarModal.vue";
 
-// Active Management Tab
+const adminTabs = [
+  { id: "chat", label: "Tư Vấn Trực Tuyến" },
+  { id: "appointments", label: "Lịch Hẹn Chuyên Viên" },
+  { id: "lawyers", label: "Đội ngũ Luật Sư" },
+  { id: "posts", label: "Bài Viết Phổ Biến" },
+];
+
+const lawyerTabs = [
+  { id: "chat", label: "Hỗ Trợ Khách Hàng" },
+  { id: "appointments", label: "Lịch Trình Cá Nhân" },
+  { id: "posts", label: "Kiến Thức Pháp Luật" },
+];
+
 const route = useRoute();
 const router = useRouter();
+
+const activeSubTab = computed({
+  get: () => (route.params.tab as string) || "chat",
+  set: (val) => {
+    router.push(`/law-admin/${val}`);
+    if (val === "appointments") fetchAppointments();
+  },
+});
 
 const scheduleModal = ref<InstanceType<typeof LawScheduleConfigModal> | null>(
   null,
@@ -1855,14 +2037,6 @@ const scheduleBoard = ref<InstanceType<typeof LawOfficeScheduleBoard> | null>(
 const lawyerCalendarModal = ref<InstanceType<
   typeof LawyerScheduleCalendarModal
 > | null>(null);
-
-const activeSubTab = computed({
-  get: () => (route.params.tab as string) || "chat",
-  set: (val) => {
-    router.push(`/law-admin/${val}`);
-    if (val === "appointments") fetchAppointments();
-  },
-});
 
 // User Identity & RBAC
 const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -1967,6 +2141,11 @@ const lawyerForm = ref({
   bio: "",
   title: "",
   isVerified: false,
+  ovr: 0,
+  exp: 0,
+  win: 0,
+  trs: 0,
+  phy: 0,
 });
 
 const handleViewSchedule = (officeId: string) => {
@@ -2148,7 +2327,16 @@ const fetchAppointments = async () => {
   isFetchingAppointments.value = true;
   try {
     const data = await lawApi.getAppointments();
-    appointmentList.value = data;
+    if (currentUser.role?.toLowerCase() === 'admin') {
+      // Filter appointments by lawyers managed by this admin
+      const managedLawyerIds = lawyerList.value.map(l => l.id);
+      appointmentList.value = data.filter((ap: any) => 
+        managedLawyerIds.includes(ap.lawyerId) || 
+        managedLawyerIds.includes(ap.lawyer?.id)
+      );
+    } else {
+      appointmentList.value = data;
+    }
   } catch (err) {
     console.error(err);
   } finally {
@@ -2225,7 +2413,18 @@ const selectedSubmission = ref<any>(null);
 const fetchSubmissions = async () => {
   isFetchingSubmissions.value = true;
   try {
-    submissionList.value = await lawApi.getSubmissions();
+    const data = await lawApi.getSubmissions();
+    if (currentUser.role?.toLowerCase() === 'admin') {
+       // Only show submissions from customers managed by this admin
+       // (Simplified: if customer has no managedById, assume public, 
+       // but in a real system we'd filter by organization)
+       submissionList.value = data.filter((s: any) => 
+         s.customer?.managedById === currentUserId.value || 
+         s.managedById === currentUserId.value
+       );
+    } else {
+       submissionList.value = data;
+    }
   } catch (err) {
     console.error(err);
   } finally {
@@ -2280,7 +2479,12 @@ const templateList = ref<any[]>([]);
 
 const fetchTemplates = async () => {
   try {
-    templateList.value = await lawApi.getApplications();
+    const data = await lawApi.getApplications();
+    if (currentUser.role?.toLowerCase() === 'admin') {
+      templateList.value = data.filter((t: any) => t.managedById === currentUserId.value || !t.managedById); // Show owned or global
+    } else {
+      templateList.value = data;
+    }
   } catch (err) {
     console.error(err);
   }
@@ -2302,7 +2506,14 @@ const handleDeleteTemplate = async (id: string) => {
 
 const fetchLawyers = async () => {
   const data = await lawApi.getLawyers();
-  lawyerList.value = data;
+  if (currentUser.role?.toLowerCase() === 'admin') {
+    lawyerList.value = data.filter((l: any) => 
+      l.user?.managedById === currentUserId.value || 
+      l.managedById === currentUserId.value
+    );
+  } else {
+    lawyerList.value = data;
+  }
 };
 
 const fetchSpecialties = async () => {
@@ -2315,7 +2526,14 @@ const fetchAvailableUsers = async () => {
   // Filter users who are not already lawyers in the list (simplified check)
   if (Array.isArray(data)) {
     const existingUserIds = lawyerList.value.map((l) => l.userId);
-    availableUsers.value = data.filter((u) => !existingUserIds.includes(u.id));
+    let filtered = data.filter((u) => !existingUserIds.includes(u.id));
+    
+    // Admin only sees their own managed users
+    if (currentUser.role?.toLowerCase() === 'admin') {
+      filtered = filtered.filter(u => u.managedById === currentUserId.value);
+    }
+    
+    availableUsers.value = filtered;
   }
 };
 
@@ -2328,6 +2546,11 @@ const openLawyerModal = async (lawyer?: any) => {
       bio: lawyer.bio || "",
       title: lawyer.title || "",
       isVerified: lawyer.isVerified || false,
+      ovr: lawyer.ovr || 0,
+      exp: lawyer.exp || 0,
+      win: lawyer.win || 0,
+      trs: lawyer.trs || 0,
+      phy: lawyer.phy || 0,
     };
   } else {
     editingLawyerId.value = null;
@@ -2337,6 +2560,11 @@ const openLawyerModal = async (lawyer?: any) => {
       bio: "",
       title: "",
       isVerified: false,
+      ovr: 0,
+      exp: 0,
+      win: 0,
+      trs: 0,
+      phy: 0,
     };
     await fetchAvailableUsers();
   }
@@ -2404,6 +2632,37 @@ const assignLawyerOffice = async (lawyer: any) => {
     });
   }
 };
+
+const handleRemoveStaffFromOffice = async (lawyerId: string) => {
+  triggerModal({
+    title: "Xác nhận Gỡ bỏ",
+    message: "Bạn có chắc chắn muốn gỡ nhân sự này khỏi văn phòng hiện tại?",
+    icon: TrashIcon,
+    variant: "danger",
+    showCancel: true,
+    confirmText: "Gỡ bỏ",
+    onConfirm: async () => {
+      try {
+        const res = await lawApi.updateLawyer(lawyerId, {
+          officeId: null,
+        });
+        if (res.status === 200) {
+          fetchLawyers();
+        } else {
+          triggerModal({
+            title: "Lỗi Hệ thống",
+            message: "Không thể gỡ bỏ nhân sự khỏi văn phòng.",
+            icon: AlertCircleIcon,
+            variant: "danger",
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+  });
+};
+
 
 const handleDeleteLawyer = async (id: string) => {
   triggerModal({
@@ -2874,5 +3133,27 @@ const toggleCardFlip = (id: string, event: Event) => {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Liquid Animations from SuperAdminDock */
+@keyframes liquid-morph {
+  0% { border-radius: 1rem; }
+  25% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  100% { border-radius: 1rem; }
+}
+
+@keyframes liquid-orbit {
+  0% { transform: translate(-50%, -50%) rotate(0deg) translateX(var(--orbit-dist)) rotate(0deg) scale(1); }
+  50% { transform: translate(-50%, -50%) rotate(180deg) translateX(calc(var(--orbit-dist) * 1.5)) rotate(-180deg) scale(0.8); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(var(--orbit-dist)) rotate(-360deg) scale(1); }
+}
+
+.animate-liquid-morph {
+  animation: liquid-morph 4s infinite alternate ease-in-out;
+}
+
+.animate-liquid-orbit {
+  animation: liquid-orbit 6s infinite linear;
 }
 </style>

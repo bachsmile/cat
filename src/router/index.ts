@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/auth/Login.vue";
 import Register from "../views/auth/Register.vue";
 import TrialWelcome from "../views/auth/TrialWelcome.vue";
-import Dashboard from "../views/admin/Dashboard.vue";
+import Dashboard from "../views/manager/admin/Dashboard.vue";
+import StoreHome from "../views/retail/StoreHomeView.vue";
 import CustomerHome from "../views/customer/CustomerHome.vue";
 import CustomerLawView from "../views/law/CustomerLawView.vue";
 
@@ -46,17 +47,17 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "overview",
     },
   },
   {
-    path: "/inventory",
+    path: "/inventory/:asset?",
     name: "AdminAssets",
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "inventory",
     },
   },
@@ -66,7 +67,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "law",
     },
   },
@@ -76,8 +77,48 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "users",
+    },
+  },
+  {
+    path: "/law-admin/users",
+    name: "LawAdminUsers",
+    component: Dashboard,
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin", "moderator", "manager"],
+      module: "law",
+    },
+  },
+  {
+    path: "/finance/users",
+    name: "FinanceAdminUsers",
+    component: Dashboard,
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin", "moderator", "manager"],
+      module: "finance",
+    },
+  },
+  {
+    path: "/medical/users",
+    name: "MedicalAdminUsers",
+    component: Dashboard,
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin", "moderator", "manager"],
+      module: "medical",
+    },
+  },
+  {
+    path: "/education/users",
+    name: "EducationAdminUsers",
+    component: Dashboard,
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin", "moderator", "manager"],
+      module: "education",
     },
   },
   {
@@ -86,7 +127,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "finance",
     },
   },
@@ -96,7 +137,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "medical",
     },
   },
@@ -106,7 +147,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "education",
     },
   },
@@ -116,7 +157,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "retail",
     },
   },
@@ -126,7 +167,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "logistics",
     },
   },
@@ -136,7 +177,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "reports",
     },
   },
@@ -146,7 +187,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "metrics",
     },
   },
@@ -156,7 +197,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "db-nodes",
     },
   },
@@ -166,7 +207,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "blockchain",
     },
   },
@@ -176,7 +217,7 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
-      role: ["admin", "moderator", "manager", "lawyer"],
+      role: ["super_admin", "admin", "moderator", "manager", "lawyer"],
       module: "vault",
     },
   },
@@ -184,24 +225,51 @@ const routes = [
     path: "/ai-playground",
     name: "AdminAi",
     component: Dashboard,
-    meta: { requiresAuth: true, role: ["admin"], module: "ai" },
+    meta: { requiresAuth: true, role: ["super_admin", "admin"], module: "ai" },
   },
   {
     path: "/licenses",
     name: "AdminLicenses",
     component: Dashboard,
-    meta: { requiresAuth: true, role: ["admin"], module: "licenses" },
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin"],
+      module: "licenses",
+    },
   },
   {
     path: "/system/modules",
     name: "AdminModules",
     component: Dashboard,
-    meta: { requiresAuth: true, role: ["admin"], module: "system_modules" },
+    meta: {
+      requiresAuth: true,
+      role: ["super_admin", "admin"],
+      module: "system_modules",
+    },
+  },
+
+  {
+    path: "/super-admin",
+    name: "SuperAdminHub",
+    component: () =>
+      import("../views/manager/super-admin/SuperAdminMainView.vue"),
+    meta: { requiresAuth: true, role: ["super_admin"] },
+  },
+  {
+    path: "/super-admin/:module",
+    name: "SuperAdminModule",
+    component: () =>
+      import("../views/manager/super-admin/SuperAdminModuleView.vue"),
+    meta: { requiresAuth: true, role: ["super_admin"] },
   },
 
   {
     path: "/admin",
-    redirect: "/dashboard",
+    redirect: () => {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const role = user.role?.toLowerCase();
+      return role === "super_admin" ? "/super-admin" : "/dashboard";
+    },
   },
   {
     path: "/home",
@@ -230,6 +298,88 @@ const routes = [
       role: ["admin", "moderator", "manager", "lawyer"],
     },
   },
+  {
+    path: "/store",
+    name: "CustomerStore",
+    component: StoreHome,
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/finance/user/home",
+    name: "FinanceUserHome",
+    component: () => import("../views/finance/FinanceHomeView.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding",
+    name: "WeddingHome",
+    component: () => import("../views/wedding/WeddingHomeView.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/album",
+    name: "WeddingAlbum",
+    component: () => import("../views/wedding/WeddingAlbumView.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/cards",
+    name: "WeddingCardList",
+    component: () => import("../views/wedding/WeddingCardListView.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/cards/editor",
+    name: "WeddingCardEditor",
+    component: () => import("../views/wedding/WeddingCardEditor.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/cards/demo",
+    name: "WeddingCardDemo",
+    component: () => import("../views/wedding/WeddingCardDemo.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/cards/editor",
+    name: "WeddingCardEditor",
+    component: () => import("../views/wedding/WeddingCardEditor.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
+    path: "/wedding/cards/demo",
+    name: "WeddingCardDemo",
+    component: () => import("../views/wedding/WeddingCardDemo.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+
   {
     path: "/npm",
     name: "CustomerNpm",
@@ -310,7 +460,11 @@ router.beforeEach((to, _from, next) => {
     next({ name: "Login" });
   } else if (to.name === "Login" && token && user) {
     // Redirect already logged in user
-    if (["admin", "moderator", "manager", "lawyer"].includes(user.role)) {
+    if (user && user.role?.toLowerCase() === "super_admin") {
+      next({ name: "SuperAdminHub" });
+    } else if (
+      ["admin", "moderator", "manager", "lawyer"].includes(user.role)
+    ) {
       next({ name: "AdminOverview" });
     } else {
       next({ name: "CustomerHome" });
@@ -318,14 +472,18 @@ router.beforeEach((to, _from, next) => {
   } else if (
     to.meta.role &&
     Array.isArray(to.meta.role) &&
-    (!user || !to.meta.role.includes(user.role))
+    (!user ||
+      (user.role?.toLowerCase() !== "super_admin" &&
+        !to.meta.role.includes(user.role?.toLowerCase())))
   ) {
     // Role mismatch
-    if (user && ["user", "guest"].includes(user.role)) {
+    if (user && ["user", "guest"].includes(user.role?.toLowerCase())) {
       next({ name: "CustomerHome" });
     } else if (
       user &&
-      ["admin", "moderator", "manager", "lawyer"].includes(user.role)
+      ["admin", "moderator", "manager", "lawyer"].includes(
+        user.role?.toLowerCase(),
+      )
     ) {
       next({ name: "AdminOverview" });
     } else {
@@ -339,8 +497,11 @@ router.beforeEach((to, _from, next) => {
     // Multi-module Domain restriction
     const authorizedModules =
       user.modules || (user.module ? [user.module] : []);
+    const role = user.role?.toLowerCase();
     const isAuthorized =
-      user.role === "admin" || authorizedModules.includes(to.meta.module);
+      role === "admin" ||
+      role === "super_admin" ||
+      authorizedModules.includes(to.meta.module);
 
     if (!isAuthorized) {
       // Redirect to the first authorized module if available

@@ -16,23 +16,23 @@
         >
           <div class="z-10 py-10 flex flex-col items-center gap-6 w-full">
             <div class="opacity-20 text-[10px] font-black uppercase tracking-[0.2rem] mb-4">Physical Result</div>
-            <CmCard
+            <CgCard
               :type="previewCardType"
-              shadow="reflex"
+              :shadow="previewShadow"
               class="flex flex-col items-center justify-center p-12 rounded-[2.5rem] w-full max-w-sm min-h-[240px]"
             >
               <div class="flex flex-col gap-6">
-                <CmCheckbox
+                <CgCheckbox
                   v-model="checkboxChecked1"
                   label="Push Notifications"
                 />
-                <CmCheckbox v-model="checkboxChecked2" label="Market Updates" />
-                <CmCheckbox
+                <CgCheckbox v-model="checkboxChecked2" label="Market Updates" />
+                <CgCheckbox
                   v-model="checkboxChecked3"
                   label="Security Alerts"
                 />
               </div>
-            </CmCard>
+            </CgCard>
 
             <!-- Status Indicator -->
             <div class="mt-6 flex flex-col items-center gap-3">
@@ -64,38 +64,33 @@
            <div class="flex flex-col gap-8">
               <!-- Material Selector -->
               <div class="flex flex-col gap-4">
-                <h4 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3">Wrapper Material</h4>
+                <h4 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3">Material Surface</h4>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <button
                     v-for="opt in ['glass-frost', 'grain-frost', 'soft-mist', 'light-frost', 'fine-frost', 'heavy-frost']"
                     :key="opt"
                     class="px-4 py-3 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-wider"
-                    :class="previewCardType === opt ? 'bg-purple-600/20 border-purple-500 text-purple-400' : 'bg-white/5 border-white/10 text-gray-500 hover:text-white hover:bg-white/10'"
+                    :class="previewCardType === opt ? 'bg-purple-600/20 border-purple-500 text-purple-400' : 'bg-white/5 border-white/10 text-gray-500'"
                     @click="previewCardType = opt as any"
                   >
-                    {{ opt.replace("-", " ") }}
+                    {{ opt.replace('-', ' ') }}
                   </button>
                 </div>
               </div>
 
-              <!-- Interactive Demo -->
+              <!-- Shadow Selector -->
               <div class="flex flex-col gap-4">
-                <h4 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3">Manual Toggle</h4>
-                <div class="flex flex-col gap-3">
-                  <CmButton
-                    variant="ghost"
-                    class="w-full py-3 text-xs"
-                    @click="checkboxChecked1 = !checkboxChecked1"
+                <h4 class="uppercase tracking-[0.2em] font-black text-[11px] text-gray-500 border-l-4 border-current pl-3">Physics Reflection</h4>
+                <div class="grid grid-cols-3 gap-3">
+                  <CgButton
+                    v-for="s in ['none', 'mist', 'reflex']"
+                    :key="s"
+                    class="px-4 py-3 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-wider"
+                    :class="previewShadow === s ? 'bg-purple-600/20 border-purple-500 text-purple-400' : 'bg-white/5 border-white/10 text-gray-500'"
+                    @click="previewShadow = s as any"
                   >
-                    Toggle Notification
-                  </CmButton>
-                  <CmButton
-                    variant="ghost"
-                    class="w-full py-3 text-xs"
-                    @click="checkboxChecked2 = !checkboxChecked2"
-                  >
-                    Toggle Market
-                  </CmButton>
+                    {{ s }}
+                  </CgButton>
                 </div>
               </div>
            </div>
@@ -109,9 +104,11 @@
            <span class="text-purple-400">Vue 3 Template</span>
         </div>
         <div class="p-8">
-           <pre class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"><code>{{ `<CmCheckbox 
-  v-model="checked" 
-  label="Push Notifications" 
+           <pre class="m-0 text-gray-300 font-mono text-sm leading-relaxed overflow-x-auto"><code>{{ `<CgCheckbox 
+  v-model="checked"
+  label="Checkbox Label"
+  type="${previewCardType}" 
+  shadow="${previewShadow}"
 />` }}</code></pre>
         </div>
       </div>
@@ -121,7 +118,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CmCard, CmCheckbox, CmButton } from 'glass-studio-ui-pro';
+import { CgCard, CgCheckbox, CgButton } from 'glass-studio-ui-pro';
 import thumbnailBg from '@/assets/images/hinh-nen-1920-1080-thumbnail.jpg';
 
 const checkboxChecked1 = ref(true);
@@ -129,6 +126,7 @@ const checkboxChecked2 = ref(false);
 const checkboxChecked3 = ref(true);
 
 const previewCardType = ref<any>("glass-frost");
+const previewShadow = ref<any>("reflex");
 </script>
 
 <style scoped>
