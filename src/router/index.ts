@@ -263,6 +263,7 @@ const routes = [
     meta: { requiresAuth: true, role: ["super_admin"] },
   },
 
+  { path: "/dashboard", redirect: "/admin" },
   {
     path: "/admin",
     redirect: () => {
@@ -460,10 +461,11 @@ router.beforeEach((to, _from, next) => {
     next({ name: "Login" });
   } else if (to.name === "Login" && token && user) {
     // Redirect already logged in user
-    if (user && user.role?.toLowerCase() === "super_admin") {
+    const userRole = user?.role?.toLowerCase();
+    if (userRole === "super_admin") {
       next({ name: "SuperAdminHub" });
     } else if (
-      ["admin", "moderator", "manager", "lawyer"].includes(user.role)
+      ["admin", "moderator", "manager", "lawyer"].includes(userRole)
     ) {
       next({ name: "AdminOverview" });
     } else {

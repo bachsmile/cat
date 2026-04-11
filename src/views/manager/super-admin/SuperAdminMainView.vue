@@ -63,13 +63,13 @@
             <div
               class="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-orange-500/20"
             >
-              {{ currentUser.displayName?.[0] || "S" }}
+              {{ currentUser.username?.[0] || "S" }}
             </div>
             <div class="pr-6">
               <p
                 class="text-xs font-bold text-[#1a1c3d] uppercase tracking-widest"
               >
-                {{ currentUser.displayName || "Root Admin" }}
+                {{ currentUser.username || "Root Admin" }}
               </p>
               <p
                 class="text-[10px] text-gray-400 font-bold uppercase tracking-widest"

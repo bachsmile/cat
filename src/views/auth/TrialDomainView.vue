@@ -434,7 +434,7 @@ const completePayment = async () => {
       email: regEmail.value,
       password: regPassword.value,
       role: "admin",
-      displayName: orgName.value || ("Quản lý " + (selectedDomain.value?.name || "Lĩnh vực")),
+      username: orgName.value || ("Quản lý " + (selectedDomain.value?.name || "Lĩnh vực")),
       modules: [selectedDomain.value?.id || "overview"],
       subscriptionPlan: selectedPlan.value || "1_month",
       subscriptionExpiresAt: defaultExpiry,
@@ -477,7 +477,7 @@ const enterSystem = async () => {
       const devUser = { 
         email: regEmail.value, 
         role: "admin",
-        displayName: orgName.value,
+        username: orgName.value,
         modules: [selectedDomain.value?.id || ""],
         customerType: customerType.value,
         organizationName: orgName.value

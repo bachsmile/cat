@@ -62,7 +62,7 @@
             <input
               type="text"
               v-model="email"
-              placeholder="admin@example.com"
+              placeholder="Email or username"
               required
               class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/10 transition-all placeholder:text-gray-600 text-white"
             />
@@ -205,7 +205,11 @@ const handleLogin = async () => {
         userRole.toLowerCase(),
       )
     ) {
-      router.push("/dashboard");
+      if (userRole.toLowerCase() === "super_admin") {
+        router.push("/sp-ad");
+      } else {
+        router.push("/ad");
+      }
     } else {
       router.push("/home");
     }

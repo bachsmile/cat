@@ -123,7 +123,7 @@
                     >
                       {{
                         org.organizationName ||
-                        org.displayName ||
+                        org.username ||
                         "Chưa đặt tên"
                       }}
                     </h4>
@@ -138,7 +138,7 @@
               <td class="px-8 py-6">
                 <div class="flex flex-col">
                   <span class="font-bold text-[#1a1c3d] text-sm">{{
-                    org.displayName
+                    org.username
                   }}</span>
                   <span class="text-xs text-gray-400 font-bold lowercase">{{
                     org.email
@@ -298,7 +298,7 @@
             >
               Tổ chức:
               <span class="text-indigo-600">{{
-                selectedOrg?.organizationName || selectedOrg?.displayName
+                selectedOrg?.organizationName || selectedOrg?.username
               }}</span>
             </p>
           </div>
@@ -347,11 +347,11 @@
                   <div
                     class="w-10 h-10 rounded-xl bg-white/40 flex items-center justify-center text-brand-600 font-black border border-white/50 uppercase"
                   >
-                    {{ user.displayName?.[0] || "U" }}
+                    {{ user.username?.[0] || "U" }}
                   </div>
                   <div>
                     <p class="font-black text-[#1a1c3d]">
-                      {{ user.displayName }}
+                      {{ user.username }}
                     </p>
                     <p class="text-[10px] text-gray-400 font-bold lowercase">
                       {{ user.email }}
@@ -507,17 +507,17 @@
         >
           Cấp cho tổ chức:
           <span class="text-brand-600">{{
-            selectedOrg?.organizationName || selectedOrg?.displayName
+            selectedOrg?.organizationName || selectedOrg?.username
           }}</span>
         </p>
 
         <div class="space-y-3">
           <label
             class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
-            >Tên hiển thị</label
+            >Username</label
           >
           <input
-            v-model="addSubUserForm.displayName"
+            v-model="addSubUserForm.username"
             type="text"
             placeholder="Ví dụ: Nguyễn Văn A"
             class="w-full bg-gray-50/80 border border-gray-200 rounded-2xl p-4 font-black text-sm !text-[#1a1c3d] outline-none focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-400"
@@ -700,7 +700,7 @@ const showAddSubUserModal = ref(false);
 const selectedOrg = ref<User | null>(null);
 
 const addSubUserForm = ref({
-  displayName: "",
+  username: "",
   email: "",
   password: "",
   role: "user",
@@ -731,16 +731,17 @@ const openAddUser = () => {
 
   // Reset form with defaults matching owner
   addSubUserForm.value = {
-    displayName: "",
+    username: "",
     email: "",
     password: "",
     role: "user",
-    subscriptionPlan: selectedOrg.value.subscriptionPlan || "trial",
-    subscriptionExpiresAt: selectedOrg.value.subscriptionExpiresAt
+    subscriptionPlan: (selectedOrg.value.subscriptionPlan || "trial") as string,
+    subscriptionExpiresAt: (selectedOrg.value.subscriptionExpiresAt
       ? new Date(selectedOrg.value.subscriptionExpiresAt)
           .toISOString()
           .split("T")[0]
-      : "",
+      : "") as string,
+    duration: "",
   };
   showAddSubUserModal.value = true;
 };
@@ -795,9 +796,9 @@ const openEditOrg = (org: User) => {
     subscriptionPlan: org.subscriptionPlan || "trial",
     userQuota: org.userQuota || 10,
     duration: "", // Clear duration on open to allow new selection
-    subscriptionExpiresAt: org.subscriptionExpiresAt
+    subscriptionExpiresAt: (org.subscriptionExpiresAt
       ? new Date(org.subscriptionExpiresAt).toISOString().split("T")[0]
-      : "",
+      : "") as string,
   };
   showEditModal.value = true;
 };
@@ -837,7 +838,7 @@ const filteredOrganizations = computed(() => {
       (o) =>
         (o.organizationName || "").toLowerCase().includes(q) ||
         o.email.toLowerCase().includes(q) ||
-        (o.displayName || "").toLowerCase().includes(q),
+        (o.username || "").toLowerCase().includes(q),
     );
   }
 

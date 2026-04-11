@@ -152,7 +152,7 @@ defineExpose({
                 <label v-for="lawyer in liveDataLists.lawyers" :key="lawyer.id" class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-white/5 rounded-xl border border-transparent hover:border-white/5 transition-all">
                   <input type="checkbox" :value="lawyer.id" v-model="scheduleConfig.selectedDataIds.lawyers" class="w-4 h-4 rounded border-teal-500/30 bg-black/40 text-teal-500 focus:ring-0 focus:ring-offset-0" />
                   <div class="flex flex-col">
-                     <span class="text-xs font-bold text-gray-200">{{ lawyer.user?.displayName || 'N/A' }}</span>
+                     <span class="text-xs font-bold text-gray-200">{{ lawyer.user?.username || 'N/A' }}</span>
                      <span class="text-[9px] text-teal-500 uppercase tracking-widest">{{ lawyer.specialty || 'Chưa cập nhật' }}</span>
                   </div>
                 </label>

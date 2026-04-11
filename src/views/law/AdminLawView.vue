@@ -427,7 +427,7 @@
                     />
                     <div>
                       <p class="text-xs font-bold text-gray-300">
-                        {{ ap.customer?.displayName || "Ẩn danh" }}
+                        {{ ap.customer?.username || "Ẩn danh" }}
                       </p>
                       <p class="text-[9px] text-gray-600">
                         {{ ap.customer?.email }}
@@ -442,7 +442,7 @@
                     {{ ap.specialty }}
                   </p>
                   <p class="text-[11px] text-gray-500">
-                    Luật sư: {{ ap.lawyer?.user?.displayName || "Đang chờ..." }}
+                    Luật sư: {{ ap.lawyer?.user?.username || "Đang chờ..." }}
                   </p>
                 </td>
                 <td class="py-5 px-6 text-center border-l border-white/5">
@@ -625,7 +625,7 @@
                   <img
                     :src="
                       lawyer.user?.avatar ||
-                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${lawyer.user?.displayName || lawyer.id}&backgroundColor=transparent`
+                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${lawyer.user?.username || lawyer.id}&backgroundColor=transparent`
                     "
                     class="w-40 h-40 object-cover relative z-0 drop-shadow-2xl grayscale group-hover:grayscale-0 transition-all duration-500"
                   />
@@ -638,7 +638,7 @@
                   <h4
                     class="text-xl font-black uppercase tracking-tight text-white mb-1 drop-shadow-md"
                   >
-                    {{ lawyer.user?.displayName || "Ẩn Danh" }}
+                    {{ lawyer.user?.username || "Ẩn Danh" }}
                   </h4>
 
                   <!-- Professional Title Badge -->
@@ -907,7 +907,7 @@
                         <UserIcon class="w-3 h-3 text-teal-400" />
                       </div>
                       <span class="text-[11px] font-bold text-gray-300">{{
-                        member.displayName
+                        member.username
                       }}</span>
                     </div>
                     <button
@@ -1055,7 +1055,7 @@
                   />
                 </div>
                 <span class="text-xs font-bold text-gray-400">{{
-                  q.customer?.displayName || q.customer?.email
+                  q.customer?.username || q.customer?.email
                 }}</span>
               </div>
               <button
@@ -1271,7 +1271,7 @@
                       />
                       <div>
                         <p class="text-xs font-bold text-gray-300">
-                          {{ sub.customer?.displayName || "Ẩn danh" }}
+                          {{ sub.customer?.username || "Ẩn danh" }}
                         </p>
                         <p class="text-[9px] text-gray-600">
                           {{ sub.customer?.email }}
@@ -1456,7 +1456,7 @@
               />
               <div>
                 <p class="text-sm font-bold">
-                  {{ selectedSubmission.customer?.displayName }}
+                  {{ selectedSubmission.customer?.username }}
                 </p>
                 <p class="text-xs text-gray-500">
                   {{ selectedSubmission.customer?.email }}
@@ -1587,7 +1587,7 @@
                 :value="user.id"
                 class="bg-[#0a0a0f]"
               >
-                {{ user.displayName || user.email }} ({{ user.email }})
+                {{ user.username || user.email }} ({{ user.email }})
               </option>
             </select>
           </div>
@@ -1900,7 +1900,7 @@
             >
               Khách hàng:
               {{
-                selectedQuestion?.customer?.displayName ||
+                selectedQuestion?.customer?.username ||
                 selectedQuestion?.customer?.email
               }}
             </p>
@@ -2245,7 +2245,7 @@ const handleScheduleSubmit = async (config: any) => {
       const lInfo = lawyerList.value.find((l) => l.id === id);
       return {
         id,
-        name: lInfo?.user?.displayName || "Ẩn danh",
+        name: lInfo?.user?.username || "Ẩn danh",
         role: "lawyer",
       };
     }),
@@ -2759,7 +2759,7 @@ const initChatSocket = () => {
           roomId: data.roomId,
           lawyerId: myId, // Send permanent database ID
           lawyerInfo: {
-            name: user.displayName || user.email,
+            name: user.username || user.email,
             avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`,
           },
         });
@@ -2935,7 +2935,7 @@ const sendAdminMessage = () => {
     message: newMessage.value,
     senderInfo: {
       role: "lawyer",
-      name: user.displayName || user.email,
+      name: user.username || user.email,
     },
   });
 

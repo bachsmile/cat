@@ -202,7 +202,7 @@
                       <p
                         class="font-black text-sm text-white group-hover:text-blue-400 transition-colors"
                       >
-                        {{ u.displayName || u.email.split("@")[0] }}
+                        {{ u.username || u.email.split("@")[0] }}
                       </p>
                       <div class="flex items-center gap-2 mt-0.5">
                         <p class="text-[10px] text-gray-500 font-mono">
@@ -378,10 +378,10 @@
             <div class="space-y-2">
               <label
                 class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Tên hiển thị</label
+                >Username</label
               >
               <input
-                v-model="form.displayName"
+                v-model="form.username"
                 required
                 placeholder="Nguyễn Văn A"
                 class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
@@ -699,7 +699,7 @@ const isEditing = ref(false);
 const editingId = ref<string | null>(null);
 
 interface UserForm {
-  displayName: string;
+  username: string;
   email: string;
   password?: string;
   role: string;
@@ -710,7 +710,7 @@ interface UserForm {
 }
 
 const form = ref<UserForm>({
-  displayName: "",
+  username: "",
   email: "",
   password: "",
   role: "user",
@@ -762,7 +762,7 @@ const filteredUsers = computed(() => {
 
     const matchesQuery =
       u.email.toLowerCase().includes(query) ||
-      (u.displayName || "").toLowerCase().includes(query) ||
+      (u.username || "").toLowerCase().includes(query) ||
       u.role.toLowerCase().includes(query);
 
     const matchesRole = !role || u.role === role;
@@ -778,7 +778,7 @@ const openModal = (u?: User) => {
     isEditing.value = true;
     editingId.value = u.id;
     form.value = {
-      displayName: (u.displayName as string) || "",
+      username: (u.username as string) || "",
       email: u.email as string,
       password: "",
       role: u.role as string,
@@ -797,7 +797,7 @@ const openModal = (u?: User) => {
     const defaultModules = targetModule ? [targetModule] : [];
 
     form.value = {
-      displayName: "",
+      username: "",
       email: "",
       password: "",
       role: "user",

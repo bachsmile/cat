@@ -50,7 +50,7 @@
           <div class="space-y-2">
             <label
               class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1"
-              >{{ $t('authDisplayName') }}</label
+              >{{ $t('authUsername') }}</label
             >
             <div class="relative group">
               <IdCardIcon
@@ -58,8 +58,8 @@
               />
               <input
                 type="text"
-                v-model="form.displayName"
-                placeholder="John Doe"
+                v-model="form.username"
+                placeholder="username"
                 class="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-gray-600 text-white"
               />
             </div>
@@ -195,7 +195,7 @@ const confirmPassword = ref("");
 
 const form = reactive({
   email: "",
-  displayName: "",
+  username: "",
   password: "",
 });
 

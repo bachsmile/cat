@@ -5,7 +5,7 @@ export interface User {
   email: string;
   password?: string;
   role: string;
-  displayName?: string;
+  username?: string;
   avatar?: string;
   status: 'active' | 'suspended';
   joinedDate?: string;

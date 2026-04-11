@@ -25,7 +25,7 @@ defineExpose({
     const myShifts: any[] = [];
     Object.values(allGlobalSchedules).forEach(officeScheduleList => {
        officeScheduleList.forEach(shift => {
-          if (shift.lawyerName === (lawyer.user?.displayName || 'Ẩn danh')) {
+          if (shift.lawyerName === (lawyer.user?.username || 'Ẩn danh')) {
              myShifts.push(shift);
           }
        });
@@ -45,10 +45,10 @@ defineExpose({
       <!-- Header -->
       <div class="p-8 border-b border-white/5 bg-gradient-to-r from-yellow-700/20 to-transparent flex items-center justify-between sticky top-0 z-20">
         <div class="flex items-center gap-6">
-           <img :src="lawyerInfo?.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${lawyerInfo?.user?.displayName || lawyerInfo.id}`" class="w-20 h-20 rounded-2xl border-2 border-yellow-500/50 shadow-[0_0_20px_rgba(202,138,4,0.3)] object-cover bg-black" />
+           <img :src="lawyerInfo?.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${lawyerInfo?.user?.username || lawyerInfo.id}`" class="w-20 h-20 rounded-2xl border-2 border-yellow-500/50 shadow-[0_0_20px_rgba(202,138,4,0.3)] object-cover bg-black" />
            <div>
              <h2 class="text-3xl font-black uppercase tracking-tighter text-white drop-shadow-lg">
-                {{ lawyerInfo?.user?.displayName || 'Lawyer' }}
+                {{ lawyerInfo?.user?.username || 'Lawyer' }}
              </h2>
              <p class="text-xs text-yellow-500 font-bold uppercase tracking-widest mt-1 flex items-center gap-2">
                 <CalendarIcon class="w-4 h-4" /> Lịch Trực Cá Nhân

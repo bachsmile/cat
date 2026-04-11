@@ -38,7 +38,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  displayName?: string;
+  username?: string;
   role?: Role;
   modules?: string[];
   subscriptionPlan?: string;

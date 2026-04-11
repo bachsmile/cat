@@ -210,7 +210,7 @@
                            <h5 class="text-xs font-bold text-gray-300">
                              <span class="text-emerald-400">{{ ap.specialty }}</span> 
                              <span v-if="ap.lawyer?.user" class="text-gray-500 mx-1">/</span>
-                             {{ ap.lawyer?.user?.displayName || 'Đang phân bổ luật sư' }}
+                             {{ ap.lawyer?.user?.username || 'Đang phân bổ luật sư' }}
                            </h5>
                         </div>
 
@@ -362,7 +362,7 @@
                        >
                           <img :src="lawyer.user?.avatar || 'https://i.pravatar.cc/150'" class="w-12 h-12 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all shadow-xl" />
                           <div class="text-left">
-                             <h4 class="text-sm font-black text-white italic">{{ lawyer.user?.displayName }}</h4>
+                             <h4 class="text-sm font-black text-white italic">{{ lawyer.user?.username }}</h4>
                              <p class="text-[10px] text-indigo-400 font-bold uppercase tracking-tight">{{ lawyer.specialty }}</p>
                           </div>
                        </div>
@@ -390,7 +390,7 @@
                       <div class="flex items-center gap-3">
                         <img :src="activeLawyer?.user?.avatar || 'https://i.pravatar.cc/150'" class="w-10 h-10 rounded-xl object-cover" />
                         <div>
-                          <h4 class="text-sm font-bold">{{ activeLawyer?.user?.displayName || 'Luật sư NovaLaw' }}</h4>
+                          <h4 class="text-sm font-bold">{{ activeLawyer?.user?.username || 'Luật sư NovaLaw' }}</h4>
                           <div class="flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                             <span class="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">Đang trực tuyến</span>
@@ -556,7 +556,7 @@
                            >
                               <img :src="lawyer.user?.avatar || 'https://i.pravatar.cc/150'" class="w-12 h-12 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all shadow-lg" />
                               <div class="text-left">
-                                 <h4 class="text-sm font-black text-white italic">{{ lawyer.user?.displayName }}</h4>
+                                 <h4 class="text-sm font-black text-white italic">{{ lawyer.user?.username }}</h4>
                                  <p class="text-[10px] text-indigo-400 font-bold uppercase tracking-tight">{{ lawyer.specialty }}</p>
                               </div>
                            </div>
@@ -577,7 +577,7 @@
                            <!-- Lawyer Info -->
                            <div class="text-center space-y-2 relative z-10">
                               <img :src="bookingData.lawyer?.user?.avatar || 'https://i.pravatar.cc/150'" class="w-20 h-20 rounded-3xl mx-auto object-cover border-2 border-indigo-500/30 shadow-2xl mb-4" />
-                              <h4 class="text-xl font-black italic">{{ bookingData.lawyer?.user?.displayName }}</h4>
+                              <h4 class="text-xl font-black italic">{{ bookingData.lawyer?.user?.username }}</h4>
                               <p class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">{{ bookingData.lawyer?.specialty }}</p>
                            </div>
                            
@@ -633,7 +633,7 @@
                          <div class="flex items-center justify-between border-b border-white/5 pb-4">
                             <div class="text-left">
                                <h3 class="text-lg font-black italic">Chọn khung giờ rảnh</h3>
-                               <p class="text-[10px] text-gray-500 uppercase tracking-widest">{{ bookingData.type === 'quick' ? bookingData.specialty : bookingData.lawyer?.user?.displayName }}</p>
+                               <p class="text-[10px] text-gray-500 uppercase tracking-widest">{{ bookingData.type === 'quick' ? bookingData.specialty : bookingData.lawyer?.user?.username }}</p>
                             </div>
                             <button @click="bookingData.type === 'quick' ? bookingStep = 'QUICK_FORM' : bookingStep = 'BY_LAWYER_DATE'" class="text-[10px] font-bold text-gray-500 hover:text-white uppercase tracking-widest flex items-center gap-1">
                               <ChevronLeftIcon class="w-3 h-3" /> Quay lại
@@ -985,7 +985,7 @@ const filteredLawyers = computed(() => {
   if (!searchQuery.value) return lawyerList.value;
   const q = searchQuery.value.toLowerCase();
   return lawyerList.value.filter(l => 
-    l.user?.displayName?.toLowerCase().includes(q) || 
+    l.user?.username?.toLowerCase().includes(q) || 
     l.specialty?.toLowerCase().includes(q)
   );
 });
@@ -1035,7 +1035,7 @@ const startChatFlow = async () => {
 };
 
 const connectToLawyer = (lawyer: any) => {
-  console.log("Starting connection to lawyer:", lawyer?.user?.displayName);
+  console.log("Starting connection to lawyer:", lawyer?.user?.username);
   activeLawyer.value = lawyer;
   chatFlowStep.value = 'CONNECTING';
   chatMessages.value = [];
@@ -1074,7 +1074,7 @@ const connectToLawyer = (lawyer: any) => {
         console.log("Lawyer joined event:", data);
         activeLawyer.value = {
           user: {
-            displayName: data.lawyerInfo?.name,
+            username: data.lawyerInfo?.name,
             avatar: data.lawyerInfo?.avatar
           },
           specialty: 'Chuyên gia hỗ trợ'
@@ -1188,7 +1188,7 @@ const emitRequestLawyer = (lawyer: any, user: any) => {
     category: 'Tư vấn chung',
     preferredLawyerId: lawyer?.id,
     customerInfo: {
-      name: user.displayName || user.email,
+      name: user.username || user.email,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
     }
   }, (res: any) => {
@@ -1209,7 +1209,7 @@ const sendChatMessage = () => {
     message: inputChat.value,
     senderInfo: {
       role: "user",
-      name: user.displayName || user.email
+      name: user.username || user.email
     }
   });
   
@@ -1301,7 +1301,7 @@ const confirmBooking = () => {
     }
   }
 
-  const targetName = bookingData.value.type === 'quick' ? `Luật sư phù hợp chuyên môn ${bookingData.value.specialty}` : `Luật sư ${bookingData.value.lawyer?.user?.displayName}`;
+  const targetName = bookingData.value.type === 'quick' ? `Luật sư phù hợp chuyên môn ${bookingData.value.specialty}` : `Luật sư ${bookingData.value.lawyer?.user?.username}`;
   
   triggerModal({
     title: "Xác nhận Đặt lịch",
