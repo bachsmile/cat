@@ -137,12 +137,9 @@
 import { ref, computed } from "vue";
 import {
   Users as UsersIcon,
-  ShieldCheck as ModulesIcon,
   Building as BuildingIcon,
   Settings as SettingsIcon,
   LayoutDashboard as DashIcon,
-  Shield as ShieldIcon,
-  Heart as WeddingIcon,
 } from "lucide-vue-next";
 import { useRouter } from "vue-router";
 import { CgCard } from "glass-studio-ui-pro";
@@ -150,22 +147,6 @@ import { CgCard } from "glass-studio-ui-pro";
 const hoverIndex = ref<number | null>(null);
 
 const dockItems = [
-  {
-    id: "dashboard",
-    name: "Tổng quan Hub",
-    icon: DashIcon,
-    path: "/sp-ad/dashboard",
-    bg: "bg-gradient-to-br from-indigo-500 to-purple-600",
-    glow: "bg-indigo-400",
-  },
-  {
-    id: "wedding",
-    name: "Quản lý Wedding",
-    icon: WeddingIcon,
-    path: "/wedding",
-    bg: "bg-gradient-to-br from-pink-500 to-rose-600",
-    glow: "bg-pink-400",
-  },
   {
     id: "users",
     name: "Quản lý Tài khoản",
@@ -175,28 +156,12 @@ const dockItems = [
     glow: "bg-blue-400",
   },
   {
-    id: "admins",
-    name: "Quản lý Admins",
-    icon: ShieldIcon,
-    path: "/sp-ad/admins",
-    bg: "bg-gradient-to-br from-amber-500 to-orange-600",
-    glow: "bg-amber-400",
-  },
-  {
-    id: "modules",
-    name: "Hệ thống Module",
-    icon: ModulesIcon,
-    path: "/sp-ad/modules",
-    bg: "bg-gradient-to-br from-rose-500 to-orange-500",
-    glow: "bg-rose-400",
-  },
-  {
-    id: "organizations",
-    name: "Quản lý Tổ chức",
-    icon: BuildingIcon,
-    path: "/sp-ad/organizations",
-    bg: "bg-gradient-to-br from-emerald-500 to-teal-500",
-    glow: "bg-emerald-400",
+    id: "go-admin",
+    name: "Giao diện Admin",
+    icon: DashIcon,
+    path: "/ad",
+    bg: "bg-gradient-to-br from-indigo-500 to-purple-600",
+    glow: "bg-indigo-400",
   },
   {
     id: "settings",
@@ -205,6 +170,14 @@ const dockItems = [
     path: "/sp-ad/settings",
     bg: "bg-gradient-to-br from-slate-600 to-slate-800",
     glow: "bg-slate-400",
+  },
+  {
+    id: "organizations",
+    name: "Quản lý Tổ chức",
+    icon: BuildingIcon,
+    path: "/sp-ad/organizations",
+    bg: "bg-gradient-to-br from-emerald-500 to-teal-500",
+    glow: "bg-emerald-400",
   },
 ];
 
@@ -233,14 +206,9 @@ const emit = defineEmits(["navigate"]);
 const router = useRouter();
 
 const handleNavigate = (item: any) => {
-  if (item.id === "admins") {
-    // Navigate to the global user management page for admins
-    router.push({
-      path: "/users",
-      query: { role: "admin" },
-    });
+  if (item.id === "go-admin") {
+    router.push("/ad");
   } else {
-    // Emit for Hub in-place swapping for Users and other items
     emit("navigate", item.id);
   }
 };

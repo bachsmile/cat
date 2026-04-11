@@ -192,7 +192,7 @@
         </header>
 
         <div class="flex-1">
-          <SuperAdminOrganizationView v-if="activeSubId === 'organizations'" />
+          <SuperAdminOrganizationView :module="moduleName" v-if="activeSubId === 'organizations'" />
           <div
             v-else
             class="flex flex-col items-center justify-center h-full text-center"

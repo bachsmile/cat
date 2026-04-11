@@ -231,18 +231,18 @@
                   <p
                     class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2 text-left"
                   >
-                    Total Valuation
+                    System Valuation
                   </p>
                   <h3
                     class="text-4xl font-black text-white text-left tracking-tighter italic"
                   >
-                    ₫{{ fmtNumber(assetStats.totalHoldings) }}
+                    ₫{{ portfolioSummary ? fmtNumber(assetStats.totalHoldings) : '---' }}
                   </h3>
                   <div
                     class="flex items-center gap-2 mt-6 text-[10px] font-black text-emerald-500"
                   >
                     <TrendingUpIcon class="w-4 h-4 animate-pulse" />
-                    <span>+12.4% PERFORMANCE</span>
+                    <span>+12.4% SYSTEM GROWTH</span>
                   </div>
                 </CxCard>
                 <CxCard
@@ -251,17 +251,17 @@
                   <p
                     class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2 text-left"
                   >
-                    Net Returns
+                    Operational Flow
                   </p>
                   <h3
                     class="text-4xl font-black text-[#FFD700] text-left tracking-tighter italic"
                   >
-                    ₫{{ fmtNumber(assetStats.realizedProfit) }}
+                    {{ portfolioSummary ? '₫' + fmtNumber(assetStats.realizedProfit) : 'OPTIMAL' }}
                   </h3>
                   <p
                     class="text-[9px] text-gray-600 mt-6 text-left font-bold tracking-widest uppercase"
                   >
-                    Global Revenue Stream
+                    Real-time Signal Sync
                   </p>
                 </CxCard>
               </div>
@@ -609,6 +609,12 @@ import WalletsVaultView from "./WalletsVaultView.vue";
 import AssetsView from "./AssetsView.vue";
 import AssetReportsView from "./AssetReportsView.vue";
 import AdminLawView from "@/views/law/AdminLawView.vue";
+import AdminWeddingView from "@/views/wedding/AdminWeddingView.vue";
+import AdminFinanceView from "@/views/finance/AdminFinanceView.vue";
+import AdminRetailView from "@/views/retail/AdminRetailView.vue";
+import AdminMedicalView from "@/views/medical/AdminMedicalView.vue";
+import AdminEducationView from "@/views/education/AdminEducationView.vue";
+import AdminLogisticsView from "@/views/logistics/AdminLogisticsView.vue";
 
 import { Line } from "vue-chartjs";
 import {
@@ -692,14 +698,16 @@ const chartOptions = {
 
 const fetchGrowthStats = async () => {
   try {
-    const [growth, summary, savings] = await Promise.all([
+    const results = await Promise.allSettled([
       getGrowthStats(),
       getPortfolioSummary(),
       getSavingsSummary(),
     ]);
-    growthStats.value = growth;
-    portfolioSummary.value = summary;
-    savingsSummary.value = savings;
+
+    if (results[0].status === "fulfilled") growthStats.value = results[0].value;
+    if (results[1].status === "fulfilled") portfolioSummary.value = results[1].value;
+    if (results[2].status === "fulfilled") savingsSummary.value = results[2].value;
+    
     transactions.value = [];
     capitalPackages.value = [];
   } catch (error) {
@@ -731,26 +739,32 @@ const adminItems = [
     icon: WeddingIcon,
     children: [
       {
+        name: "Tổng quan Wedding",
+        path: "/ad/wedding",
+        id: "WED-HOME",
+        icon: WeddingIcon,
+      },
+      {
         name: "Tạo thiệp cưới",
-        path: "/wedding/cards",
+        path: "/ad/wedding/cards",
         id: "WED-CARD",
         icon: MailIcon,
       },
       {
         name: "Thiết kế Website",
-        path: "/wedding/website",
+        path: "/ad/wedding/website",
         id: "WED-WEB",
         icon: GlobeIcon,
       },
       {
         name: "Quản lý đơn hàng",
-        path: "/wedding/orders",
+        path: "/ad/wedding/orders",
         id: "WED-ORD",
         icon: PackageIcon,
       },
       {
         name: "Thống kê doanh thu",
-        path: "/wedding/revenue",
+        path: "/ad/wedding/revenue",
         id: "WED-REV",
         icon: TrendingUpIcon,
       },
@@ -761,9 +775,9 @@ const adminItems = [
     shortName: "Sys",
     icon: CpuIcon,
     children: [
-      { name: "Quản lý người dùng", path: "/users", icon: UserCheckIcon },
-      { name: "Quản lý Module", path: "/system/modules", icon: BoxesIcon },
-      { name: "Quản lý License", path: "/licenses", icon: ShieldCheckIcon },
+      { name: "Quản lý người dùng", path: "/ad/users", icon: UserCheckIcon },
+      { name: "Quản lý Module", path: "/ad/system/modules", icon: BoxesIcon },
+      { name: "Quản lý License", path: "/ad/licenses", icon: ShieldCheckIcon },
     ],
   },
 
@@ -775,19 +789,19 @@ const adminItems = [
       { name: "QUẢN TRỊ TÀI SẢN", isHeader: true },
       {
         name: "Quản lý tài sản (Assets)",
-        path: "/inventory",
+        path: "/ad/finance/assets",
         icon: WalletIcon,
         id: "FIN-AST",
       },
       {
         name: "Danh mục đầu tư",
-        path: "/inventory",
+        path: "/ad/finance/portfolio",
         icon: FinanceIcon,
         id: "FIN-INV",
       },
       {
         name: "Báo cáo tài chính",
-        path: "/reports",
+        path: "/ad/finance/reports",
         icon: BarChart3Icon,
         id: "FIN-REP",
       },
@@ -795,13 +809,13 @@ const adminItems = [
       { name: "HẠ TẦNG KỸ THUẬT", isHeader: true },
       {
         name: "Blockchain Hub",
-        path: "/blockchain",
+        path: "/ad/finance/blockchain",
         icon: ActivityIcon,
         id: "FIN-BLK",
       },
       {
         name: "Tài khoản Vault",
-        path: "/vault",
+        path: "/ad/finance/vault",
         icon: LockIcon,
         id: "FIN-VLT",
       },
@@ -809,13 +823,13 @@ const adminItems = [
       { name: "PHÂN TÍCH CHIẾN LƯỢC", isHeader: true },
       {
         name: "Thị trường AI",
-        path: "/finance/ai-market",
+        path: "/ad/finance/ai-market",
         icon: ZapIcon,
         id: "FIN-AIM",
       },
       {
         name: "Phân tích xu hướng",
-        path: "/finance/trends",
+        path: "/ad/finance/trends",
         icon: ActivityIcon,
         id: "FIN-TRD",
       },
@@ -828,19 +842,19 @@ const adminItems = [
     children: [
       {
         name: "Hồ sơ bệnh án",
-        path: "/medical/records",
+        path: "/ad/medical/records",
         icon: FileTextIcon,
         id: "MED-REC",
       },
       {
         name: "Lịch khám bệnh",
-        path: "/medical/appointments",
+        path: "/ad/medical/appointments",
         icon: CalendarIcon,
         id: "MED-APP",
       },
       {
         name: "Tư vấn Sức khỏe AI",
-        path: "/medical/ai-consult",
+        path: "/ad/medical/ai-consult",
         icon: ActivityIcon,
         id: "MED-AIC",
       },
@@ -854,25 +868,25 @@ const adminItems = [
       { name: "QUẢN LÝ ĐÀO TẠO", isHeader: true },
       {
         name: "Quản lý Khóa học",
-        path: "/edu/courses",
+        path: "/ad/edu/courses",
         icon: BookOpenIcon,
         id: "EDU-CRS",
       },
       {
         name: "Bài giảng AI",
-        path: "/edu/ai-lectures",
+        path: "/ad/edu/ai-lectures",
         icon: LayersIcon,
         id: "EDU-AIL",
       },
       {
         name: "Quản lý Lớp",
-        path: "/edu/classes",
+        path: "/ad/edu/classes",
         icon: LayersIcon,
         id: "EDU-CLS",
       },
       {
         name: "Quản lý Bộ môn",
-        path: "/edu/departments",
+        path: "/ad/edu/departments",
         icon: FolderOpenIcon,
         id: "EDU-DEP",
       },
@@ -880,19 +894,19 @@ const adminItems = [
       { name: "NHÂN SỰ & HỌC SINH", isHeader: true },
       {
         name: "Quản lý Giáo viên",
-        path: "/edu/teachers",
+        path: "/ad/edu/teachers",
         icon: UsersIcon,
         id: "EDU-TCH",
       },
       {
         name: "Quản lý Học sinh",
-        path: "/edu/students",
+        path: "/ad/edu/students",
         icon: GraduationCapIcon,
         id: "EDU-STD",
       },
       {
         name: "Sinh viên & Điểm",
-        path: "/edu/grades",
+        path: "/ad/edu/grades",
         icon: ActivityIcon,
         id: "EDU-GRD",
       },
@@ -906,19 +920,19 @@ const adminItems = [
       { name: "QUẢN LÝ BÁN HÀNG", isHeader: true },
       {
         name: "Lập đơn hàng",
-        path: "/retail/pos",
+        path: "/ad/retail/pos",
         icon: PackageIcon,
         id: "RET-POS",
       },
       {
         name: "Khách hàng",
-        path: "/retail/customers",
+        path: "/ad/retail/customers",
         icon: UsersIcon,
         id: "RET-CUS",
       },
       {
         name: "Báo cáo doanh thu",
-        path: "/retail/revenue",
+        path: "/ad/retail/revenue",
         icon: TrendingUpIcon,
         id: "RET-REV",
       },
@@ -926,13 +940,13 @@ const adminItems = [
       { name: "QUẢN LÝ SẢN PHẨM", isHeader: true },
       {
         name: "Hàng hóa",
-        path: "/retail/products",
+        path: "/ad/retail/products",
         icon: PackageIcon,
         id: "RET-PRD",
       },
       {
         name: "Kho & Tồn kho",
-        path: "/retail/inventory",
+        path: "/ad/retail/inventory",
         icon: BoxesIcon,
         id: "RET-INV",
       },
@@ -946,13 +960,13 @@ const adminItems = [
       { name: "VẬN HÀNH", isHeader: true },
       {
         name: "Đội xe & Tài xế",
-        path: "/logistics/fleet",
+        path: "/ad/logistics/fleet",
         icon: UsersIcon,
         id: "LOG-FLT",
       },
       {
         name: "Lộ trình giao hàng",
-        path: "/logistics/routes",
+        path: "/ad/logistics/routes",
         icon: ActivityIcon,
         id: "LOG-RTE",
       },
@@ -960,13 +974,13 @@ const adminItems = [
       { name: "KHO BÃI", isHeader: true },
       {
         name: "Nhập / Xuất kho",
-        path: "/logistics/warehouse",
+        path: "/ad/logistics/warehouse",
         icon: PackageIcon,
         id: "LOG-WHS",
       },
       {
         name: "Kiểm kê",
-        path: "/logistics/audit",
+        path: "/ad/logistics/audit",
         icon: FileTextIcon,
         id: "LOG-AUD",
       },
@@ -980,13 +994,13 @@ const adminItems = [
       { name: "DỊCH VỤ KHÁCH HÀNG", isHeader: true },
       {
         name: "Quản lý Lịch hẹn",
-        path: "/law-admin/appointments",
+        path: "/ad/law/appointments",
         icon: CalendarIcon,
         id: "LAW-APP",
       },
       {
         name: "Tư vấn Trực tuyến",
-        path: "/law-admin/chat",
+        path: "/ad/law/chat",
         icon: MessageCircleIcon,
         id: "LAW-CON",
       },
@@ -994,13 +1008,13 @@ const adminItems = [
       { name: "NHÂN SỰ & CƠ SỞ", isHeader: true },
       {
         name: "Phòng Luật & Lịch",
-        path: "/law-admin/offices",
+        path: "/ad/law/offices",
         icon: BriefcaseIcon,
         id: "LAW-OFF",
       },
       {
         name: "Đội ngũ Luật sư",
-        path: "/law-admin/lawyers",
+        path: "/ad/law/lawyers",
         icon: UsersIcon,
         id: "LAW-STA",
       },
@@ -1008,19 +1022,19 @@ const adminItems = [
       { name: "HỒ SƠ & KIẾN THỨC", isHeader: true },
       {
         name: "Hồ sơ Khách hàng",
-        path: "/law-admin/applications",
+        path: "/ad/law/applications",
         icon: FileTextIcon,
         id: "LAW-CLI",
       },
       {
         name: "Hỏi đáp Pháp luật",
-        path: "/law-admin/questions",
+        path: "/ad/law/questions",
         icon: MessageSquareIcon,
         id: "LAW-QNA",
       },
       {
         name: "Thư viện Bài viết",
-        path: "/law-admin/posts",
+        path: "/ad/law/posts",
         icon: BookOpenIcon,
         id: "LAW-LIB",
       },
@@ -1152,9 +1166,31 @@ watch(
   },
 );
 
+watch(activeTab, (newTab) => {
+  const financeTabs = [
+    "Tài chính",
+    "Quản lý tài sản (Assets)",
+    "Danh mục đầu tư",
+    "Báo cáo tài chính",
+  ];
+  if (financeTabs.includes(newTab) && growthStats.value.length === 0) {
+    fetchGrowthStats();
+  }
+});
+
 onMounted(() => {
   syncTabWithRoute();
-  fetchGrowthStats();
+  // Never fetch wallet stats automatically on the Overview dashboard anymore as requested.
+  // Only fetch if we land directly on a Finance tab.
+  const financeTabs = [
+    "Tài chính",
+    "Quản lý tài sản (Assets)",
+    "Danh mục đầu tư",
+    "Báo cáo tài chính",
+  ];
+  if (financeTabs.includes(activeTab.value)) {
+    fetchGrowthStats();
+  }
 });
 
 const getActiveComponent = () => {
@@ -1177,6 +1213,67 @@ const getActiveComponent = () => {
     "Thư viện Bài viết",
   ];
   if (lawActiveTabs.includes(activeTab.value)) return AdminLawView;
+
+  const weddingActiveTabs = [
+    "Wedding",
+    "Tổng quan Wedding",
+    "Tạo thiệp cưới",
+    "Thiết kế Website",
+    "Quản lý đơn hàng",
+    "Thống kê doanh thu",
+  ];
+  if (weddingActiveTabs.includes(activeTab.value)) return AdminWeddingView;
+
+  const financeActiveTabs = [
+    "Tài chính",
+    "Quản lý tài sản (Assets)",
+    "Danh mục đầu tư",
+    "Báo cáo tài chính",
+    "Blockchain Hub",
+    "Tài khoản Vault",
+    "Thị trường AI",
+    "Phân tích xu hướng",
+  ];
+  if (financeActiveTabs.includes(activeTab.value)) return AdminFinanceView;
+
+  const retailActiveTabs = [
+    "Kinh doanh Store",
+    "Lập đơn hàng",
+    "Khách hàng",
+    "Báo cáo doanh thu",
+    "Hàng hóa",
+    "Kho & Tồn kho",
+  ];
+  if (retailActiveTabs.includes(activeTab.value)) return AdminRetailView;
+
+  const medicalActiveTabs = [
+    "Y tế",
+    "Hồ sơ bệnh án",
+    "Lịch khám bệnh",
+    "Tư vấn Sức khỏe AI",
+  ];
+  if (medicalActiveTabs.includes(activeTab.value)) return AdminMedicalView;
+
+  const educationActiveTabs = [
+    "Giáo dục",
+    "Quản lý Khóa học",
+    "Bài giảng AI",
+    "Quản lý Lớp",
+    "Quản lý Bộ môn",
+    "Quản lý Giáo viên",
+    "Quản lý Học sinh",
+    "Sinh viên & Điểm",
+  ];
+  if (educationActiveTabs.includes(activeTab.value)) return AdminEducationView;
+
+  const logisticsActiveTabs = [
+    "Logistics",
+    "Đội xe & Tài xế",
+    "Lộ trình giao hàng",
+    "Nhập / Xuất kho",
+    "Kiểm kê",
+  ];
+  if (logisticsActiveTabs.includes(activeTab.value)) return AdminLogisticsView;
 
   if (activeTab.value === "Super Dashboard") return SuperAdminDashboard;
   if (activeTab.value === "Organizations") return SuperAdminOrganizationView;
