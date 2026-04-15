@@ -129,50 +129,72 @@
               <PackageIcon class="w-6 h-6 text-pink-400" />
               Danh sách đơn hàng
             </h3>
-            <div class="flex gap-4">
-              <div class="relative">
-                <SearchIcon class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input type="text" placeholder="Tìm kiếm đơn hàng..." class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-xs focus:outline-none focus:border-pink-500/50 w-64" />
-              </div>
-            </div>
+            <button @click="fetchOrders" class="p-2 bg-white/5 hover:bg-pink-500/20 rounded-xl text-gray-400 hover:text-pink-400 transition-all active:rotate-180 duration-500" title="Làm mới">
+              <RefreshCcwIcon class="w-4 h-4" />
+            </button>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto min-h-[400px]">
             <table class="w-full text-left border-separate border-spacing-y-3">
               <thead>
                 <tr class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
                   <th class="pb-2 px-6">ID Đơn</th>
-                  <th class="pb-2 px-6">Khách hàng</th>
+                  <th class="pb-2 px-6">Người dùng</th>
                   <th class="pb-2 px-6">Dịch vụ</th>
-                  <th class="pb-2 px-6">Tổng tiền</th>
+                  <th class="pb-2 px-6">Số lượng</th>
+                  <th class="pb-2 px-6">Tổng cộng</th>
                   <th class="pb-2 px-6 text-center">Trạng thái</th>
                   <th class="pb-2 px-6 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr v-for="i in 5" :key="i" class="bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <tbody v-if="orders.length > 0">
+                <tr v-for="order in orders" :key="order.id" class="bg-white/[0.02] hover:bg-white/[0.04] transition-all">
                   <td class="py-5 px-6 rounded-l-2xl">
-                    <span class="text-xs font-mono font-bold text-pink-400">#ORD-{{ 2024 + i }}</span>
+                    <span class="text-xs font-mono font-bold text-pink-400">#{{ order.id.substring(0, 8) }}</span>
                   </td>
                   <td class="py-5 px-6">
-                    <p class="text-xs font-bold text-white">Nguyễn Văn {{ i }}</p>
-                    <p class="text-[9px] text-gray-500">090 123 456{{ i }}</p>
+                    <p class="text-xs font-bold text-white">{{ order.user?.email || 'N/A' }}</p>
                   </td>
                   <td class="py-5 px-6">
-                    <span class="text-[10px] font-black text-gray-400 uppercase bg-white/5 px-2 py-1 rounded-md">Thiệp cưới Silver</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase bg-white/5 px-2 py-1 rounded-md">{{ order.planId }}</span>
                   </td>
                   <td class="py-5 px-6">
-                    <span class="text-xs font-black text-white">1,500,000đ</span>
+                    <span class="text-xs font-bold text-gray-300">{{ order.quantity || 1 }}</span>
+                  </td>
+                  <td class="py-5 px-6">
+                    <span class="text-xs font-black text-white">{{ order.totalAmount?.toLocaleString() }}đ</span>
                   </td>
                   <td class="py-5 px-6 text-center">
-                    <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">Hoàn tất</span>
+                    <span 
+                      class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border"
+                      :class="order.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'"
+                    >
+                      {{ order.status }}
+                    </span>
                   </td>
                   <td class="py-5 px-6 text-right rounded-r-2xl">
-                    <button class="p-2 hover:bg-white/10 rounded-lg text-gray-500 hover:text-white transition-all">
-                      <MoreVerticalIcon class="w-4 h-4" />
-                    </button>
+                    <div class="flex items-center gap-2 justify-end">
+                      <button
+                        @click="viewOrderDetail(order.id)"
+                        class="px-4 py-2 bg-white/5 hover:bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-blue-500/30"
+                      >
+                        Xem
+                      </button>
+                      <button 
+                        v-if="order.status === 'pending'"
+                        @click="handleApproveOrder(order.id)"
+                        class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-pink-500/20 active:scale-95"
+                      >
+                        Duyệt
+                      </button>
+                      <span v-else-if="order.status !== 'pending'" class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">Đã xử lý</span>
+                    </div>
                   </td>
                 </tr>
               </tbody>
+              <div v-else class="flex flex-col items-center justify-center py-20 opacity-20">
+                <PackageIcon :size="48" class="mb-4" />
+                <p class="text-xs font-bold uppercase tracking-widest">Chưa có đơn hàng nào</p>
+              </div>
             </table>
           </div>
         </CgCard>
@@ -195,12 +217,19 @@
         </div>
       </template>
     </div>
+
+    <!-- Order Detail Modal -->
+    <WcoOrderDetailModal
+      v-model="showOrderDetail"
+      :orderId="selectedOrderId"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useToast } from '@/composables/useToast';
 import { 
   Heart as HeartIcon, 
   User as UserIcon, 
@@ -208,21 +237,45 @@ import {
   Package as PackageIcon, 
   TrendingUp as TrendingUpIcon,
   Users as UsersIcon,
-  Search as SearchIcon,
-  MoreVertical as MoreVerticalIcon,
   Activity as ActivityIcon,
   CreditCard as CreditCardIcon,
   Mail as MailIcon,
   LayoutDashboard as DashIcon,
-  ChevronRight as ChevronRightIcon
+  ChevronRight as ChevronRightIcon,
+  RefreshCcwIcon as RefreshCcwIcon
 } from 'lucide-vue-next';
+import WcoOrderDetailModal from './modals/WcoOrderDetailModal.vue';
 import { CgCard } from 'glass-studio-ui-pro';
 import WeddingCardListView from './WeddingCardListView.vue';
 import WeddingWebsiteEditor from './WeddingWebsiteEditor.vue';
+import { weddingApi } from '@/api/wedding';
 
 const router = useRouter();
 const route = useRoute();
+const { showToast } = useToast();
 const activeTab = ref('overview');
+const orders = ref<any[]>([]);
+const showOrderDetail = ref(false);
+const selectedOrderId = ref('');
+
+const fetchOrders = async () => {
+  try {
+    const res = await weddingApi.getAdminOrders();
+    orders.value = res.data;
+  } catch (e) {
+    console.error("Failed to fetch orders", e);
+  }
+};
+
+const handleApproveOrder = async (orderId: string) => {
+  try {
+    await weddingApi.updateOrderStatus(orderId, 'confirmed');
+    showToast("Đã duyệt đơn hàng thành công!", "success");
+    await fetchOrders();
+  } catch (e) {
+    showToast("Lỗi khi duyệt đơn hàng", "error");
+  }
+};
 
 const tabs = [
   { id: 'overview', label: 'Tổng quan' },
@@ -257,10 +310,18 @@ const syncTab = () => {
 };
 
 watch(() => route.params.tab, syncTab);
-onMounted(syncTab);
+onMounted(() => {
+  syncTab();
+  fetchOrders();
+});
 
 const navigateTo = (tabId: string) => {
   router.push(`/ad/wedding/${tabId}`);
+};
+
+const viewOrderDetail = (orderId: string) => {
+  selectedOrderId.value = orderId;
+  showOrderDetail.value = true;
 };
 </script>
 

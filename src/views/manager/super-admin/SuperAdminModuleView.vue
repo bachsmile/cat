@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen bg-[#f3f4f9] p-6 lg:p-10 overflow-hidden">
+  <div class="flex min-h-screen bg-transparent p-6 lg:p-10">
     <!-- 1. Symbolic Symbolic Sidebar -->
     <CgCard
       type="glass-frost"
@@ -54,7 +54,7 @@
     <CgCard
       type="heavy-frost"
       :shadow="true"
-      class="flex-1 rounded-[4rem] border border-white/50 p-12 lg:p-16 flex flex-col relative overflow-hidden"
+      class="flex-1 rounded-[4rem] border border-white/50 p-12 lg:p-16 flex flex-col relative"
     >
       <div v-if="!activeSubId" class="flex flex-col h-full">
         <!-- Breadcrumb / Header -->
@@ -64,7 +64,7 @@
             class="flex items-center gap-4 txt-gray-400 font-black group cursor-pointer hover:txt-brand-900 transition-colors"
           >
             <span class="text-xl uppercase tracking-tighter"
-              >Super Admin Hub</span
+              >Trung tâm Quản trị</span
             >
             <span class="opacity-30">/</span>
             <span class="text-xl txt-brand-900 uppercase tracking-tighter">{{
@@ -89,7 +89,7 @@
         <h1
           class="text-4xl lg:text-5xl font-black txt-brand-900 tracking-tighter mb-8 bg-clip-text"
         >
-          Module <span class="txt-orange-500">Analytics</span>
+          Phân tích <span class="txt-orange-500">Module</span>
         </h1>
 
         <!-- Gauge Widget (Smart Dashboard Style) -->
@@ -125,7 +125,7 @@
               <p
                 class="text-xs font-black txt-gray-400 uppercase tracking-widest mb-1"
               >
-                Active Users
+                Người dùng hoạt động
               </p>
               <h2
                 class="text-7xl lg:text-8xl font-black txt-brand-900 tracking-tighter"
@@ -137,7 +137,7 @@
               >
                 <TrendingUpIcon class="w-4 h-4" />
                 <span class="text-xs font-black tracking-widest"
-                  >+12% VS LAST WEEK</span
+                  >+12% SO VỚI TUẦN TRƯỚC</span
                 >
               </div>
             </div>
@@ -147,7 +147,7 @@
         <!-- Bottom Status Grid -->
         <div class="mt-auto grid grid-cols-3 gap-10">
           <CgCard
-            v-for="stat in ['Load Index', 'Latency', 'Error Rate']"
+            v-for="stat in ['Chỉ số Tải', 'Độ trễ', 'Tỉ lệ Lỗi']"
             :key="stat"
             type="fine-frost"
             class="p-6 rounded-3xl border border-white/50"
@@ -167,7 +167,7 @@
       <!-- Specific Sub-Unit Content -->
       <div
         v-else
-        class="flex flex-col h-full overflow-y-auto pr-4 scrollbar-hide"
+        class="flex flex-col"
       >
         <header class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
@@ -182,7 +182,7 @@
               <h3
                 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400"
               >
-                Unit Control
+                Điều khiển Đơn vị
               </h3>
               <h2 class="text-2xl font-black text-brand-900">
                 {{ currentSub?.name }}
@@ -199,7 +199,7 @@
           >
             <CgCard
               type="glass-frost"
-              class="w-24 h-24 rounded-3xl flex items-center justify-center mb-6"
+              class="w-full h-full bg-black rounded-[14px] flex items-center justify-center text-[#FFD700] font-black text-lg"
             >
               <component
                 :is="currentSub?.icon"
@@ -225,11 +225,11 @@
       <section>
         <div class="flex items-center justify-between mb-8">
           <h3 class="text-xs font-bold uppercase tracking-widest txt-brand-900">
-            Control Units
+            Các Đơn vị Điều khiển
           </h3>
           <span
             class="px-2 py-1 bg-orange-100 txt-orange-600 text-[9px] font-bold rounded-full"
-            >9 ACTIVE</span
+            >9 ĐANG HOẠT ĐỘNG</span
           >
         </div>
 

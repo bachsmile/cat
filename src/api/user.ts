@@ -18,6 +18,7 @@ export interface User {
   customerType?: 'individual' | 'business';
   organizationName?: string;
   managedById?: string; // ID của Admin quản lý tài khoản này
+  createdBy?: string; // ID của người tạo tài khoản này
   userQuota?: number; // Giới hạn số lượng user dưới quyền
 }
 

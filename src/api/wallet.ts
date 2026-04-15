@@ -82,7 +82,7 @@ export const deleteWalletTransaction = async (
 };
 
 export const getWalletStats = async (assetSymbol: string) => {
-  const response = await client.get(`/stats/${assetSymbol}`);
+  const response = await client.get(`/wallet/stats/${assetSymbol}`);
   return response.data;
 };
 
@@ -226,5 +226,10 @@ export const deleteSavings = async (id: string) => {
 
 export const faucet = async (assetSymbol: string) => {
   const response = await client.post("/wallet/faucet", { assetSymbol });
+  return response.data;
+};
+
+export const activateWallet = async () => {
+  const response = await client.post("/wallet/activate");
   return response.data;
 };

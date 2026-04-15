@@ -568,7 +568,6 @@ import {
   Settings as SettingsIcon,
   ShieldAlert as LegalIcon,
   Crown as CrownIcon,
-  Building as OrgIcon,
   Cpu as CpuIcon,
   Search as SearchIcon,
   Bell as BellIcon,
@@ -599,6 +598,7 @@ import {
 // Components
 import CxCard from "@/components/common/cx/CxCard.vue";
 import CxSidebar from "@/components/common/cx/CxSidebar.vue";
+import { authApi } from "@/api/auth";
 
 // Views
 import UserManagementView from "./UserManagementView.vue";
@@ -778,6 +778,7 @@ const adminItems = [
       { name: "Quản lý người dùng", path: "/ad/users", icon: UserCheckIcon },
       { name: "Quản lý Module", path: "/ad/system/modules", icon: BoxesIcon },
       { name: "Quản lý License", path: "/ad/licenses", icon: ShieldCheckIcon },
+      { name: "Dọn dẹp Database", action: "clean", icon: ZapIcon, id: "SYS-CLN" },
     ],
   },
 
@@ -1042,8 +1043,6 @@ const adminItems = [
   },
 ];
 
-const currentMenuItems = adminItems;
-
 const moduleDockItems = computed(() => {
   return [
     {
@@ -1121,9 +1120,20 @@ const selectMenu = (item: any) => {
   }
 };
 
-const handleSubMenuClick = (sub: any) => {
+const handleSubMenuClick = async (sub: any) => {
   if (sub.path) {
     router.push(sub.path);
+  } else if (sub.action === 'clean') {
+    if (confirm("BẠN CÓ CHẮC CHẮN MUỐN XÓA TOÀN BỘ DỮ LIỆU CÁC BẢNG? Hành động này không thể hoàn tác.")) {
+      try {
+        const result = await authApi.cleanDatabase();
+        alert(result.data?.message || "Đã dọn dẹp Database thành công!");
+        localStorage.removeItem("user");
+        router.push("/");
+      } catch (err) {
+        alert("Lỗi khi dọn dẹp database");
+      }
+    }
   } else {
     activeTab.value = sub.name;
   }

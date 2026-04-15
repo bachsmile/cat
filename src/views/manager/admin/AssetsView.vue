@@ -631,10 +631,10 @@
               v-model.number="newLoan.amount"
               type="number"
               class="w-full bg-black/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#FFD700] transition-colors"
-              :class="{ 'border-red-500/50 text-red-400': newLoan.amount > currentAssetBalance }"
+              :class="{ 'border-red-500/50 text-red-400': (newLoan.amount ?? 0) > currentAssetBalance }"
               placeholder="0.00"
             />
-            <p v-if="newLoan.amount > currentAssetBalance" class="text-[9px] font-bold text-red-500 uppercase mt-2 italic">Vượt quá thanh khoản ví (Chỉ còn {{ fmtNumber(currentAssetBalance) }} {{ selectedAsset || 'VND' }})</p>
+            <p v-if="(newLoan.amount ?? 0) > currentAssetBalance" class="text-[9px] font-bold text-red-500 uppercase mt-2 italic">Vượt quá thanh khoản ví (Chỉ còn {{ fmtNumber(currentAssetBalance) }} {{ selectedAsset || 'VND' }})</p>
           </div>
           <div
             class="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 cursor-pointer"

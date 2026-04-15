@@ -1,0 +1,5 @@
+src/views/manager/admin/AssetsView.vue(634,59): error TS18047: '__VLS_ctx.newLoan.amount' is possibly 'null'.
+src/views/manager/admin/AssetsView.vue(637,22): error TS18047: '__VLS_ctx.newLoan.amount' is possibly 'null'.
+src/views/manager/admin/Dashboard.vue(571,15): error TS6133: 'OrgIcon' is declared but its value is never read.
+src/views/manager/super-admin/SuperAdminOrganizationView.vue(726,34): error TS2532: Object is possibly 'undefined'.
+src/views/wedding/WeddingCardDemo.vue(76,19): error TS6133: 'page' is declared but its value is never read.

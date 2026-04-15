@@ -381,10 +381,6 @@
            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" class="w-full h-full object-cover" />
         </div>
     </div>
-    <!-- Super Admin Dock -->
-    <Teleport to="body">
-      <SuperAdminDock />
-    </Teleport>
   </div>
 </template>
 
@@ -412,7 +408,6 @@ import {
   Camera as WebcamIcon,
   Cloud as CloudIcon,
 } from "lucide-vue-next";
-import SuperAdminDock from "@/components/admin/SuperAdminDock.vue";
 
 const router = useRouter();
 const currentUser = JSON.parse(localStorage.getItem("user") || "{}");

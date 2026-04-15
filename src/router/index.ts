@@ -229,17 +229,10 @@ const routes = [
   },
 
   {
-    path: "/sp-ad",
+    path: "/sp-ad/:tab?",
     name: "SuperAdminHub",
     component: () =>
       import("../views/manager/super-admin/SuperAdminMainView.vue"),
-    meta: { requiresAuth: true, role: ["super_admin"] },
-  },
-  {
-    path: "/sp-ad/:module",
-    name: "SuperAdminModule",
-    component: () =>
-      import("../views/manager/super-admin/SuperAdminModuleView.vue"),
     meta: { requiresAuth: true, role: ["super_admin"] },
   },
 
@@ -307,6 +300,15 @@ const routes = [
     },
   },
   {
+    path: "/wedding/my-order",
+    name: "WeddingMyOrders",
+    component: () => import("../views/wedding/WeddingMyOrdersView.vue"),
+    meta: {
+      requiresAuth: true,
+      role: ["user", "guest", "admin", "manager", "lawyer"],
+    },
+  },
+  {
     path: "/wedding/album",
     name: "WeddingAlbum",
     component: () => import("../views/wedding/WeddingAlbumView.vue"),
@@ -359,6 +361,12 @@ const routes = [
       requiresAuth: true,
       role: ["user", "guest", "admin", "manager", "lawyer"],
     },
+  },
+  // PUBLIC: Invitation view (no auth)
+  {
+    path: "/invitation/:code",
+    name: "WeddingInvitation",
+    component: () => import("../views/wedding/WeddingInvitationView.vue"),
   },
 
   {
@@ -449,9 +457,7 @@ router.beforeEach((to, _from, next) => {
     const userRole = user?.role?.toLowerCase();
     if (userRole === "super_admin") {
       next({ name: "SuperAdminHub" });
-    } else if (
-      ["admin", "moderator", "manager", "lawyer"].includes(userRole)
-    ) {
+    } else if (["admin", "moderator", "manager", "lawyer"].includes(userRole)) {
       next({ name: "AdminOverview" });
     } else {
       next({ name: "CustomerHome" });

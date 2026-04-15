@@ -995,12 +995,6 @@ const completedStats = computed(() => {
   const worst = sortedByProfit[pkgs.length - 1];
 
   // Normalize heights (max 100%)
-  const allValues = pkgs.flatMap((r) => [
-    Math.abs(r.realizedProfit || 0),
-  ]);
-  const currentMax = Math.max(...allValues, 0);
-  const maxVal = currentMax > 0 ? currentMax : 1000;
-
   return {
     totalRealizedProfit,
     totalExhausted,

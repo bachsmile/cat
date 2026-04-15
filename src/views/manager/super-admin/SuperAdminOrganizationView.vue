@@ -600,10 +600,6 @@
         </div>
       </div>
     </CgModal>
-    <!-- Super Admin Dock -->
-    <Teleport to="body">
-      <SuperAdminDock />
-    </Teleport>
   </div>
 </template>
 
@@ -623,7 +619,6 @@ import {
   User as UserIcon,
 } from "lucide-vue-next";
 import { userApi, type User } from "@/api/user";
-import SuperAdminDock from "@/components/admin/SuperAdminDock.vue";
 
 const allUsers = ref<User[]>([]);
 const organizations = ref<User[]>([]);
@@ -723,7 +718,7 @@ const availablePlansForSubUser = computed(() => {
   if (!selectedOrg.value) return ALL_PLANS.slice(0, 1);
   const managerPlan = (selectedOrg.value.subscriptionPlan || "trial").toLowerCase();
   const managerLevel = PLAN_LEVELS[managerPlan] || 1;
-  return ALL_PLANS.filter((p) => PLAN_LEVELS[p.id] <= managerLevel);
+  return ALL_PLANS.filter((p) => (PLAN_LEVELS[p.id] || 0) <= managerLevel);
 });
 
 const openAddUser = () => {

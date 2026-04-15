@@ -100,6 +100,13 @@ const router = useRouter();
 
 const templates = ref([
   {
+    id: "elegant-suite",
+    name: "Elegant Minimal Suite",
+    desc: "Bộ thiệp phong cách tối giản với sự kết hợp tuyệt vời giữa ảnh chân dung và họa tiết hoa nghệ thuật.",
+    preview: wd2, // Will use as placeholder
+    tags: ["Minimalist", "Elegant", "Suite"]
+  },
+  {
     id: "classic-gold",
     name: "Classic Gold Royale",
     desc: "Vẻ đẹp cổ điển với viền vàng kim sang trọng và phông chữ Serif tinh tế.",

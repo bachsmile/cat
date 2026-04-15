@@ -6,12 +6,15 @@
     >
       <div>
         <h2
-          class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent"
+          class="text-3xl font-black italic tracking-tighter uppercase text-white flex items-center gap-4"
         >
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FFD700] to-orange-500 flex items-center justify-center text-black shadow-[0_0_30px_rgba(255,215,0,0.2)]"
+          >
+            <UsersIcon class="w-6 h-6" />
+          </div>
           <template v-if="currentModuleParam">
-            <span :style="{ color: getModuleColor(currentModuleParam) }"
-              >Quản lý nhân sự:</span
-            >
+            <span class="text-[#FFD700]">Quản lý nhân sự:</span>
             {{
               availableModules.find((m) => m.id === currentModuleParam)?.name ||
               currentModuleParam
@@ -20,46 +23,30 @@
           <template v-else>
             {{
               currentUser.role?.toLowerCase() === "super_admin"
-                ? "Quản lý người dùng hệ thống"
+                ? "Quản trị người dùng"
                 : currentUser.role?.toLowerCase() === "admin"
-                  ? "Quản lý thành viên (Tổ chức)"
-                  : "Quản lý người dùng"
+                  ? "Cộng tác viên & Nhân sự"
+                  : "Danh sách tài khoản"
             }}
           </template>
         </h2>
-        <p class="text-gray-500 mt-2">
+        <p
+          class="text-gray-500 mt-3 font-medium text-xs uppercase tracking-[0.2em] ml-16"
+        >
           {{
             currentModuleParam
-              ? `Danh sách nhân sự trực thuộc lĩnh vực ${availableModules.find((m) => m.id === currentModuleParam)?.name || currentModuleParam}`
-              : currentUser.role?.toLowerCase() === "super_admin"
-                ? "Đang hiển thị toàn bộ người dùng từ tất cả các Module và Hub hạ tầng"
-                : currentUser.role?.toLowerCase() === "admin"
-                  ? "Quản lý các tài khoản trực thuộc tổ chức của bạn"
-                  : "Theo dõi và quản trị tài khoản hệ thống Finzo"
+              ? `Hệ thống nhân sự trực thuộc lĩnh vực ${availableModules.find((m) => m.id === currentModuleParam)?.name || currentModuleParam}`
+              : "Hệ thống quản trị tài khoản tập trung • Nova Ecosystem"
           }}
         </p>
       </div>
-      <div class="flex gap-3">
-        <div
-          v-if="currentModuleParam"
-          class="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/5 text-[10px] uppercase font-black tracking-widest text-gray-500"
-        >
-          <div
-            class="w-2 h-2 rounded-full"
-            :style="{ backgroundColor: getModuleColor(currentModuleParam) }"
-          ></div>
-          Module: {{ currentModuleParam }}
-        </div>
+      <div class="flex gap-4">
         <button
           @click="openModal()"
-          class="px-6 py-2.5 rounded-xl font-bold text-sm hover:shadow-lg transition-all flex items-center gap-2"
-          :style="{
-            background: `linear-gradient(to right, ${getModuleColor(currentModuleParam) || '#3b82f6'}, ${getModuleColor(currentModuleParam) || '#4f46e5'})`,
-            boxShadow: `0 10px 15px -3px ${getModuleColor(currentModuleParam)}33`,
-          }"
+          class="px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest bg-gradient-to-r from-[#FFD700] to-orange-500 text-black hover:scale-105 transition-all shadow-[0_20px_40px_rgba(255,215,0,0.15)] flex items-center gap-3 active:scale-95"
         >
-          <PlusIcon class="w-4 h-4" />
-          Thêm người dùng
+          <PlusIcon class="w-5 h-5" />
+          Tạo tài khoản mới
         </button>
       </div>
     </div>
@@ -86,53 +73,54 @@
     <!-- Main Module: Quản lý tài khoản (Account Management) -->
     <div v-if="activeSubTab === 'accounts'" class="space-y-6">
       <!-- Search & Filters -->
-      <CgCard
-        type="grain-frost"
-        :shadow="true"
-        opacity="1"
-        class="flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-[2rem] border border-white/5 bg-brand-600"
+      <div
+        class="flex flex-col md:flex-row gap-6 items-center justify-between p-6 rounded-[2.5rem] border border-white/5 bg-[#0A0A0B]/60 backdrop-blur-xl shadow-2xl"
       >
-        <div class="relative w-full md:w-96 group">
+        <div class="relative w-full md:w-[450px] group">
           <SearchIcon
-            class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-400 transition-colors"
+            class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-[#FFD700] transition-colors"
           />
           <input
             v-model="searchQuery"
-            placeholder="Tìm kiếm theo tên, email hoặc role..."
-            class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-blue-500/50 transition-all text-white"
+            placeholder="Tên, Email, Role hoặc Module..."
+            class="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-sm font-medium focus:outline-none focus:border-[#FFD700]/30 transition-all text-white placeholder:text-gray-700 placeholder:italic"
           />
         </div>
-        <div class="flex gap-4 w-full md:w-auto overflow-x-auto pb-1">
-          <select
-            v-model="roleFilter"
-            class="bg-transparent border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
-          >
-            <option value="" class="bg-[#0a0a0f] text-white">
-              Tất cả vai trò
-            </option>
-            <option
-              v-for="role in roles"
-              :key="role"
-              :value="role"
-              class="bg-[#0a0a0f] text-white"
+        <div class="flex gap-4 w-full md:w-auto">
+          <div class="relative min-w-[200px]">
+            <select
+              v-model="roleFilter"
+              class="w-full bg-white/5 border border-white/5 rounded-2xl px-6 py-5 text-sm font-bold text-gray-400 focus:outline-none focus:border-[#FFD700]/30 transition-all appearance-none cursor-pointer"
             >
-              {{ role }}
-            </option>
-          </select>
+              <option value="" class="bg-[#050507] text-white">
+                Tất cả vai trò
+              </option>
+              <option
+                v-for="role in roles"
+                :key="role"
+                :value="role"
+                class="bg-[#050507] text-white text-xs uppercase tracking-widest"
+              >
+                {{ role }}
+              </option>
+            </select>
+            <div
+              class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40"
+            >
+              <FilterIcon class="w-4 h-4" />
+            </div>
+          </div>
           <button
-            class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-bold hover:bg-white/10 transition-colors text-white"
+            class="px-8 py-5 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-[#FFD700] hover:bg-white/10 transition-all flex items-center gap-3"
           >
-            <FilterIcon class="w-4 h-4" />
-            Bộ lọc
+            Lọc nâng cao
           </button>
         </div>
-      </CgCard>
+      </div>
 
       <!-- Users Table Container -->
-      <CgCard
-        type="heavy-frost"
-        :shadow="true"
-        class="rounded-[2.5rem] border overflow-hidden p-0 bg-brand-800"
+      <div
+        class="rounded-[3rem] border border-white/5 overflow-hidden bg-[#0A0A0B]/40 backdrop-blur-3xl shadow-2xl"
       >
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -323,277 +311,321 @@
 
         <!-- Pagination Table Footer -->
         <div
-          class="p-4 border-t border-white/5 bg-white/5 flex items-center justify-between"
+          class="p-6 border-t border-white/5 bg-white/5 flex items-center justify-between"
         >
-          <p class="text-xs text-gray-500">
-            Hiển thị {{ filteredUsers.length }}/{{ users.length }} người dùng
+          <p
+            class="text-[10px] text-gray-500 font-black uppercase tracking-widest"
+          >
+            Hiển thị {{ filteredUsers.length }}/{{ users.length }} tài khoản hệ
+            thống
           </p>
           <div class="flex gap-2">
             <button
-              class="px-3 py-1 bg-white/5 rounded border border-white/5 text-gray-500 text-xs disabled:opacity-50"
+              class="px-5 py-2 bg-white/5 rounded-xl border border-white/5 text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all disabled:opacity-30"
             >
               Trước
             </button>
             <button
-              class="px-3 py-1 bg-blue-600 rounded border border-blue-500 text-white text-xs"
+              class="px-5 py-2 bg-[#FFD700] rounded-xl text-black text-[10px] font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20"
             >
               1
             </button>
             <button
-              class="px-3 py-1 bg-white/5 rounded border border-white/5 text-gray-400 text-xs"
+              class="px-5 py-2 bg-white/5 rounded-xl border border-white/5 text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all"
             >
               Sau
             </button>
           </div>
         </div>
-      </CgCard>
-    </div>
-
-    <!-- User Modal -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-    >
-      <CgCard
-        type="fine-frost"
-        :shadow="true"
-        class="w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 p-0 border border-white"
+      </div>
+      <!-- User Modal -->
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
       >
         <div
-          class="p-6 border-b border-white/5 flex items-center justify-between bg-white/5"
+          class="w-full max-w-2xl max-h-[75vh] flex flex-col rounded-[3rem] shadow-[0_0_100px_rgba(255,215,0,0.1)] border border-white/10 bg-[#0A0A0B]/90 backdrop-blur-3xl animate-in zoom-in-95 duration-200 overflow-hidden"
         >
-          <h3 class="text-xl font-bold">
-            {{ isEditing ? "Chỉnh sửa tài khoản" : "Thêm tài khoản mới" }}
-          </h3>
-          <button
-            @click="closeModal"
-            class="p-2 text-gray-500 hover:text-white"
-          >
-            <XIcon class="w-5 h-5" />
-          </button>
-        </div>
-
-        <form @submit.prevent="handleSubmit" class="p-8 space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Username</label
-              >
-              <input
-                v-model="form.username"
-                required
-                placeholder="Nguyễn Văn A"
-                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Email</label
-              >
-              <input
-                v-model="form.email"
-                type="email"
-                required
-                :disabled="isEditing"
-                placeholder="user@example.com"
-                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all disabled:opacity-50"
-              />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Vai trò</label
-              >
-              <select
-                v-model="form.role"
-                required
-                class="w-full bg-[#1a1a24] border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-white"
-              >
-                <option
-                  v-for="role in roles"
-                  :key="role"
-                  :value="role"
-                  class="bg-[#1a1a24] text-white"
-                >
-                  {{ role }}
-                </option>
-              </select>
-            </div>
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Mật khẩu</label
-              >
-              <input
-                v-model="form.password"
-                type="password"
-                :required="!isEditing"
-                placeholder="••••••••"
-                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <label
-              class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-              >Trạng thái</label
-            >
-            <div class="flex gap-4">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  v-model="form.status"
-                  value="active"
-                  class="hidden peer"
-                />
-                <div
-                  class="px-4 py-2 rounded-xl text-xs font-bold border transition-all peer-checked:ring-2 peer-checked:ring-blue-500/50"
-                  :class="
-                    form.status === 'active'
-                      ? 'bg-green-500/20 text-green-400 border-green-500/40'
-                      : 'bg-white/5 text-gray-500 border-white/5'
-                  "
-                >
-                  Hoạt động
-                </div>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  v-model="form.status"
-                  value="suspended"
-                  class="hidden peer"
-                />
-                <div
-                  class="px-4 py-2 rounded-xl text-xs font-bold border transition-all peer-checked:ring-2 peer-checked:ring-blue-500/50"
-                  :class="
-                    form.status === 'suspended'
-                      ? 'bg-red-500/20 text-red-400 border-red-500/40'
-                      : 'bg-white/5 text-gray-500 border-white/5'
-                  "
-                >
-                  Bị khóa
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Module Permissions -->
-          <div class="space-y-4 pt-4 border-t border-white/5">
-            <h4
-              class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1"
-            >
-              Phân quyền Lĩnh vực
-            </h4>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <label
-                v-for="mod in availableModules"
-                :key="mod.id"
-                class="flex items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all"
-                :class="{
-                  'border-blue-500/50 bg-blue-500/10': form.modules.includes(
-                    mod.id,
-                  ),
-                }"
-              >
-                <input
-                  type="checkbox"
-                  :value="mod.id"
-                  v-model="form.modules"
-                  :disabled="!!currentModuleParam"
-                  class="w-4 h-4 accent-blue-500 disabled:opacity-50"
-                />
-                <span class="text-xs font-semibold">{{ mod.name }}</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Subscription Plan Section (Moved down) -->
+          <!-- Modal Header (Sticky) -->
           <div
-            v-if="form.modules.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5 animate-in slide-in-from-top-2 duration-300"
+            class="p-8 border-b border-white/5 flex items-center justify-between bg-gradient-to-br from-[#FFD700]/5 to-transparent flex-none"
           >
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Gói dịch vụ</label
+            <div>
+              <h3
+                class="text-2xl font-black italic tracking-tighter uppercase text-white"
               >
-              <select
-                v-model="form.subscriptionPlan"
-                required
-                class="w-full bg-[#1a1a24] border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-white"
+                {{ isEditing ? "Cập nhật hồ sơ" : "Tạo tài khoản mới" }}
+              </h3>
+              <p
+                class="text-[9px] text-gray-500 font-black uppercase tracking-widest mt-1"
               >
-                <optgroup label="Gói cơ bản">
-                  <option value="trial">Dùng thử (Trial)</option>
-                  <option value="basic">Gói Cơ bản</option>
-                </optgroup>
-
-                <optgroup
-                  v-for="modId in form.modules"
-                  :key="modId"
-                  :label="
-                    availableModules.find((m) => m.id === modId)?.name || modId
-                  "
-                >
-                  <option
-                    v-for="plan in getModulePlans(modId)"
-                    :key="plan.id"
-                    :value="plan.id"
-                  >
-                    {{ plan.name }}
-                  </option>
-                </optgroup>
-              </select>
+                Hệ thống Nova Cloud • Quản trị tập trung
+              </p>
             </div>
-            <div class="space-y-2">
-              <label
-                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
-                >Thời hạn đến</label
-              >
-              <input
-                v-model="form.subscriptionExpiresAt"
-                type="date"
-                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
-              />
-            </div>
-          </div>
-          <div
-            v-else
-            class="text-center p-4 bg-white/5 border border-white/5 rounded-xl text-[10px] text-gray-500 italic"
-          >
-            Vui lòng chọn ít nhất một Lĩnh vực để cấu hình Gói dịch vụ
-          </div>
-
-          <div class="pt-4 flex gap-3">
             <button
-              type="button"
               @click="closeModal"
-              class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold text-sm transition-all"
+              class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all border border-white/5"
             >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              :disabled="submitting"
-              class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
-            >
-              {{
-                submitting
-                  ? "Đang lưu..."
-                  : isEditing
-                    ? "Cập nhật"
-                    : "Tạo tài khoản"
-              }}
+              <XIcon class="w-5 h-5" />
             </button>
           </div>
-        </form>
-      </CgCard>
+
+          <!-- Scrollable Content -->
+          <form
+            @submit.prevent="handleSubmit"
+            class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Username</label
+                >
+                <input
+                  v-model="form.username"
+                  required
+                  placeholder="Nguyễn Văn A"
+                  @input="handleUsernameInput"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all text-white"
+                />
+              </div>
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Email</label
+                >
+                <input
+                  v-model="form.email"
+                  type="text"
+                  required
+                  :disabled="isEditing"
+                  placeholder="user@example.com"
+                  @blur="handleEmailBlur"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all disabled:opacity-30 text-white"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Vai trò</label
+                >
+                <div class="relative group">
+                  <select
+                    v-model="form.role"
+                    required
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all text-white appearance-none cursor-pointer"
+                  >
+                    <option
+                      v-for="role in roles"
+                      :key="role"
+                      :value="role"
+                      class="bg-[#0A0A0B] text-white"
+                    >
+                      {{ role.toUpperCase() }}
+                    </option>
+                  </select>
+                  <div
+                    class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 group-hover:text-[#FFD700] transition-colors"
+                  >
+                    <ChevronDownIcon class="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Mật khẩu</label
+                >
+                <input
+                  v-model="form.password"
+                  type="password"
+                  :required="!isEditing"
+                  placeholder="••••••••"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all text-white placeholder:text-gray-800"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
+                >Trạng thái</label
+              >
+              <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="form.status"
+                    value="active"
+                    class="hidden peer"
+                  />
+                  <div
+                    class="px-4 py-2 rounded-xl text-xs font-bold border transition-all peer-checked:ring-2 peer-checked:ring-blue-500/50"
+                    :class="
+                      form.status === 'active'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/40'
+                        : 'bg-white/5 text-gray-500 border-white/5'
+                    "
+                  >
+                    Hoạt động
+                  </div>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="form.status"
+                    value="suspended"
+                    class="hidden peer"
+                  />
+                  <div
+                    class="px-4 py-2 rounded-xl text-xs font-bold border transition-all peer-checked:ring-2 peer-checked:ring-blue-500/50"
+                    :class="
+                      form.status === 'suspended'
+                        ? 'bg-red-500/20 text-red-400 border-red-500/40'
+                        : 'bg-white/5 text-gray-500 border-white/5'
+                    "
+                  >
+                    Bị khóa
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Module Permissions -->
+            <div class="space-y-5 pt-8 border-t border-white/5">
+              <h4
+                class="text-[10px] font-black text-[#FFD700] uppercase tracking-[0.3em] ml-1"
+              >
+                Phân quyền Lĩnh vực
+              </h4>
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <label
+                  v-for="mod in availableModules"
+                  :key="mod.id"
+                  class="flex items-center gap-3 p-4 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition-all group relative overflow-hidden"
+                  :class="{
+                    'border-[#FFD700]/30 bg-[#FFD700]/5': form.modules.includes(
+                      mod.id,
+                    ),
+                  }"
+                >
+                  <div
+                    class="absolute inset-0 bg-gradient-to-br from-[#FFD700]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                    :class="{ 'opacity-100': form.modules.includes(mod.id) }"
+                  ></div>
+                  <input
+                    type="checkbox"
+                    :value="mod.id"
+                    v-model="form.modules"
+                    :disabled="!!currentModuleParam"
+                    class="w-4 h-4 accent-[#FFD700] disabled:opacity-30 relative z-10"
+                  />
+                  <span
+                    class="text-[11px] font-black uppercase tracking-tight relative z-10"
+                    :class="
+                      form.modules.includes(mod.id)
+                        ? 'text-white'
+                        : 'text-gray-500 group-hover:text-gray-300'
+                    "
+                    >{{ mod.name }}</span
+                  >
+                </label>
+              </div>
+            </div>
+
+            <!-- Subscription Plan Section (Moved down) -->
+            <div
+              v-if="form.modules.length > 0"
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5 animate-in slide-in-from-top-2 duration-300"
+            >
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Gói dịch vụ</label
+                >
+                <div class="relative group">
+                  <select
+                    v-model="form.subscriptionPlan"
+                    required
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all text-white appearance-none cursor-pointer"
+                  >
+                    <optgroup label="Gói cơ bản" class="bg-[#0A0A0B]">
+                      <option value="trial">Dùng thử (Trial)</option>
+                      <option value="basic">Gói Cơ bản</option>
+                    </optgroup>
+
+                    <optgroup
+                      v-for="modId in form.modules"
+                      :key="modId"
+                      :label="
+                        availableModules.find((m) => m.id === modId)?.name ||
+                        modId
+                      "
+                      class="bg-[#0A0A0B]"
+                    >
+                      <option
+                        v-for="plan in getModulePlans(modId)"
+                        :key="plan.id"
+                        :value="plan.id"
+                      >
+                        {{ plan.name }}
+                      </option>
+                    </optgroup>
+                  </select>
+                  <div
+                    class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 group-hover:text-[#FFD700] transition-colors"
+                  >
+                    <ChevronDownIcon class="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1"
+                  >Thời hạn đến</label
+                >
+                <input
+                  v-model="form.subscriptionExpiresAt"
+                  type="date"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold focus:outline-none focus:border-[#FFD700]/50 transition-all text-white"
+                />
+              </div>
+            </div>
+            <div
+              v-else
+              class="text-center p-4 bg-white/5 border border-white/5 rounded-xl text-[10px] text-gray-500 italic"
+            >
+              Vui lòng chọn ít nhất một Lĩnh vực để cấu hình Gói dịch vụ
+            </div>
+
+            <div class="pt-10 flex gap-4 pb-16">
+              <button
+                type="button"
+                @click="closeModal"
+                class="flex-1 py-5 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="submit"
+                :disabled="submitting"
+                class="flex-1 py-5 bg-[#FFD700] text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-[0_20px_40px_rgba(255,215,0,0.1)] hover:bg-white transition-all active:scale-95 disabled:opacity-30"
+              >
+                {{
+                  submitting
+                    ? "Đang xử lý..."
+                    : isEditing
+                      ? "Lưu thay đổi"
+                      : "Khởi tạo tài khoản"
+                }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
     <!-- Mock Content for other SubTabs -->
@@ -628,15 +660,16 @@ import {
   Trash2 as TrashIcon,
   CheckCircle as CheckCircleIcon,
   Pause as PauseIcon,
-  X as XIcon,
+  ChevronDown as ChevronDownIcon,
   Shield as ShieldIcon,
+  X as XIcon,
 } from "lucide-vue-next";
 import { useRoute } from "vue-router";
-import { DOMAINS } from "@/constants/modules";
+import { useToast } from "@/composables/useToast";
 import { userApi, type User } from "@/api/user";
-import { CgCard } from "glass-studio-ui-pro";
 
 const route = useRoute();
+const { showToast } = useToast();
 const props = defineProps<{
   initialRole?: string;
 }>();
@@ -660,19 +693,20 @@ const currentModuleParam = computed(() => {
   return null;
 });
 
-const getModuleColor = (modId?: string | null) => {
-  if (!modId) return "#3b82f6"; // default blue
-  const domain = DOMAINS.find((d) => d.id === modId);
-  return domain?.hexColor || "#3b82f6";
-};
 const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
 const availableModules = computed(() => {
   const all = [
-    { id: "law", name: "Pháp lý", icon: "Scale" },
-    { id: "finance", name: "Tài chính", icon: "LineChart" },
-    { id: "medical", name: "Y tế", icon: "Stethoscope" },
-    { id: "education", name: "Giáo dục", icon: "BookOpen" },
+    { id: "law", name: "Luật pháp", icon: "Scale", color: "#60a5fa" },
+    { id: "finance", name: "Tài chính", icon: "LineChart", color: "#34d399" },
+    { id: "tech", name: "Công nghệ", icon: "Laptop", color: "#fb923c" },
+    { id: "retail", name: "Dịch vụ", icon: "ShoppingBag", color: "#f472b6" },
+    { id: "medical", name: "Y tế", icon: "Stethoscope", color: "#22d3ee" },
+    { id: "npm", name: "Thư viện NPM", icon: "CodeIcon", color: "#818cf8" },
+    { id: "wedding", name: "Thiệp cưới", icon: "Heart", color: "#fb7185" },
+    { id: "education", name: "Giáo dục", icon: "BookOpen", color: "#fb923c" },
+    { id: "logistics", name: "Vận tải", icon: "Truck", color: "#818cf8" },
+    { id: "other", name: "Khác", icon: "Cpu", color: "#94a3b8" },
   ];
 
   if (currentUser.role?.toLowerCase() === "admin") {
@@ -771,6 +805,23 @@ const filteredUsers = computed(() => {
   });
 });
 
+const handleUsernameInput = () => {
+  if (isEditing.value) return;
+  // Auto-fill email if it's empty or matches the old username pattern
+  if (!form.value.email || form.value.email.includes("@gmail.com")) {
+    const cleanUsername = form.value.username.toLowerCase().replace(/\s+/g, "");
+    if (cleanUsername) {
+      form.value.email = `${cleanUsername}@gmail.com`;
+    }
+  }
+};
+
+const handleEmailBlur = () => {
+  if (form.value.email && !form.value.email.includes("@")) {
+    form.value.email = `${form.value.email.trim()}@gmail.com`;
+  }
+};
+
 const openModal = (u?: User) => {
   const targetModule = currentModuleParam.value;
 
@@ -822,23 +873,29 @@ const handleSubmit = async () => {
     delete payload.password;
   }
 
-  // Quota & Hierarchy Security Logic
-  if (!isEditing.value && currentUser.role?.toLowerCase() === "admin") {
-    // 1. Map to managing admin
-    payload.managedById = currentUser.id;
+  // Audit & Hierarchy Logic
+  if (!isEditing.value) {
+    // 1. Always map to the creator
+    payload.createdBy = currentUser.id;
 
-    // 2. Check Quota (Skip if no quota defined, or check against existing users)
-    const managedUsersCount = users.value.filter(
-      (u) => String(u.managedById) === String(currentUser.id),
-    ).length;
-    const currentQuota = currentUser.userQuota || 999;
+    // 2. Map management assignment for both Admin and SuperAdmin
+    if (["admin", "superadmin"].includes(currentUser.role?.toLowerCase())) {
+      payload.managedById = currentUser.id;
 
-    if (managedUsersCount >= currentQuota) {
-      alert(
-        `Cảnh báo: Bạn đã đạt giới hạn tối đa (${currentQuota}) tài khoản thành viên. Vui lòng liên hệ Super Admin để nâng cấp gói.`,
-      );
-      submitting.value = false;
-      return;
+      // Check Quota
+      const managedUsersCount = users.value.filter(
+        (u) => String(u.managedById) === String(currentUser.id),
+      ).length;
+      const currentQuota = currentUser.userQuota || 999;
+
+      if (managedUsersCount >= currentQuota) {
+        showToast(
+          `Cảnh báo: Bạn đã đạt giới hạn tối đa (${currentQuota}) tài khoản thành viên. Vui lòng liên hệ Super Admin để nâng cấp gói.`,
+          "warning",
+        );
+        submitting.value = false;
+        return;
+      }
     }
   }
 
@@ -855,10 +912,11 @@ const handleSubmit = async () => {
   }
 
   if (result && !result.message) {
+    showToast(isEditing.value ? "Cập nhật tài khoản thành công" : "Khởi tạo tài khoản thành công", "success");
     await fetchUsers();
     closeModal();
   } else if (result.message) {
-    alert(result.message);
+    showToast(result.message, "error");
   }
   submitting.value = false;
 };
@@ -867,9 +925,10 @@ const handleDelete = async (id: string) => {
   if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
     const result = await userApi.deleteUser(id);
     if (result && !result.message) {
+      showToast("Đã xóa người dùng", "success");
       await fetchUsers();
     } else {
-      alert(result.message || "Xóa thất bại");
+      showToast(result.message || "Xóa thất bại", "error");
     }
   }
 };
@@ -903,6 +962,18 @@ const getPlanStyles = (plan: string | undefined) => {
     return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
   if (plan.includes("education"))
     return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+  if (plan.includes("wedding"))
+    return "bg-rose-500/10 text-rose-500 border-rose-500/20";
+  if (plan.includes("retail"))
+    return "bg-pink-500/10 text-pink-500 border-pink-500/20";
+  if (plan.includes("logistics"))
+    return "bg-indigo-500/10 text-indigo-500 border-indigo-500/20";
+  if (plan.includes("tech"))
+    return "bg-orange-500/10 text-orange-500 border-orange-500/20";
+  if (plan.includes("npm"))
+    return "bg-blue-500/10 text-blue-500 border-blue-500/20";
+  if (plan.includes("other"))
+    return "bg-slate-500/10 text-slate-500 border-slate-500/20";
 
   switch (plan) {
     case "trial":
@@ -938,9 +1009,35 @@ const getModulePlans = (modId: string) => {
       { id: "edu_standard", name: "Giáo dục Tiêu chuẩn" },
       { id: "edu_campus", name: "Gói Campus Connect" },
     ],
+    wedding: [
+      { id: "wedding_platinum", name: "Gói Platinum Event" },
+    ],
+    retail: [
+      { id: "retail_pos", name: "Gói Retail POS" },
+      { id: "retail_omni", name: "Gói Omni-channel" },
+    ],
+    logistics: [
+      { id: "log_standard", name: "Vận tải Tiêu chuẩn" },
+      { id: "log_fleet", name: "Gói Fleet Management" },
+    ],
   };
   return plansMap[modId] || [];
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 215, 0, 0.2) rgba(255, 255, 255, 0.02);
+}
+</style>

@@ -1,428 +1,481 @@
 <template>
   <div
-    class="min-h-screen bg-[#f8f9fd] p-8 md:p-12 lg:p-20 overflow-hidden relative animate-in-view"
-    :style="{
-      backgroundImage: `url(${hubBg})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      fontFamily: systemFont,
-    }"
+    class="h-screen w-full bg-[#050507] text-[#E2E8F0] overflow-hidden flex relative"
+    :style="globalFontStyle"
   >
-    <!-- Background accents -->
-    <div
-      class="absolute top-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-200/30 blur-[120px] rounded-full"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-10%] w-[30vw] h-[30vw] bg-orange-200/30 blur-[100px] rounded-full"
-    ></div>
+    <!-- 🌠 Castle-Class Atmospheric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div
+        class="absolute top-[-10%] left-[20%] w-[70%] h-[50%] bg-gradient-to-b from-[#FFD700]/10 to-transparent blur-[180px] pointer-events-none z-0"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[150px] rounded-full"
+      ></div>
+    </div>
 
-    <div class="max-w-[1600px] mx-auto relative z-10">
+    <!-- 🏰 Custom Super Admin Interaction Rail (Liquid Animation Set) -->
+    <SuperAdminDock
+      v-model="activeTab"
+      @navigate="onDockNavigate"
+      class="animate-dock-entrance"
+    />
+
+    <!-- 🌌 Main Execution Workspace -->
+    <main
+      class="flex-1 h-full flex flex-col relative z-10 bg-transparent animate-fade-in"
+    >
       <!-- Header -->
-      <header class="mb-12 flex items-center justify-between">
-        <div
-          @click="activeTab = 'hub'"
-          class="cursor-pointer group flex items-center gap-4"
-        >
-          <div
-            class="w-14 h-14 bg-[#1a1c3d] rounded-2xl flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-500"
-          >
-            <LayersIcon v-if="activeTab === 'hub'" class="w-7 h-7" />
-            <DashIcon v-else class="w-7 h-7 text-orange-400" />
-          </div>
-          <div>
-            <h2
-              class="text-4xl font-black tracking-tighter text-[#1a1c3d] flex items-center gap-2"
-            >
-              Super <span class="text-orange-500">Admin</span> Hub
-            </h2>
-            <p
-              class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400"
-            >
-              {{
-                activeTab === "hub"
-                  ? "System Infrastructure Control"
-                  : `Global ${activeTab} Management`
-              }}
-            </p>
+      <header
+        class="h-24 px-10 flex items-center justify-between border-b border-white/5 bg-black/20 backdrop-blur-3xl"
+      >
+        <div class="flex items-center gap-6">
+          <div class="flex flex-col">
+            <h1 class="text-2xl font-black tracking-tighter text-white">
+              QUẢN TRỊ <span class="text-gold-vibrant">TỐI CAO</span>
+            </h1>
+            <div class="flex items-center gap-2 mt-0.5">
+              <div class="w-8 h-px bg-gold-vibrant/40"></div>
+              <p
+                class="text-[9px] font-black uppercase tracking-[0.4em] text-white/30"
+              >
+                Hạ tầng {{ activeNavItemName }}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-6">
-          <button
-            @click="showSettings = true"
-            class="p-4 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white hover:bg-white transition-all text-gray-400 hover:text-[#1a1c3d] group"
-          >
-            <SettingsIcon
-              class="w-6 h-6 group-hover:rotate-90 transition-transform duration-500"
-            />
-          </button>
-
+        <!-- System Telemetry -->
+        <div class="flex items-center gap-8">
           <div
-            class="flex items-center gap-4 bg-white/80 backdrop-blur-xl p-2 rounded-3xl shadow-xl border border-white"
+            v-for="stat in systemStats"
+            :key="stat.label"
+            class="hidden md:flex flex-col items-end"
           >
-            <div
-              class="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-orange-500/20"
+            <span
+              class="text-[8px] font-black uppercase tracking-widest text-white/20 mb-1"
+              >{{ stat.label }}</span
             >
-              {{ currentUser.username?.[0] || "S" }}
+            <div class="flex items-center gap-2">
+              <div
+                :class="['w-1.5 h-1.5 rounded-full animate-pulse', stat.color]"
+              ></div>
+              <span class="text-xs font-bold text-white/60 tracking-wider">{{
+                stat.value
+              }}</span>
             </div>
-            <div class="pr-6">
-              <p
-                class="text-xs font-bold text-[#1a1c3d] uppercase tracking-widest"
+          </div>
+
+          <div class="h-10 w-px bg-white/5"></div>
+
+          <!-- Profile Quick Action -->
+          <div
+            class="flex items-center gap-4 group cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-all"
+          >
+            <div class="flex flex-col items-end">
+              <span
+                class="text-[10px] font-black text-white/80 tracking-tighter"
+                >QUẢN TRỊ VIÊN</span
               >
-                {{ currentUser.username || "Root Admin" }}
-              </p>
-              <p
-                class="text-[10px] text-gray-400 font-bold uppercase tracking-widest"
+              <span
+                class="text-[8px] font-bold text-gold-vibrant/60 uppercase"
+                >{{ user.username || "System" }}</span
               >
-                Master Authority
-              </p>
+            </div>
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-vibrant to-orange-600 p-0.5 shadow-lg border border-white/10 group-hover:scale-105 transition-all"
+            >
+              <div
+                class="w-full h-full bg-black rounded-[9px] flex items-center justify-center overflow-hidden"
+              >
+                <ShieldIcon class="w-5 h-5 text-gold-vibrant" />
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- Main Shell Content -->
-      <div class="relative min-h-[70vh]">
-        <Transition name="fade-scale" mode="out-in" appear>
-          <!-- 1. HUB GRID (Overview) -->
+      <!-- Dynamic Content Area -->
+      <div class="flex-1 min-h-0 relative overflow-y-auto custom-scrollbar p-8">
+        <Transition name="page-slide" mode="out-in">
+          <!-- 1. DASHBOARD HUB (Bento Style) -->
           <div
             v-if="activeTab === 'hub'"
             key="hub"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            class="grid grid-cols-12 gap-6 max-w-[1600px] mx-auto auto-rows-[minmax(180px,_auto)]"
           >
-            <CgCard
-              v-for="domain in DOMAINS"
-              :key="domain.id"
-              type="fine-frost"
-              :shadow="true"
-              @click="enterModule(domain.id)"
-              class="rounded-[3rem] p-10 hover:translate-y-[-8px] transition-all duration-500 cursor-pointer border border-transparent hover:border-white group"
-            >
-              <div class="flex flex-col gap-6">
+            <!-- 🏰 Hero Piece -->
+            <div class="col-span-12 lg:col-span-8 row-span-2">
+              <CgCard
+                type="glass-frost"
+                class="group !rounded-[3rem] relative overflow-hidden h-full flex items-center !p-12 border border-white/10 shadow-2xl"
+              >
+                <!-- Visual Decoration -->
                 <div
-                  class="w-16 h-16 rounded-[1.8rem] flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-2xl shadow-white/30"
-                  :class="[domain.shadow, domain.color, 'bg-white']"
-                >
-                  <component :is="domain.icon" class="w-8 h-8" />
+                  class="absolute top-0 right-0 w-[40%] h-full bg-gradient-to-l from-gold-vibrant/10 to-transparent pointer-events-none"
+                ></div>
+                <div class="absolute bottom-0 right-0 w-1/2 h-full">
+                  <img
+                    src="@/assets/images/Mascot robot-otter với tablet hologram.png"
+                    class="w-full h-full object-contain opacity-20 filter grayscale blur-[2px] transition-all duration-1000 group-hover:opacity-40 group-hover:grayscale-0 group-hover:blur-0"
+                  />
+                </div>
+
+                <div class="relative z-10 w-full max-w-lg">
+                  <div class="flex items-center gap-3 mb-8">
+                    <span
+                      class="px-4 py-1.5 rounded-full bg-gold-vibrant text-black text-[9px] font-black uppercase tracking-[0.2em]"
+                      >GỐC HỆ THỐNG</span
+                    >
+                    <span
+                      class="text-[9px] font-black uppercase tracking-[0.3em] text-white/30"
+                      >Trạng thái hệ thống v4.2</span
+                    >
+                  </div>
+
+                  <h1
+                    class="text-4xl lg:text-5xl font-black text-white tracking-tighter leading-[1.1] mb-6"
+                  >
+                    Cụm Nexus <br />
+                    <span
+                      class="text-transparent bg-clip-text bg-gradient-to-r from-gold-vibrant to-white"
+                      >Điều hành Toàn cầu</span
+                    >
+                  </h1>
+
+                  <p
+                    class="text-base text-white/40 font-medium leading-relaxed mb-10"
+                  >
+                    Tất cả các giao thức cốt lõi đang hoạt động bình thường.
+                    <br />
+                    Chào mừng trở lại,
+                    <span class="text-white font-bold">{{
+                      user.username || "Quản trị hệ thống"
+                    }}</span
+                    >.
+                  </p>
+
+                  <div class="flex flex-wrap gap-4">
+                    <button
+                      @click="activeTab = 'deposits'"
+                      class="px-8 py-3.5 bg-gold-vibrant text-black rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_15px_30px_rgba(255,215,0,0.2)]"
+                    >
+                      Xử lý giao dịch
+                    </button>
+                    <button
+                      @click="activeTab = 'users'"
+                      class="px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all"
+                    >
+                      Kiểm tra Nút
+                    </button>
+                  </div>
+                </div>
+              </CgCard>
+            </div>
+
+            <!-- 📊 Metrics Pieces -->
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
+              <CgCard
+                type="glass-frost"
+                class="!rounded-[2.5rem] h-full !p-8 border border-white/5 flex flex-col justify-between group hover:border-gold-vibrant/30 transition-all bg-white/[0.02]"
+              >
+                <div class="flex items-center justify-between">
+                  <h3
+                    class="text-[10px] font-black uppercase tracking-[0.4em] text-white/30"
+                  >
+                    Danh tính Bảo mật
+                  </h3>
+                  <div
+                    class="w-10 h-10 rounded-xl bg-gold-vibrant/10 border border-gold-vibrant/20 flex items-center justify-center"
+                  >
+                    <UsersIcon class="w-5 h-5 text-gold-vibrant" />
+                  </div>
                 </div>
                 <div>
                   <h3
-                    class="text-2xl font-bold text-[#1a1c3d] tracking-tight group-hover:text-orange-500 transition-colors"
+                    class="text-5xl font-black text-white tracking-tighter mt-4"
                   >
-                    {{ domain.name }}
+                    1,204
                   </h3>
-                  <p
-                    class="text-sm text-gray-400 mt-3 line-clamp-3 leading-relaxed font-medium"
-                  >
-                    {{ domain.desc }}
-                  </p>
-                </div>
-
-                <div
-                  class="mt-4 pt-6 border-t border-gray-100 flex items-center justify-between"
-                >
-                  <span
-                    class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300"
-                  >
-                    {{ domain.features.length }} Hub Sub-modules
-                  </span>
                   <div
-                    class="w-8 h-8 rounded-full border border-gray-100 group-hover:bg-[#1a1c3d] group-hover:text-white group-hover:border-transparent flex items-center justify-center transition-all"
+                    class="flex items-center gap-2 mt-2 text-emerald-500 text-[10px] font-bold"
                   >
-                    <ArrowRightIcon
-                      class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                    />
+                    <TrendingUpIcon class="w-4 h-4" />
+                    <span>+12% TĂNG TRƯỞNG</span>
                   </div>
                 </div>
-              </div>
-            </CgCard>
+              </CgCard>
+            </div>
+
+            <div class="col-span-12 md:col-span-4 lg:col-span-4">
+              <CgCard
+                type="glass-frost"
+                class="!rounded-[2.5rem] h-full !p-8 border border-white/5 flex flex-col justify-between group hover:border-blue-500/30 transition-all bg-white/[0.02]"
+              >
+                <div class="flex items-center justify-between">
+                  <h3
+                    class="text-[10px] font-black uppercase tracking-[0.4em] text-white/30"
+                  >
+                    Nhịp mạng
+                  </h3>
+                  <div
+                    class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center"
+                  >
+                    <GlobeIcon class="w-5 h-5 text-blue-500" />
+                  </div>
+                </div>
+                <div>
+                  <h3
+                    class="text-5xl font-black text-white tracking-tighter mt-4"
+                  >
+                    42.8<span class="text-xl">GB/s</span>
+                  </h3>
+                  <div class="flex gap-1 mt-4">
+                    <div
+                      v-for="i in 8"
+                      :key="i"
+                      class="flex-1 h-1 rounded-full bg-blue-500/20 overflow-hidden"
+                    >
+                      <div
+                        class="h-full bg-blue-500"
+                        :style="{
+                          width: Math.random() * 100 + '%',
+                          opacity: 0.3 + Math.random() * 0.7,
+                        }"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </CgCard>
+            </div>
           </div>
 
-          <!-- 2. USERS (Global Management) -->
-          <CgCard
-            v-else-if="activeTab === 'users'"
-            key="users"
-            type="light-frost"
-            :shadow="true"
-            class="rounded-[4rem] p-12 relative overflow-hidden h-full"
+          <!-- Functional View Container -->
+          <div
+            v-else
+            :key="activeTab"
+            class="w-full animate-page-entrance"
           >
-            <UserManagementView />
-          </CgCard>
-
-          <!-- 3. ADMINS (Admin Management) -->
-          <CgCard
-            v-else-if="activeTab === 'admins'"
-            key="admins"
-            type="glass-frost"
-            :shadow="true"
-            class="rounded-[4rem] p-12 relative overflow-hidden h-full"
-          >
-            <UserManagementView initial-role="admin" />
-          </CgCard>
-
-          <!-- 4. MODULES (Global System) -->
-          <CgCard
-            v-else-if="activeTab === 'modules'"
-            key="modules"
-            type="glass-frost"
-            :shadow="true"
-            class="rounded-[4rem] p-12 h-full"
-          >
-            <SuperAdminModuleView />
-          </CgCard>
-
-          <!-- 5. ORGANIZATIONS (Entity Management) -->
-          <CgCard
-            v-else-if="activeTab === 'organizations'"
-            key="organizations"
-            type="glass-frost"
-            :shadow="true"
-            class="rounded-[4rem] p-12 h-full"
-          >
-            <SuperAdminOrganizationView />
-          </CgCard>
+            <div class="px-2">
+              <UserManagementView v-if="activeTab === 'users'" />
+              <SuperAdminDepositView v-else-if="activeTab === 'deposits'" />
+              <SuperAdminModuleView v-else-if="activeTab === 'modules'" />
+              <SuperAdminOrganizationView
+                v-else-if="activeTab === 'organizations'"
+              />
+              <div
+                v-else
+                class="flex items-center justify-center h-full text-white/10 font-black uppercase tracking-[0.5em]"
+              >
+                Đang triển khai Module: {{ activeNavItemName }}
+              </div>
+            </div>
+          </div>
         </Transition>
       </div>
-    </div>
+    </main>
 
-    <Teleport to="body">
+    <!-- ⚙️ Control Drawer -->
+    <Transition name="fade">
       <div
         v-if="showSettings"
-        class="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-[#1a1c3d]/20 backdrop-blur-sm animate-in fade-in duration-300"
+        class="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
       >
         <CgCard
-          type="fine-frost"
-          :shadow="true"
-          class="w-full max-w-lg rounded-[3rem] p-12 relative animate-in zoom-in-95 duration-300 border border-white"
+          type="glass-frost"
+          class="w-full max-w-lg rounded-[3.5rem] p-12 relative border border-white/10 shadow-3xl"
         >
           <button
             @click="showSettings = false"
-            class="absolute top-8 right-8 p-3 text-gray-300 hover:text-gray-900 transition-colors z-20"
+            class="absolute top-10 right-10 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all active:scale-90"
           >
-            <XIcon class="w-6 h-6" />
+            <XIcon class="w-6 h-6 border-white/20" />
           </button>
-          <h2 class="text-3xl font-black text-[#1a1c3d] tracking-tighter mb-8">
-            Hub <span class="text-orange-500">Settings</span>
+
+          <h2
+            class="text-3xl font-black text-white tracking-tighter mb-10 flex items-center gap-4"
+          >
+            <SettingsIcon class="w-8 h-8 text-gold-vibrant" />
+            CẤU HÌNH HỆ THỐNG
           </h2>
 
-          <div class="space-y-10">
-            <!-- Background Setting -->
-            <div class="space-y-4">
+          <div class="space-y-8">
+            <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
               <label
-                class="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1"
-                >Hub Background Image</label
-              >
-              <div class="flex gap-3">
-                <input
-                  v-model="tempHubBg"
-                  type="text"
-                  placeholder="https://example.com/image.jpg"
-                  class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-orange-500 transition-all font-medium text-sm"
-                />
-              </div>
-              <div class="grid grid-cols-3 gap-3">
-                <div
-                  v-for="preset in bgPresets"
-                  :key="preset"
-                  @click="tempHubBg = preset"
-                  class="h-16 rounded-xl cursor-pointer border-2 transition-all hover:scale-105"
-                  :class="
-                    tempHubBg === preset
-                      ? 'border-orange-500'
-                      : 'border-transparent'
-                  "
-                  :style="{
-                    backgroundImage: `url(${preset})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }"
-                ></div>
-              </div>
-            </div>
-
-            <!-- Font Setting -->
-            <div class="space-y-4">
-              <label
-                class="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1"
-                >System Global Font</label
+                class="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 block mb-4"
+                >Font chữ Master</label
               >
               <select
-                v-model="tempSystemFont"
-                class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-orange-500 transition-all font-bold text-[#1a1c3d]"
+                v-model="systemFont"
+                class="w-full bg-black border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-gold-vibrant/50 transition-all font-bold"
+                @change="updateSystemFont"
               >
-                <option v-for="f in fonts" :key="f.value" :value="f.value">
-                  {{ f.name }}
-                </option>
+                <option value="Inter">Inter Enterprise</option>
+                <option value="Outfit">Outfit Modern</option>
+                <option value="Roboto">Roboto Standard</option>
+                <option value="Montserrat">Montserrat Bold</option>
               </select>
             </div>
-
-            <!-- Actions -->
-            <div class="flex gap-4 pt-4">
-              <button
-                @click="showSettings = false"
-                class="flex-1 py-5 rounded-2xl font-bold text-gray-400 hover:text-[#1a1c3d] hover:bg-gray-50 transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                @click="applySettings"
-                class="flex-1 py-5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold shadow-xl shadow-orange-500/30 transition-all active:scale-95"
-              >
-                Save Changes
-              </button>
-            </div>
           </div>
+
+          <button
+            @click="logout"
+            class="w-full mt-12 py-5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] hover:bg-red-500 hover:text-white transition-all"
+          >
+            Đăng xuất hệ thống
+          </button>
         </CgCard>
       </div>
-    </Teleport>
-
-    <!-- Super Admin Dock -->
-    <Teleport to="body">
-      <SuperAdminDock v-model="activeDockId" @navigate="onDockNavigate" />
-    </Teleport>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import {
+  Globe as GlobeIcon,
+  TrendingUp as TrendingUpIcon,
   Settings as SettingsIcon,
-  ArrowRight as ArrowRightIcon,
-  X as XIcon,
-  Layers as LayersIcon,
-  LayoutDashboard as DashIcon,
 } from "lucide-vue-next";
-import { DOMAINS } from "@/constants/modules";
-import SuperAdminDock from "@/components/admin/SuperAdminDock.vue";
-import UserManagementView from "../admin/UserManagementView.vue";
-import SuperAdminModuleView from "./SuperAdminModuleView.vue";
-import SuperAdminOrganizationView from "./SuperAdminOrganizationView.vue";
 import { CgCard } from "glass-studio-ui-pro";
+import SuperAdminDock from "@/components/admin/SuperAdminDock.vue";
+
+// Views
+import UserManagementView from "@/views/manager/admin/UserManagementView.vue";
+import SuperAdminDepositView from "@/views/manager/super-admin/SuperAdminDepositView.vue";
+import SuperAdminModuleView from "@/views/manager/super-admin/SuperAdminModuleView.vue";
+import SuperAdminOrganizationView from "@/views/manager/super-admin/SuperAdminOrganizationView.vue";
 
 const router = useRouter();
-const activeTab = ref("hub");
-const activeDockId = ref("dashboard");
-const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+const route = useRoute();
+const user = ref<any>(JSON.parse(localStorage.getItem("user") || "{}"));
+const activeTab = ref((route.params.tab as string) || "hub");
 const showSettings = ref(false);
+const systemFont = ref(localStorage.getItem("system_font") || "Inter");
 
-const hubBg = ref(
-  localStorage.getItem("hub_bg") ||
-    "https://m.yodycdn.com/blog/hinh-nen-thien-nhien-4k-yody-vn-61.jpg",
-);
-const systemFont = ref(
-  localStorage.getItem("system_font") || "'Outfit', sans-serif",
-);
+const activeNavItemName = computed(() => {
+  const items = [
+    { id: "hub", name: "Trung tâm điều khiển" },
+    { id: "users", name: "Quản trị người dùng" },
+    { id: "deposits", name: "Cổng tài chính" },
+    { id: "organizations", name: "Sơ đồ tổ chức" },
+    { id: "modules", name: "Cấu hình module" },
+  ];
+  return items.find((i) => i.id === activeTab.value)?.name || "Hệ thống";
+});
 
-const tempHubBg = ref(hubBg.value);
-const tempSystemFont = ref(systemFont.value);
-
-const bgPresets = [
-  "https://m.yodycdn.com/blog/hinh-nen-thien-nhien-4k-yody-vn-61.jpg",
-  "https://vietnamest.com/wp-content/uploads/2023/10/hinh-nen-chill-cho-may-tinh-vietnamest-20.jpg",
-  "https://wallpapers.com/images/featured/dark-blue-abstract-5itntst15a4of38a.jpg",
+const systemStats = [
+  { label: "Độ ổn định", value: "99.98%", color: "bg-emerald-500" },
+  { label: "Tải hệ thống", value: "0.24", color: "bg-blue-500" },
+  { label: "Nút hoạt động", value: "12", color: "bg-gold-vibrant" },
 ];
 
-const fonts = [
-  { name: "Outfit (Modern)", value: "'Outfit', sans-serif" },
-  { name: "Inter (Professional)", value: "'Inter', sans-serif" },
-  { name: "Poppins (Rounded)", value: "'Poppins', sans-serif" },
-  { name: "Montserrat (Classic)", value: "'Montserrat', sans-serif" },
-  { name: "Playfair (Luxury)", value: "'Playfair Display', serif" },
-  { name: "Merriweather (Readability)", value: "'Merriweather', serif" },
-];
-
-const applySettings = () => {
-  hubBg.value = tempHubBg.value;
-  systemFont.value = tempSystemFont.value;
-
-  localStorage.setItem("hub_bg", hubBg.value);
+const updateSystemFont = () => {
   localStorage.setItem("system_font", systemFont.value);
-
-  // Apply globally
-  document.documentElement.style.setProperty("--system-font", systemFont.value);
-
-  showSettings.value = false;
+  window.location.reload();
 };
 
 const onDockNavigate = (id: string) => {
-  activeDockId.value = id;
-  if (id === "dashboard") activeTab.value = "hub";
-  else if (id === "users") activeTab.value = "users";
-  else if (id === "admins") activeTab.value = "admins";
-  else if (id === "modules") activeTab.value = "modules";
-  else if (id === "organizations") activeTab.value = "organizations";
-  else if (id === "settings") showSettings.value = true;
+  if (id === "settings") {
+    showSettings.value = true;
+  } else {
+    router.push(`/sp-ad/${id}`);
+  }
 };
 
-const enterModule = (moduleId: string) => {
-  activeTab.value = "modules"; // Or specialized logic
-  router.push(`/sp-ad/${moduleId}`);
+// Sync tab with route
+watch(
+  () => route.params.tab,
+  (newTab) => {
+    if (newTab) {
+      activeTab.value = newTab as string;
+    } else {
+      activeTab.value = "hub";
+    }
+  },
+);
+
+const globalFontStyle = computed(() => ({
+  fontFamily: `'${systemFont.value}', sans-serif`,
+}));
+
+const logout = () => {
+  localStorage.removeItem("user");
+  router.push("/auth/login");
 };
 
 onMounted(() => {
-  document.documentElement.style.setProperty("--system-font", systemFont.value);
+  if (!localStorage.getItem("user")) {
+    router.push("/auth/login");
+  }
 });
 </script>
 
 <style scoped>
-.animate-in-view {
-  animation: entrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.3);
+}
+
+.animate-page-entrance {
+  animation: entrance 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 @keyframes entrance {
   from {
     opacity: 0;
-    transform: scale(1.05) translateY(20px);
+    transform: translateY(20px) scale(0.98);
     filter: blur(10px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
 
-.fade-scale-enter-active,
-.fade-scale-leave-active {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fade-scale-enter-from {
-  opacity: 0;
-  transform: scale(0.98) translateY(10px);
-}
-
-.fade-scale-leave-to {
-  opacity: 0;
-  transform: scale(1.02) translateY(-10px);
-}
-
-@keyframes fade-in {
+@keyframes dock-entrance {
   from {
     opacity: 0;
+    transform: translateY(40px);
+    filter: blur(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
   }
 }
-@keyframes zoom-in {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+
+.animate-dock-entrance {
+  animation: dock-entrance 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
-.animate-in {
-  animation-fill-mode: forwards;
+
+.page-slide-enter-active,
+.page-slide-leave-active {
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.fade-in {
-  animation-name: fade-in;
+.page-slide-enter-from {
+  opacity: 0;
+  transform: translateX(40px);
 }
-.zoom-in-95 {
-  animation-name: zoom-in;
+.page-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

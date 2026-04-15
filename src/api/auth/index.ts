@@ -71,4 +71,42 @@ export const authApi = {
       };
     }
   },
+
+  /**
+   * Xác thực mã Admin
+   */
+  async verifyAdminCode(code: string): Promise<ApiResponse<{ verified: boolean }>> {
+    try {
+      const response = await api.post<{ verified: boolean }>(AUTH_URLS.VERIFY_CODE, { code });
+      return {
+        status: response.status,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        data: error.response?.data || null,
+        message: error.response?.data?.message || "Verification failed",
+      };
+    }
+  },
+
+  /**
+   * Dọn dẹp toàn bộ Database
+   */
+  async cleanDatabase(): Promise<ApiResponse<any>> {
+    try {
+      const response = await api.post(AUTH_URLS.CLEAN_DB);
+      return {
+        status: response.status,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        status: error.response?.status || 500,
+        data: error.response?.data || null,
+        message: error.response?.data?.message || "Cleanup failed",
+      };
+    }
+  },
 };

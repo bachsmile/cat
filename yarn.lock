@@ -2146,10 +2146,10 @@ get-stream@^5.1.0:
   dependencies:
     pump "^3.0.0"
 
-glass-studio-ui-pro@^1.1.11:
-  version "1.1.11"
-  resolved "https://registry.npmjs.org/glass-studio-ui-pro/-/glass-studio-ui-pro-1.1.11.tgz"
-  integrity sha512-SkaBJpMDmCUGpYb2MpxoiJHIJDMGI16m6Oep9AO6x/yy4tBf14Kio7AvOQGW++9a+M+MisEKobW+51XGxtnYbg==
+glass-studio-ui-pro@^1.1.15:
+  version "1.1.15"
+  resolved "https://registry.npmjs.org/glass-studio-ui-pro/-/glass-studio-ui-pro-1.1.15.tgz"
+  integrity sha512-sjQz/VD05wl6fulh2mB/r0wkuMw7reup7St2FSlUKmRdylvtHlnAEOvFX6x7EFLihjBRcwOjhHH9SGGDTxbtIQ==
   dependencies:
     "@types/three" "^0.183.1"
     lucide-vue-next ">=0.400.0"

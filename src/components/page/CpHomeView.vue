@@ -8,6 +8,70 @@
       backgroundPosition: 'center',
     }"
   >
+    <!-- 0. User Toolbar (Floating) -->
+    <div
+      class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-entrance animation-delay-500"
+    >
+      <div
+        class="flex items-center gap-2 px-3 py-2 rounded-full bg-black/70 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+      >
+        <!-- Balance -->
+        <div
+          class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 cursor-pointer hover:bg-white/10 transition-all"
+          @click="handleFaucet"
+        >
+          <span class="text-[9px] font-black text-white/40 uppercase tracking-wider">Ví</span>
+          <span class="text-sm font-black text-emerald-400 italic tracking-tighter">{{ walletBalance.toLocaleString() }}đ</span>
+          <PlusIcon class="w-3 h-3 text-emerald-400/60" />
+        </div>
+
+        <!-- Nav Items -->
+        <template v-if="navItems.length > 0">
+          <div class="w-px h-5 bg-white/10"></div>
+          <button
+            v-for="nav in navItems" :key="nav.label"
+            @click="nav.onClick ? nav.onClick() : router.push(nav.to || '')"
+            class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black text-white/60 uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all"
+          >
+            <component v-if="nav.icon" :is="nav.icon" class="w-3.5 h-3.5" />
+            {{ nav.label }}
+          </button>
+        </template>
+
+        <div class="w-px h-5 bg-white/10"></div>
+
+        <!-- User -->
+        <div
+          class="flex items-center gap-2.5 px-2 py-1 rounded-full hover:bg-white/5 cursor-pointer transition-all"
+          @click="router.push('/customer')"
+        >
+          <div class="flex flex-col items-end hidden md:flex">
+            <p class="text-[10px] font-black text-white/80 uppercase tracking-tight leading-none">
+              {{ userEmail?.split("@")[0] || "Khách" }}
+            </p>
+            <span class="text-[7px] font-black text-white/30 uppercase tracking-widest">{{ userRole || "GUEST" }}</span>
+          </div>
+          <div class="w-8 h-8 rounded-full p-0.5 bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg">
+            <div class="w-full h-full rounded-full overflow-hidden border border-white/20">
+              <img
+                :src="userAvatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <button
+          @click="handleLogout"
+          class="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center text-white/30 hover:text-red-400 transition-all active:scale-90"
+          title="Đăng xuất"
+        >
+          <LogOutIcon class="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+
     <!-- 1. Hero Section -->
     <section
       class="hero-section relative min-h-screen flex items-center pt-20"
@@ -82,11 +146,11 @@
 
     <!-- 2. Feature Bar & Grid Section -->
     <section
-      class="p-24 lg:p-24 relative z-20 reveal-init content-section"
+      class="p-24 lg:p-24 relative z-20 content-section"
       :style="getDynamicBgStyle(props.images.sectionBg)"
     >
       <div
-        class="feature-wave-bar rounded-[5rem] p-16 mb-24 lg:p-24 shadow-[0_-30px_60px_rgba(0,0,0,0.3),0_80px_160px_rgba(0,0,0,0.4)] relative overflow-hidden bg-[#1e4a2e] max-w-[1440px] mx-auto"
+        class="feature-wave-bar rounded-[5rem] p-16 mb-24 lg:p-24 shadow-[0_-30px_60px_rgba(0,0,0,0.3),0_80px_160px_rgba(0,0,0,0.4)] relative overflow-hidden bg-[#1e4a2e] max-w-[1440px] mx-auto reveal-init"
       >
         <div
           class="absolute inset-0 pointer-events-none bg-no-repeat bg-cover bg-center"
@@ -102,9 +166,15 @@
             class="flex flex-col items-center text-center group"
           >
             <div
-              class="w-24 h-24 rounded-[2.5rem] bg-white/10 border border-white/10 flex items-center justify-center mb-8 group-hover:bg-white/20 transition-all duration-500 shadow-xl group-hover:-translate-y-2"
+              class="mb-6 group-hover:-translate-y-2 group-hover:scale-110 transition-all duration-500"
             >
-              <CnIcon color="emerald" :size="48" class="text-emerald-100">
+              <CnIcon
+                color="emerald"
+                :size="80"
+                pill
+                variant="soft"
+                class="text-emerald-100 shadow-xl"
+              >
                 <component :is="f.icon" class="w-10 h-10" />
               </CnIcon>
             </div>
@@ -130,7 +200,7 @@
           <CnCard
             v-if="card.type === 'card'"
             :color="card.color || 'emerald'"
-            class="organic-store-card aspect-square"
+            class="organic-store-card aspect-square reveal-init"
             @click="card.onClick"
           >
             <div
@@ -138,19 +208,16 @@
             >
               <div
                 v-if="card.icon"
-                class="w-[100px] h-[100px] flex items-center justify-center shadow-2xl rounded-full"
-                :class="[card.iconBgClass || 'bg-white']"
-                :style="
-                  isColor(card.iconBgClass)
-                    ? { backgroundColor: card.iconBgClass }
-                    : {}
-                "
+                class="transition-all duration-500 hover:scale-110"
               >
                 <CnIcon
                   :color="card.color || 'emerald'"
-                  :size="card.iconSize || 48"
+                  :size="card.iconSize || 100"
+                  pill
+                  variant="solid"
+                  class="shadow-2xl"
                 >
-                  <component :is="card.icon" class="w-full h-full" />
+                  <component :is="card.icon" class="w-10 h-10" />
                 </CnIcon>
               </div>
               <div
@@ -177,7 +244,7 @@
           <!-- Image Variant -->
           <div
             v-else
-            class="rounded-[4rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.2)] aspect-square relative group"
+            class="rounded-[4rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.2)] aspect-square relative group reveal-init"
           >
             <img
               :src="card.image"
@@ -271,11 +338,14 @@ export interface Images {
 </script>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Play as PlayIcon } from "lucide-vue-next";
+import { Play as PlayIcon, Plus as PlusIcon, LogOut as LogOutIcon } from "lucide-vue-next";
 import { CnButton, CnCard, CnIcon, CgCard } from "glass-studio-ui-pro";
+import { useRouter } from "vue-router";
+import { getWalletStatus, faucet } from "@/api/wallet";
+import { useToast } from "@/composables/useToast";
 
 function isColor(val?: string) {
   if (!val) return false;
@@ -307,13 +377,79 @@ const props = defineProps<{
   cards: Card[];
   images: Images;
   footer: Footer;
+  navItems?: { label: string; icon?: any; to?: string; onClick?: () => void }[];
 }>();
 
+const navItems = computed(() => props.navItems || []);
+
 defineEmits(["more-info"]);
+
+const router = useRouter();
+const { showToast } = useToast();
+const walletBalance = ref(0);
+const userEmail = ref("");
+const userRole = ref("");
+const userAvatar = ref("");
+
+const fetchWallet = async () => {
+  try {
+    const res = await getWalletStatus("VND");
+    if (res && res.balance !== undefined) {
+      walletBalance.value = res.balance;
+    }
+  } catch (e) {
+    console.error("Balance fetch error", e);
+  }
+};
+
+const handleFaucet = async () => {
+  try {
+    await faucet("VND");
+    showToast("Kích hoạt số dư dùng thử thành công!", "success");
+    await fetchWallet();
+  } catch (e) {
+    showToast("Lỗi khi nạp tiền", "error");
+  }
+};
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user");
+  router.push("/");
+};
+
+const loadUserInfo = () => {
+  // Quick extract from token/localStorage as fallback
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const parts = token.split(".");
+      if (parts.length < 2) return;
+      const base64Url = parts[1];
+      if (!base64Url) return;
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        window
+          .atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(""),
+      );
+      const payload = JSON.parse(jsonPayload);
+      userEmail.value = payload.email || payload.username;
+      userRole.value = payload.role;
+    } catch (e) {
+      console.error("Auth parse error");
+    }
+  }
+};
 
 gsap.registerPlugin(ScrollTrigger);
 
 onMounted(() => {
+  loadUserInfo();
+  fetchWallet();
   const revealElements = document.querySelectorAll(".reveal-init");
 
   revealElements.forEach((el) => {
@@ -321,8 +457,8 @@ onMounted(() => {
       el,
       {
         opacity: 0,
-        y: 100,
-        scale: 0.95,
+        y: 60,
+        scale: 0.98,
         filter: "blur(10px)",
       },
       {
@@ -330,16 +466,22 @@ onMounted(() => {
         y: 0,
         scale: 1,
         filter: "blur(0px)",
-        duration: 1.2,
+        duration: 1,
+        ease: "power3.out",
         scrollTrigger: {
           trigger: el,
-          start: "top 95%",
-          end: "bottom center",
-          toggleActions: "play none none reverse",
+          start: "top 90%", // Trigger sooner
+          toggleActions: "play none none none", // Only play once for better performance
+          // markers: true, // For debugging if needed
         },
       },
     );
   });
+
+  // Critical: Refresh ScrollTrigger after a short delay to account for dynamic images/layouts
+  setTimeout(() => {
+    ScrollTrigger.refresh();
+  }, 500);
 });
 </script>
 

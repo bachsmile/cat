@@ -100,12 +100,6 @@ onMounted(() => {
   (window as any).$pageTransition = {
     trigger: (target?: string) => pageTransitionRef.value?.trigger(target),
   };
-
-  // 🎨 Apply Global System Font
-  const savedFont = localStorage.getItem("system_font");
-  if (savedFont) {
-    document.documentElement.style.setProperty("--system-font", savedFont);
-  }
 });
 
 // Watch route to trigger if user just logged in or navigates

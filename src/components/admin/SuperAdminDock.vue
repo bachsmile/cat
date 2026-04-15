@@ -140,34 +140,46 @@ import {
   Building as BuildingIcon,
   Settings as SettingsIcon,
   LayoutDashboard as DashIcon,
+  Wallet as WalletIcon,
+  Crown as CrownIcon,
 } from "lucide-vue-next";
-import { useRouter } from "vue-router";
 import { CgCard } from "glass-studio-ui-pro";
 
 const hoverIndex = ref<number | null>(null);
 
 const dockItems = [
   {
-    id: "users",
-    name: "Quản lý Tài khoản",
-    icon: UsersIcon,
-    path: "/users",
-    bg: "bg-gradient-to-br from-blue-500 to-cyan-500",
-    glow: "bg-blue-400",
+    id: "hub",
+    name: "Hệ thống (Super Hub)",
+    icon: CrownIcon,
+    bg: "bg-gradient-to-br from-amber-400 to-orange-600",
+    glow: "bg-amber-400",
   },
   {
     id: "go-admin",
     name: "Giao diện Admin",
     icon: DashIcon,
-    path: "/ad",
     bg: "bg-gradient-to-br from-indigo-500 to-purple-600",
     glow: "bg-indigo-400",
+  },
+  {
+    id: "users",
+    name: "Quản lý Tài khoản",
+    icon: UsersIcon,
+    bg: "bg-gradient-to-br from-blue-500 to-cyan-500",
+    glow: "bg-blue-400",
+  },
+  {
+    id: "deposits",
+    name: "Phê duyệt Nạp tiền",
+    icon: WalletIcon,
+    bg: "bg-gradient-to-br from-rose-500 to-pink-600",
+    glow: "bg-rose-400",
   },
   {
     id: "settings",
     name: "Thiết lập Hệ thống",
     icon: SettingsIcon,
-    path: "/sp-ad/settings",
     bg: "bg-gradient-to-br from-slate-600 to-slate-800",
     glow: "bg-slate-400",
   },
@@ -175,7 +187,6 @@ const dockItems = [
     id: "organizations",
     name: "Quản lý Tổ chức",
     icon: BuildingIcon,
-    path: "/sp-ad/organizations",
     bg: "bg-gradient-to-br from-emerald-500 to-teal-500",
     glow: "bg-emerald-400",
   },
@@ -184,7 +195,7 @@ const dockItems = [
 const props = defineProps({
   modelValue: {
     type: String,
-    default: "dashboard",
+    default: "hub",
   },
 });
 
@@ -193,7 +204,6 @@ const activeIndex = computed(() => {
 });
 
 const getIconStyle = () => {
-  // Flattened layout as requested: no jutting or scaling
   return {
     transform: "translateY(0) scale(1)",
     margin: "0 4px",
@@ -201,13 +211,12 @@ const getIconStyle = () => {
   };
 };
 
-const emit = defineEmits(["navigate"]);
 
-const router = useRouter();
+const emit = defineEmits(["navigate"]);
 
 const handleNavigate = (item: any) => {
   if (item.id === "go-admin") {
-    router.push("/ad");
+    window.location.href = "/ad";
   } else {
     emit("navigate", item.id);
   }
